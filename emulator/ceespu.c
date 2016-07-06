@@ -15,9 +15,9 @@ Version : v.0.1 4-07-16
 
 static inline unsigned short run_alu_op(short alu_op, short alu1, short alu2, short cin) {
 	switch (alu_op) {
-	    case 0: return alu1 + alu2;
+	        case 0: return alu1 + alu2;
 		case 1: return alu1 + alu2 + cin;
-	    case 2: return alu1 - alu2;
+	        case 2: return alu1 - alu2;
 		case 3: return alu1 - alu2 - cin;
 		case 4: return (int)(alu1 * alu2) >> 16;
 		case 5: return alu1 * alu2;
@@ -134,9 +134,9 @@ int main(int argc, char ** argv)
 	printf("Machine Created...\n");
 	
 	
-    fseek (binary , 0 , SEEK_END);
+        fseek (binary , 0 , SEEK_END);
 	int lSize = ftell (binary);
-    rewind (binary);
+        rewind (binary);
 	fread(vm->vmem, 1, lSize, binary);
 	printf("File Read...\n");
 	printf("Running program code...\n");
