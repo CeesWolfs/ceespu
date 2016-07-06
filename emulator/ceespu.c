@@ -23,12 +23,12 @@ static inline unsigned short run_alu_op(short alu_op, short alu1, short alu2, sh
 		case 5: return alu1 * alu2;
 		case 6: return alu1 << alu2;
 		case 7: return alu1 >> alu2;
-		case 8: return alu1 && alu2;
-		case 9: return alu1 || alu2;
+		case 8: return alu1 & alu2;
+		case 9: return alu1 | alu2;
 		case 10: return alu1 ^ alu2;
-		case 11: return alu1 ^~ alu2;
-		case 12: return alu1 |~ alu2;
-		case 13: return alu1 &~ alu2;
+		case 11: return ~(alu1 ^ alu2);
+		case 12: return ~(alu1 | alu2);
+		case 13: return ~(alu1 & alu2);
 		case 14: return ~alu1;
 		case 15: return alu1;
 	}
