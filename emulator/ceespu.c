@@ -97,8 +97,8 @@ void vmachine_run(VirtualMachine* vm) {
 			case 1: vm->RegFile[r2] = run_alu_op(op, vm->RegFile[r1], imm, vm->carry_flag); break;
 			case 2: vm->RegFile[r2] = run_alu_op(op, imm, vm->RegFile[r1], vm->carry_flag); break;
 			default: switch(op) {
-			case 0: if (imm && (1 << 15)) { vmem_store_word(vm->vmem, imm & 0x7fff, r1); } else { vmem_store_word(vm->vmem, r2, r1); } break;
-				case 1: if (imm && (1 << 15)) { vm->RegFile[r1] = vmem_get_word(vm->vmem, imm & 0x7fff); } else { vm->RegFile[r1] = vmem_get_word(vm->vmem, r2); } break;
+			case 0: if (imm && (1 << 15)) { vmem_store_word(vm->vmem, imm & 0x7fff, vm->RegFile[r1]); } else { vmem_store_word(vm->vmem, vm->RegFile[r2], vm->RegFile[r1]); } break;
+				case 1: if (imm && (1 << 15)) { vm->RegFile[r1] = vmem_get_word(vm->vmem, imm & 0x7fff); } else { vm->RegFile[r1] = vmem_get_word(vm->vmem, vm->RegFile[r2]); } break;
 				case 2: vmem_store_word(vm->vmem, vm->stack_pointer, vm->RegFile[r1]); vm->stack_pointer--; break;
 				case 3: vm->RegFile[r1] = vmem_get_word(vm->vmem, vm->stack_pointer); vm->stack_pointer++;   break;
 				case 4: vm->RegFile[18] = vm->PC; vm->PC = imm; break;
