@@ -445,6 +445,7 @@ void ParseFile(FILE * fp,hashtable_t * hashtable, hashtable_t * labels,unsigned 
 					}
 					machine_code = cat;
 					machine_code += opcode << 2;
+					machine_code += 18 << 6;
 					machine_code += (imm / 4) << 16;
 				}
 				else if (!strcmp("je", token)) {
