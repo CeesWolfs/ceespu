@@ -15,6 +15,5 @@ typedef struct _VirtualMachine {
 	unsigned short RegFile [31];		// the register file
 	VirtualMem *vmem;	// the virtual memory
 	int PC;				// the program counter
-	unsigned short stack_pointer; // the stack pointer
 	unsigned short carry_flag;
 } VirtualMachine;
