@@ -3,7 +3,8 @@
 
 typedef union _Data  {
 	unsigned int _dword;
-    unsigned short _words[2];
+        unsigned short _words[2];
+        unsigned char _bytes[4];
 } Data;
 
 typedef struct _VirtualMem {
