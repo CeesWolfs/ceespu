@@ -104,7 +104,7 @@ void vmachine_run(VirtualMachine* vm) {
 			default: switch(op) {
 			        case 0: vmem_store_word(vm->vmem, imm & 0x7fff, vm->RegFile[r1]);  
 				case 1: if (imm && (1 << 15)) { vm->RegFile[r1] = vmem_get_word(vm->vmem, imm & 0x7fff); } else { vm->RegFile[r1] = vmem_get_word(vm->vmem, vm->RegFile[r2]); } break;
-				case 2: vm->RegFile[19] = vm->PC; vm->PC = imm; break;
+				case 2: vm->RegFile[19] = vm->PC; if(imm >> 15) vm->PC = vm->RegFile[r1]; else vm->PC = imm; break;
 				case 8: if (take_jump(imm >> 14, vm->RegFile[r1], vm->RegFile[r2])) { vm->PC = imm & 0x3fff; continue; } break;
 				case 9: if (take_jump(imm >> 14 + 4, vm->RegFile[r1], vm->RegFile[r2])) { vm->PC = imm && 0x3fff; continue; } break;
 				case 10: goto stop;
