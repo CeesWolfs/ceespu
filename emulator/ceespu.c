@@ -102,11 +102,12 @@ void vmachine_run(VirtualMachine* vm) {
 			case 1: vm->RegFile[rd] = run_alu_op(op, vm->RegFile[r1], imm, vm->carry_flag); break;
 			case 2: vm->RegFile[rd] = run_alu_op(op, imm, vm->RegFile[r1], vm->carry_flag); break;
 			default: switch(op) {
-			        case 0: vmem_store_word(vm->vmem, imm & 0x7fff, vm->RegFile[r1]);  
-				case 1: if (imm && (1 << 15)) { vm->RegFile[r1] = vmem_get_word(vm->vmem, imm & 0x7fff); } else { vm->RegFile[r1] = vmem_get_word(vm->vmem, vm->RegFile[r2]); } break;
+			        case 0: vmem_store_word(vm->vmem, rd + (imm & 0xffe0) + vm->RegFile[r1], vm->RegFile[r2]);  
+				case 1: vm->RegFile[rd] = vmem_get_word(vm->vmem, vm->RegFile[r1] + imm); break;
 				case 2: vm->RegFile[19] = vm->PC; if(imm >> 15) vm->PC = vm->RegFile[r1]; else vm->PC = imm; break;
+				case 3: 
 				case 8: if (take_jump(imm >> 14, vm->RegFile[r1], vm->RegFile[r2])) { vm->PC = imm & 0x3fff; continue; } break;
-				case 9: if (take_jump(imm >> 14 + 4, vm->RegFile[r1], vm->RegFile[r2])) { vm->PC = imm && 0x3fff; continue; } break;
+				case 9: if (take_jump(imm >> 14 + 4, vm->RegFile[r1], vm->RegFile[r2])) { vm->PC = imm & 0x3fff; continue; } break;
 				case 10: goto stop;
 				case 15: if (imm & (1 << 15)) { vm->PC = vm->RegFile[r1]; } else { vm->PC = imm; } continue;
 				default: printf("Error non supported instruction at address %d\n", vm->PC); break;
