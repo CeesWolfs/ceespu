@@ -10,9 +10,16 @@ CPU Architecture
 The CPU is generally 32-bit: that is the width of registers, the size of each
 instruction word. The size of memory locations are 16 bit due to a limitation in the amount of available memory.
 
-There are three main types of of instructions
-| Tables        | Are           | Cool  |
+An instruction is 32 bits wide. The opcode is 6 bits an register 5, and an immidiate 16 bits.
+There are two main types of of instructions:
+```
+TypeA:  Opcode RegD RegA RegB
+TypeB:  Opcode RegD RegA Immidiate
+```
+There are 32 32-bit registers. 
+
+| Type          | Are           | Cool  |
 | ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
+| Type A        | right-aligned | $1600 |
+| Type B        | centered      |   $12 |
+| Type C        | are neat      |    $1 |
