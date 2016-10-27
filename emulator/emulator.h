@@ -1,19 +1,15 @@
 #pragma once
-#define VMEM_SIZE (2 << 13)
+#define VMEM_SIZE (1 << 14)
 
-typedef union _Data  {
-	unsigned int _dword;
-        unsigned short _words[2];
-        unsigned char _bytes[4];
-} Data;
-
-typedef struct _VirtualMem {
-	Data mem[VMEM_SIZE];
+typedef union _VirtualMem {
+	int word[VMEM_SIZE];
+	short hword[VMEM_SIZE * 2];
+	char byte[VMEM_SIZE * 4];
 } VirtualMem;
 
 typedef struct _VirtualMachine {
-	unsigned short RegFile [31];		// the register file
-	VirtualMem *vmem;	// the virtual memory
-	int PC;				// the program counter
-	unsigned short carry_flag;
+	unsigned int RegFile [32];		// the register file
+	VirtualMem *vmem;	                // the virtual memory
+	unsigned int PC;			// the program counter
+	unsigned char carry_flag : 1;           // the carry bit
 } VirtualMachine;
