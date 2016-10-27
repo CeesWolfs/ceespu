@@ -3,10 +3,12 @@
 #include <stdio.h>
 #include <limits.h>
 #include <string.h>
+#include <stdint.h>
+#include "ceespu_cas.h"
 
 struct entry_s {
 	char *key;
-	short value;
+	uint16_t value;
 	struct entry_s *next;
 };
 
@@ -20,11 +22,8 @@ struct hashtable_s {
 typedef struct hashtable_s hashtable_t;
 
 hashtable_t * ht_create(int size);
-
 int ht_hash(hashtable_t * hashtable, char * key);
+entry_t * ht_newpair(char * key, uint16_t value);
+int ht_set(hashtable_t * hashtable, char * key, uint16_t value);
+int ht_get(hashtable_t * hashtable, char * key, uint16_t * value);
 
-entry_t * ht_newpair(char * key, short value);
-
-void ht_set(hashtable_t * hashtable, char * key, short value);
-
-int ht_get(hashtable_t * hashtable, char * key, short * value);
