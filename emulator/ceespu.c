@@ -251,11 +251,9 @@ int main(int argc, char ** argv)
 		return;
 	}
 	printf("Machine Created...\n");
-	
-	
-    fseek (binary , 0 , SEEK_END);
+	fseek (binary , 0 , SEEK_END);
 	int lSize = ftell (binary);
-    rewind (binary);
+        rewind (binary);
 	fread(vm->vmem, 1, lSize, binary);
 	printf("File Read...\n");
 	printf("Running program code...\n");
@@ -264,5 +262,3 @@ int main(int argc, char ** argv)
 	vmachine_destroy(vm);
 	getchar();
 }
-
-
