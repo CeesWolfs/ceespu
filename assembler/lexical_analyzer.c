@@ -1,4 +1,4 @@
-#include "lexical_analysis.h"
+#include "lexical_analyzer.h"
 
 void lexical_analysis(FILE * file, token * tk_array)
 {
