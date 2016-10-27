@@ -44,7 +44,7 @@ int ht_hash(hashtable_t *hashtable, char *key) {
 }
 
 /* Create a key-value pair. */
-entry_t *ht_newpair(char *key, short value) {
+entry_t *ht_newpair(char *key, uint16_t value) {
 	entry_t *newpair;
 
 	if ((newpair = malloc(sizeof(entry_t))) == NULL) {
@@ -63,7 +63,7 @@ entry_t *ht_newpair(char *key, short value) {
 }
 
 /* Insert a key-value pair into a hash table. */
-void ht_set(hashtable_t *hashtable, char *key, short value) {
+int ht_set(hashtable_t *hashtable, char *key, uint16_t value) {
 	int bin = 0;
 	entry_t *newpair = NULL;
 	entry_t *next = NULL;
@@ -81,8 +81,7 @@ void ht_set(hashtable_t *hashtable, char *key, short value) {
 	/* There's already a pair.  Let's replace that string. */
 	if (next != NULL && next->key != NULL && strcmp(key, next->key) == 0) {
 
-		free(next->value);
-		next->value = strdup(value);
+		return ERR_DUP_LABEL;
 
 		/* Nope, could't find it.  Time to grow a pair. */
 	}
@@ -109,7 +108,7 @@ void ht_set(hashtable_t *hashtable, char *key, short value) {
 }
 
 /* Retrieve a key-value pair from a hash table. */
-int ht_get(hashtable_t *hashtable, char *key,short *value) {
+int ht_get(hashtable_t *hashtable, char *key,uint16_t *value) {
 	int bin = 0;
 	entry_t *pair;
 	if (!key || !hashtable) {
@@ -125,12 +124,12 @@ int ht_get(hashtable_t *hashtable, char *key,short *value) {
 
 	/* Did we actually find anything? */
 	if (pair == NULL || pair->key == NULL || strcmp(key, pair->key) != 0) {
-		return NULL;
+		*value = 0;
+		return ERR_NO_LABEL;
 
 	}
 	else {
 		*value = pair->value;
-		return 1; //success
+		return ERR_NO_ERROR; //success
 	}
-
 }
