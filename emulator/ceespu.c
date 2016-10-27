@@ -1,78 +1,44 @@
 /*
-Copyrigth (c) CeesPU project 2016
+Copyright (c) 2016 Cees Wolfs
 
-ceespu.c : the entry point for the CeesPu emulator 
+ Permission is hereby granted, free of charge, to any person
+ obtaining a copy of this software and associated documentation
+ files (the "Software"), to deal in the Software without
+ restriction, including without limitation the rights to use,
+ copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following
+ conditions:
 
-Author : Cees Wolfs
-Version : v.0.1 4-07-16
+ The above copyright notice and this permission notice shall be
+ included in all copies or substantial portions of the Software.
 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include "stdio.h"
 #include "stdlib.h"
-#include "string.h"
 #include "emulator.h"
-
-static inline unsigned short run_alu_op(short alu_op, short alu1, short alu2, short cin) {
-	switch (alu_op) {
-	        case 0: return alu1 + alu2;
-		case 1: return alu1 + alu2 + cin;
-	        case 2: return alu1 - alu2;
-		case 3: return alu1 - alu2 - cin;
-		case 4: return (int)(alu1 * alu2) >> 16;
-		case 5: return alu1 * alu2;
-		case 6: return alu1 << alu2;
-		case 7: return (unsigned)alu1 >> (unsigned)alu2;
-		case 8: return alu1 >> alu2;
-		case 9: return alu1 & alu2;
-		case 10: return alu1 | alu2;
-		case 11: return alu1 ^ alu2;
-		case 12: return (short)(char)alu1;
-	}
-}
-
-static inline unsigned char take_jump(unsigned char branch_condition, unsigned short a, unsigned short b) {
-    switch (branch_condition){
-   	    case 0: return (a == b);
-   	    case 1: return (a != b);
-   	    case 2: return (a <= b);
-   	    case 3: return (a < b);
-   	    case 4: return (a > b);
-   	    case 5: return (a >= b);
-   	    case 6: return (a && (1 << 15));
-   	    case 7: return !(a && (1 << 15));
-    }
-}
-
-
-static inline unsigned short vmem_get_word(VirtualMem* vm,unsigned short address) {
-	return vm->mem[address >> 1]._words[address && 0x0001];
-}
-
-static inline unsigned char vmem_get_byte(VirtualMem* vm,unsigned short address) {
-	return vm->mem[address >> 2]._bytes[address && 0x0003];
-}
-
-static inline void vmem_store_word(VirtualMem* vm,unsigned short address,unsigned short value) {
-	vm->mem[address >> 1]._words[address && 0x0001] = value;
-}
-
-static inline void vmem_store_byte(VirtualMem* vm,unsigned short address,unsigned char value) {
-	vm->mem[address >> 2]._words[address && 0x0003] = value;
-}
 
 VirtualMachine* vmachine_create() {
 	VirtualMachine* vm = (VirtualMachine*)calloc(sizeof(VirtualMachine),1);
 	if (!vm) {
 		return NULL;
 	}
-	vm->vmem = calloc(VMEM_SIZE, sizeof(Data));
-	vm->stack_pointer = 0x7fff;
+	vm->vmem = calloc(1, sizeof(VirtualMem));
+	vm->RegFile[18] = 0xfffc;
 	return vm;
 }
 
 void vmachine_dump(VirtualMachine* vm){
-	for (int i = 0; i < 31; ++i)
+	for (int i = 0; i < 32; ++i)
 	{
 		printf("register: c%d 0x%04x\n", i,vm->RegFile[i]);
 	}
@@ -86,33 +52,181 @@ void vmachine_destroy(VirtualMachine* vm) {
 }
 
 void vmachine_run(VirtualMachine* vm) {
-	unsigned int instruction,r1,r2,imm,op,cat;
-	char isaluop;
+	unsigned int instruction,rd,ra,rb,op;
+	int imm;
+	char imm_valid = 0;
+	unsigned short imm_value = 0;
 	for (;;) {
-		instruction = vm->vmem->mem[vm->PC++]._dword;
-		cat = instruction & 0x03;
-		op = (instruction  >> 2 ) & 0xf;
-		rd = (instruction >> 6) & 0x1f;
-		r1 = (instruction >> 11) & 0x1f;
-		r2 = (instruction >> 16) & 0x1f;
-		imm = instruction >> 16;
-		isaluop = !(cat == 3);
-		switch (cat) {
-		        case 0: vm->RegFile[rd] = run_alu_op(op, vm->RegFile[r1], vm->RegFile[r2], vm->carry_flag); break;
-			case 1: vm->RegFile[rd] = run_alu_op(op, vm->RegFile[r1], imm, vm->carry_flag); break;
-			case 2: vm->RegFile[rd] = run_alu_op(op, imm, vm->RegFile[r1], vm->carry_flag); break;
-			default: switch(op) {
-			        case 0: vmem_store_word(vm->vmem, rd + (imm & 0xffe0) + vm->RegFile[r1], vm->RegFile[r2]);  
-				case 1: vm->RegFile[rd] = vmem_get_word(vm->vmem, vm->RegFile[r1] + imm); break;
-				case 2: vm->RegFile[19] = vm->PC; if(imm >> 15) vm->PC = vm->RegFile[r1]; else vm->PC = imm; break;
-				case 3: 
-				case 8: if (take_jump(imm >> 14, vm->RegFile[r1], vm->RegFile[r2])) { vm->PC = imm & 0x3fff; continue; } break;
-				case 9: if (take_jump(imm >> 14 + 4, vm->RegFile[r1], vm->RegFile[r2])) { vm->PC = imm & 0x3fff; continue; } break;
-				case 10: goto stop;
-				case 15: if (imm & (1 << 15)) { vm->PC = vm->RegFile[r1]; } else { vm->PC = imm; } continue;
-				default: printf("Error non supported instruction at address %d\n", vm->PC); break;
+		instruction = vm->vmem->word[(vm->PC) >> 2];
+		op = (instruction >> 26) & 0x3f;
+		rd = (instruction >> 21) & 0x1f;
+		ra = (instruction >> 16) & 0x1f;
+		rb = (instruction >> 11) & 0x1f;
+		imm = imm_valid ? (imm_value << 16) + (int)(instruction & 0xffff) : (signed)(instruction << 16) >> 16;
+		imm_valid = 0;
+		switch (op) {
+		case 0x0:
+			vm->RegFile[rd] = vm->RegFile[ra] + vm->RegFile[rb];
+			vm->carry_flag = ((vm->RegFile[ra] + vm->RegFile[rb]) ^ vm->RegFile[ra])&((vm->RegFile[ra] + vm->RegFile[rb]) ^ vm->RegFile[rb]);
+			break;
+		case 0x1:
+			vm->RegFile[rd] = vm->RegFile[ra] + vm->RegFile[rb] + vm->carry_flag;
+			vm->carry_flag = ((vm->RegFile[ra] + vm->RegFile[rb] + vm->carry_flag) ^ vm->RegFile[ra])&((vm->RegFile[ra] + vm->RegFile[rb] + vm->carry_flag) ^ vm->RegFile[rb]);
+			break;
+		case 0x2:
+			vm->RegFile[rd] = ~vm->RegFile[ra] + vm->RegFile[rb] + 1;
+			vm->carry_flag = ((vm->RegFile[ra] + vm->RegFile[rb] + vm->carry_flag) ^ vm->RegFile[ra])&((vm->RegFile[ra] + vm->RegFile[rb] + vm->carry_flag) ^ vm->RegFile[rb]);
+			break;
+		case 0x3:
+			vm->RegFile[rd] = ~vm->RegFile[ra] + vm->RegFile[rb] + !vm->carry_flag;
+			vm->carry_flag = ((vm->RegFile[ra] + vm->RegFile[rb] + vm->carry_flag) ^ vm->RegFile[ra])&((vm->RegFile[ra] + vm->RegFile[rb] + vm->carry_flag) ^ vm->RegFile[rb]);
+			break;
+		case 0x4:
+			vm->RegFile[rd] = vm->RegFile[ra] | vm->RegFile[rb];
+			break;
+		case 0x5:
+			vm->RegFile[rd] = vm->RegFile[ra] & vm->RegFile[rb];
+			break;
+		case 0x6:
+			vm->RegFile[rd] = vm->RegFile[ra] ^ vm->RegFile[rb];
+			break;
+		case 0x7:
+			vm->RegFile[rd] = imm & 1 ? (int)vm->RegFile[ra] & 0xffff : (int)vm->RegFile[ra] & 0xff;
+			break;
+		case 0x8:
+			switch (imm & 0xC0)
+			{
+			case 0:
+				vm->RegFile[rd] = vm->RegFile[ra] << vm->RegFile[rb];
+				break;
+			case 0x40:
+				vm->RegFile[rd] = (unsigned)vm->RegFile[ra] >> (unsigned)vm->RegFile[rb];
+				break;
+			case 0x80:
+				vm->RegFile[rd] = vm->RegFile[ra] >> vm->RegFile[rb];
+				break;
+			default:
+				printf("invalid shift instruction at 0x%X", vm->PC);
+				exit(1);
 			}
+			break;
+		case 0x9:
+			vm->RegFile[rd] = vm->RegFile[ra] * vm->RegFile[rb];
+			break;
+		case 0x10:
+			vm->RegFile[rd] = vm->RegFile[ra] + imm;
+			vm->carry_flag = ((vm->RegFile[ra] + imm) ^ vm->RegFile[ra])&((vm->RegFile[ra] + imm) ^ imm);
+			break;
+		case 0x11:
+			vm->RegFile[rd] = vm->RegFile[ra] + imm + vm->carry_flag;
+			vm->carry_flag = ((vm->RegFile[ra] + imm) ^ vm->RegFile[ra])&((vm->RegFile[ra] + imm) ^ imm);
+			break;
+		case 0x12:
+			vm->RegFile[rd] = ~vm->RegFile[ra] + imm + 1;
+			vm->carry_flag = ((vm->RegFile[ra] + imm) ^ vm->RegFile[ra])&((vm->RegFile[ra] + imm) ^ imm);
+			break;
+		case 0x13:
+			vm->RegFile[rd] = ~vm->RegFile[ra] + imm + !vm->carry_flag;
+			vm->carry_flag = ((vm->RegFile[ra] + imm) ^ vm->RegFile[ra])&((vm->RegFile[ra] + imm) ^ imm);
+			break;
+		case 0x14:
+			vm->RegFile[rd] = vm->RegFile[ra] | imm;
+			break;
+		case 0x15:
+			vm->RegFile[rd] = vm->RegFile[ra] & imm;
+			break;
+		case 0x16:
+			vm->RegFile[rd] = vm->RegFile[ra] ^ imm;
+			break;
+		case 0x18:
+			switch (imm & 0xC0)
+			{
+			case 0:
+				vm->RegFile[rd] = vm->RegFile[ra] << imm;
+				break;
+			case 0x40:
+				vm->RegFile[rd] = (unsigned)vm->RegFile[ra] >> (unsigned)imm;
+				break;
+			case 0x80:
+				vm->RegFile[rd] = vm->RegFile[ra] >> imm;
+				break;
+			default:
+				printf("invalid shift instruction at 0x%X", vm->PC);
+				exit(1);
+			}
+			break;
+		case 0x19:
+			vm->RegFile[rd] = vm->RegFile[ra] * imm;
+			break;
+		case 0x2A:
+			imm_valid = 1;
+			imm_value = imm;
+			break;
+		case 0x2B:
+			goto stop;
+		case 0x20:
+			vm->RegFile[rd] = vm->vmem->word[(vm->RegFile[ra] + imm) >> 2];
+			break;
+		case 0x21:
+			vm->RegFile[rd] = (int)vm->vmem->hword[(vm->RegFile[ra] + imm) >> 1];
+			break;
+		case 0x22:
+			vm->RegFile[rd] = (int)vm->vmem->byte[vm->RegFile[ra] + imm];
+			break;
+		case 0x24:
+			vm->vmem->word[(vm->RegFile[ra] + imm) >> 2] = vm->RegFile[rd];
+			break;
+		case 0x25:
+			vm->vmem->hword[(vm->RegFile[ra] + imm) >> 1] = vm->RegFile[rd];
+			break;
+		case 0x26:
+			vm->vmem->byte[vm->RegFile[ra] + imm] = vm->RegFile[rd];
+			break;
+		case 0x30:
+			vm->PC = (vm->RegFile[rd] == vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			break;
+		case 0x31:
+			vm->PC = (vm->RegFile[rd] != vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			break;
+		case 0x32:
+			vm->PC = (vm->RegFile[rd] > vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			break;
+		case 0x33:
+			vm->PC = (vm->RegFile[rd] >= vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			break;
+		case 0x34:
+			vm->PC = (vm->RegFile[rd] < vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			break;
+		case 0x35:
+			vm->PC = (vm->RegFile[rd] <= vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			break;
+		case 0x36:
+			vm->PC = ((unsigned)vm->RegFile[rd] > (unsigned)vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			break;
+		case 0x37:
+			vm->PC = ((unsigned)vm->RegFile[rd] >= (unsigned)vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			break;
+		case 0x38:
+			vm->PC = ((unsigned)vm->RegFile[rd] < (unsigned)vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			break;
+		case 0x39:
+			vm->PC = ((unsigned)vm->RegFile[rd] <= (unsigned)vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			break;
+		case 0x3A:
+			vm->PC = vm->carry_flag ? (imm - 4) : vm->PC;
+			break;
+		case 0x3B:
+			vm->PC = !vm->carry_flag ? (imm - 4) : vm->PC;
+			break;
+		case 0x3C:
+			vm->RegFile[19] = (imm & 0x0001) ? (vm->PC + 4) : vm->RegFile[19];
+			vm->PC = (imm & 0x0002) ? vm->RegFile[rd] - 4 : (imm - 4) & 0xfffc;
+			break;
+		default:
+			printf("invalid instruction at 0x%X", vm->PC);
+			exit(1);
 		}
+		vm->PC += 4;
 	}
 stop: 
 	printf("Running program done...\n");
@@ -126,8 +240,9 @@ int main(int argc, char ** argv)
 		return;
 	}
 	binary = fopen(argv[1], "rb");
+	//binary = fopen("string.asm.bin", "rb");
 	if (!binary) {
-		printf("Error input file couldn't be opened");
+		printf("Error input file couldn't be opened!");
 		return;
 	}
 	printf("Starting Machine Simulation...\n");
@@ -138,15 +253,16 @@ int main(int argc, char ** argv)
 	printf("Machine Created...\n");
 	
 	
-        fseek (binary , 0 , SEEK_END);
+    fseek (binary , 0 , SEEK_END);
 	int lSize = ftell (binary);
-        rewind (binary);
+    rewind (binary);
 	fread(vm->vmem, 1, lSize, binary);
 	printf("File Read...\n");
 	printf("Running program code...\n");
 	vmachine_run(vm);
 	vmachine_dump(vm);
 	vmachine_destroy(vm);
-
+	getchar();
 }
+
 
