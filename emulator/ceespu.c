@@ -260,5 +260,4 @@ int main(int argc, char ** argv)
 	vmachine_run(vm);
 	vmachine_dump(vm);
 	vmachine_destroy(vm);
-	getchar();
 }
