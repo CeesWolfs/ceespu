@@ -17,7 +17,6 @@ TypeA:  Opcode RegD RegA RegB
 TypeB:  Opcode RegD RegA Immidiate
 ```
 There are 32 32-bit registers. 
- * Registers    Use
  * c0           zero; unchangeable
  * c1-c11       saved registers for static variables (preserved accross function calls)
  * c12-c17      scratch temporary registers
@@ -27,8 +26,16 @@ There are 32 32-bit registers.
  * c20-c25      function args
  * c25-c31      scratch temporary registers
 
-| Type          | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| Type A        | right-aligned | $1600 |
-| Type B        | centered      |   $12 |
-| Type C        | are neat      |    $1 |
+| Mnemonic      | Encoding      | Operation  |
+| ------------- |:-------------:| ---------: |
+| ADD           | b000000       | Add two registers      |
+| ADC           | b000001       |   $12      |
+| SUB           | b000010       |    $1      |
+| SBB           | b000011       |    $1      |
+| OR            | b000100       |    $1      |
+| AND           | b000101       |    $1      |
+| XOR           | b000110       |    $1      |
+| SHL           | b001000       |    $1      |
+| SHR           | b001000       |    $1      |
+| SAR           | b001000       |    $1      |
+| MUL           | b001001       |    $1      |
