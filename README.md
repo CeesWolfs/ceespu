@@ -27,7 +27,7 @@ There are 32 32-bit registers.
  * c25-c31      scratch temporary registers
 
 | Mnemonic      | Encoding      | Operation  |
-| ------------- |:-------------:| ---------: |
+| ------------- |:-------------:| :--------- |
 | ADD           | b000000       | Add two registers Rd = Ra + Rb     |
 | ADC           | b000001       | Addition with carry Rd = Ra + Rb + carry      |
 | SUB           | b000010       | Subtraction Rd = Rb - Ra      |
