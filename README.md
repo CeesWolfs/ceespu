@@ -31,11 +31,11 @@ There are 32 32-bit registers.
 | ADD           | b000000       | Add two registers Rd = Ra + Rb     |
 | ADC           | b000001       | Addition with carry Rd = Ra + Rb + carry      |
 | SUB           | b000010       | Subtraction Rd = Rb - Ra      |
-| SBB           | b000011       |    $1      |
-| OR            | b000100       |    $1      |
-| AND           | b000101       |    $1      |
-| XOR           | b000110       |    $1      |
-| SHL           | b001000       |    $1      |
-| SHR           | b001000       |    $1      |
-| SAR           | b001000       |    $1      |
+| SBB           | b000011       | Subtraction with borrow Rd = Rb - Ra - carry     |
+| OR            | b000100       | Bitwise or Rd = Ra | Rb      |
+| AND           | b000101       | Bitwise and Rd = Ra & Rb      |
+| XOR           | b000110       | Bitwise exclusive or Rd = Ra ^ Rb      |
+| SHL           | b001000       | Bitshift to the left Rd = Ra << Rb     |
+| SHR           | b001000       | Bitshift to the right Rd = Ra >> Rb    |
+| SAR           | b001000       | Signed shift to the right Rd = Ra >> Rb |
 | MUL           | b001001       |    $1      |
