@@ -28,9 +28,9 @@ There are 32 32-bit registers.
 
 | Mnemonic      | Encoding      | Operation  |
 | ------------- |:-------------:| ---------: |
-| ADD           | b000000       | Add two registers      |
-| ADC           | b000001       |   $12      |
-| SUB           | b000010       |    $1      |
+| ADD           | b000000       | Add two registers Rd = Ra + Rb     |
+| ADC           | b000001       | Addition with carry Rd = Ra + Rb + carry      |
+| SUB           | b000010       | Subtraction Rd = Rb - Ra      |
 | SBB           | b000011       |    $1      |
 | OR            | b000100       |    $1      |
 | AND           | b000101       |    $1      |
