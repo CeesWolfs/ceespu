@@ -12,7 +12,7 @@
 // Target Devices: 
 // Tool versions: 
 // Description: 
-//
+// The execute unit, it performs the action for an instruction, and selects which value to writeback  
 // Dependencies: 
 //
 // Revision: 
@@ -26,8 +26,8 @@ module ceespu_execute(
   input [4:0] I_selD,
   input [3:0] I_aluop,
   input I_we,
+  input I_branch,
   input [1:0] I_selWb,
-  input [0:0] I_branch,
   input [2:0] I_branchop,
   input [31:0] I_dataA,
   input [31:0] I_dataB,
