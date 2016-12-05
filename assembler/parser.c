@@ -53,7 +53,38 @@ int parse(token * tk_array, instr * instr_array, hashtable_t * labels, label_to_
 				cur_token++;
 				if (cur_token->type != REG)
 					print_err_msg(cur_token->code_line, ERR_TYPE_ARG);
-				instr_array->rd = cur_token->value;
+				if (instr_array->op >> 3 == 0x7)
+					instr_array->ra = cur_token->value;
+				else
+					instr_array->rd = cur_token->value;
+				if ((cur_token + 1)->type == REG | (cur_token + 1)->type == IMM | (cur_token + 1)->type == SYMBOL)
+					print_err_msg(cur_token->code_line, ERR_MANY_ARG);
+				break;
+			case TYPE_B0:
+				for (int x = 0; x < 2; x++) {
+					cur_token++;
+					if (cur_token->type != REG)
+						print_err_msg(cur_token->code_line, ERR_TYPE_ARG);
+					if (x == 0)
+						instr_array->rd = cur_token->value;
+					if (x == 1)
+						instr_array->ra = cur_token->value;
+				}
+				cur_token++;
+				if (cur_token->type == IMM) {
+					instr_array->imm = cur_token->value;
+
+				}
+				else if (cur_token->type == SYMBOL) {
+					instr_array->symbol = cur_token->value_str;
+				}
+				else {
+					print_err_msg(cur_token->code_line, ERR_TYPE_ARG);
+				}
+				if ((cur_token + 1)->type == REG && instr_array->rb == 0) {
+					cur_token++;
+					instr_array->rb = cur_token->value;
+				}
 				if ((cur_token + 1)->type == REG | (cur_token + 1)->type == IMM | (cur_token + 1)->type == SYMBOL)
 					print_err_msg(cur_token->code_line, ERR_MANY_ARG);
 				break;
@@ -63,9 +94,9 @@ int parse(token * tk_array, instr * instr_array, hashtable_t * labels, label_to_
 					if (cur_token->type != REG)
 						print_err_msg(cur_token->code_line, ERR_TYPE_ARG);
 					if (x == 0)
-						instr_array->rd = cur_token->value;
-					if (x == 1)
 						instr_array->ra = cur_token->value;
+					if (x == 1)
+						instr_array->rb = cur_token->value;
 				}
 				cur_token++;
 				if (cur_token->type == IMM) {
@@ -130,6 +161,39 @@ int parse(token * tk_array, instr * instr_array, hashtable_t * labels, label_to_
 							print_err_msg(cur_token->code_line, ERR_MANY_ARG);
 				}
 				else 
+					print_err_msg(cur_token->code_line, ERR_TYPE_ARG);
+				break;
+			case TYPE_B4:
+				cur_token++;
+				if (cur_token->type != REG)
+					print_err_msg(cur_token->code_line, ERR_TYPE_ARG);
+				instr_array->rb = cur_token->value;
+				cur_token++;
+				if (cur_token->type == IMM) {
+					instr_array->imm = cur_token->value & 0x3ff;
+					instr_array->rd = cur_token->value >> 11;
+					if ((cur_token + 1)->type == REG) {
+						cur_token++;
+						instr_array->ra = cur_token->value;
+						if ((cur_token + 1)->type == REG | (cur_token + 1)->type == IMM | (cur_token + 1)->type == SYMBOL)
+							print_err_msg(cur_token->code_line, ERR_MANY_ARG);
+					}
+				}
+				else if (cur_token->type == SYMBOL) {
+					instr_array->symbol = cur_token->value_str;
+					if ((cur_token + 1)->type == REG) {
+						cur_token++;
+						instr_array->ra = cur_token->value;
+						if ((cur_token + 1)->type == REG | (cur_token + 1)->type == IMM | (cur_token + 1)->type == SYMBOL)
+							print_err_msg(cur_token->code_line, ERR_MANY_ARG);
+					}
+				}
+				else if (cur_token->type == REG) {
+					instr_array->ra = cur_token->value;
+					if ((cur_token + 1)->type == REG | (cur_token + 1)->type == IMM | (cur_token + 1)->type == SYMBOL)
+						print_err_msg(cur_token->code_line, ERR_MANY_ARG);
+				}
+				else
 					print_err_msg(cur_token->code_line, ERR_TYPE_ARG);
 				break;
 			default:
@@ -208,6 +272,28 @@ int parse(token * tk_array, instr * instr_array, hashtable_t * labels, label_to_
 				memcpy(binary + memory_index, cur_token->value_str, strlen(cur_token->value_str) + 1);
 				memory_index += strlen(cur_token->value_str) + 1;
 				break;
+			case DI_ALIGN:
+				cur_token++;
+				memory_index = roundUp(memory_index);
+				break;
+			case DI_COMM:
+				cur_token++;
+				if (!cur_token->value_str)
+					print_err_msg(cur_token->code_line, ERR_TYPE_ARG);
+				if (ht_set(labels, cur_token->value_str, memory_index) == ERR_DUP_LABEL)
+					print_err_msg(cur_token->code_line, ERR_DUP_LABEL);
+				printf("label %s found at 0x%X\n", cur_token->value_str, memory_index);
+				cur_token++;
+				if (!cur_token->type == IMM) {
+					print_err_msg(cur_token->code_line, ERR_TYPE_ARG);
+				}
+				int num = cur_token->value;
+				cur_token++;
+				if (!cur_token->type == IMM) {
+					print_err_msg(cur_token->code_line, ERR_TYPE_ARG);
+				}
+				int Size = cur_token->value;
+				memory_index += Size * num;
 			default:
 				break;
 			}

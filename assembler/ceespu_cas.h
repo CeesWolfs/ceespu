@@ -19,6 +19,8 @@
 #define DI_WORD   6
 #define DI_ASCII  7
 #define DI_EXTERN 8
+#define DI_ALIGN  9
+#define DI_COMM   10
 
 /* ------------------------------ Error codes --------------------------------*/
 #define ERR_NO_ERROR			(0x00)
@@ -53,15 +55,16 @@
 #define TYPE_A1 (0x00) /* opcode rd, ra, rb */
 #define TYPE_A2 (0x01) /* opcode rd, ra     */
 #define TYPE_A3 (0x02) /* opcode ra         */
+#define TYPE_B0 (0x07)
 #define TYPE_B1 (0x03) /* opcode rd, ra, imm*/
 #define TYPE_B2 (0x04) /* opcode imm    */
 #define TYPE_B3 (0x05) /* opcode rd, imm, ra*/
-
-
+#define TYPE_B4 (0x06) /* opcode rd, imm, ra*/
+ 
 char * cas_input_file;
 
 const char * reg_table[32];
-const char * directive_table[10];
+const char * directive_table[11];
 
 typedef enum token_type {INSTR, REG, IMM, STRING_LITERAL ,LABEL, SYMBOL, DIRECTIVE} token_type;
 
@@ -95,6 +98,6 @@ typedef struct {
     uint16_t funct;
 } inst_info;
 
-const inst_info const instr_table[47];
+const inst_info const instr_table[44];
 void print_err_msg(uint32_t line, uint8_t error);
 
