@@ -49,7 +49,7 @@ void lexical_analysis(FILE * file, token * tk_array)
 				print_err_msg(code_count, ERR_INV_DIRECT);
 			}
 			else {
-				for (int i = 0; i < 32; i++) {
+				for (int i = 0; i < 32; i++) { //Register name
 					if (strcmp(line_lexicons->lexer, reg_table[i]) == ERR_NO_ERROR) {
 						cur_token->type = REG;
 						cur_token->value = i;
@@ -57,7 +57,7 @@ void lexical_analysis(FILE * file, token * tk_array)
 					}
 				}
 
-				for (int i = 0; i < 47; i++) {
+				for (int i = 0; i < 47; i++) { //Instruction name
 					if (strcmp(line_lexicons->lexer, instr_table[i].name) == ERR_NO_ERROR) {
 						cur_token->type = INSTR;
 						cur_token->value = i;
@@ -76,7 +76,7 @@ void lexical_analysis(FILE * file, token * tk_array)
 					}
 					print_err_msg(code_count, ERR_TK_IMM_INV);
 				}
-				if (strlen(line_lexicons->lexer) <= 31) {
+				if (strlen(line_lexicons->lexer) <= 31) {//Label
 					for (int i = 0; i < strlen(line_lexicons->lexer); i++) {
 						if (*(line_lexicons->lexer + i) != '+' && *(line_lexicons->lexer + i) != '-' && *(line_lexicons->lexer + i) != '.' && *(line_lexicons->lexer + i) != '_' && isalnum(*(line_lexicons->lexer + i)) == 0)
 							print_err_msg(code_count, ERR_TK_INV);
@@ -86,7 +86,7 @@ void lexical_analysis(FILE * file, token * tk_array)
 					goto next_loop;
 				}
 				else {
-					print_err_msg(code_count, ERR_TK_SYMBOL_INV);
+					print_err_msg(code_count, ERR_TK_SYMBOL_INV); //Invalid symbol
 				}
 			}
 		clean_next_loop:
@@ -102,12 +102,12 @@ void lexical_analysis(FILE * file, token * tk_array)
 }
 
 lexer_list* string_tokenizer(char* str, char* delim) {
-    char* tok;
+        char* tok;
 	char *quote = strchr(str, '"');
 	char *second_quote;
 	char *escaped_string;
-    lexer_list* list = NULL;
-    lexer_list *cur_list, *next_list;
+        lexer_list* list = NULL;
+        lexer_list *cur_list, *next_list;
 	if (quote) {
 		escaped_string = malloc(strlen(str));
 		second_quote = strchr(quote + 1, '"');
