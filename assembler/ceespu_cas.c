@@ -1,11 +1,6 @@
 // ceespu-cas.cpp : Defines the entry point for the console application.
 //
 
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
-
-#include "stdafx.h"
 #include "ceespu_cas.h"
 #include "lexical_analysis.h"
 #include "parser.h"
@@ -159,6 +154,5 @@ int main(int argc, char ** argv)
 	free(instr_array);
 	free(labels->table);
 	free(binary);
-	_CrtDumpMemoryLeaks();
 }
 
