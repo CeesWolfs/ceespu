@@ -10,7 +10,7 @@
 // Target Devices: 
 // Tool versions: 
 // Description: 
-//
+// The compare unit, it compares two numbers and then decides if a branch should be taken
 // Dependencies: 
 //
 // Revision: 
