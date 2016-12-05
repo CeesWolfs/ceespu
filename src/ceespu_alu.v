@@ -10,7 +10,7 @@
 // Target Devices: 
 // Tool versions: 
 // Description: 
-//
+// The Arithemetic Logic Unit it does all of the calculations
 // Dependencies: 
 //
 // Revision: 
