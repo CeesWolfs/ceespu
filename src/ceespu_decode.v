@@ -10,7 +10,7 @@
 // Target Devices: 
 // Tool versions: 
 // Description: 
-//
+// The decode unit, it decides what the proccesor should do for a given instruction
 // Dependencies: 
 //
 // Revision: 
@@ -81,7 +81,7 @@ module ceespu_decode(
   output [15:0] O_memAddress
 );
 
-  reg [15:0] imm; // contains the immidiate from immidiate I_instruction
+  reg [15:0] imm; // contains the immidiate from immidiate instruction
   reg imm_valid;  // indicates wether the immidiate is valid
 
   wire [31:0] immidiate;
