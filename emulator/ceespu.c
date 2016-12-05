@@ -62,6 +62,7 @@ void vmachine_run(VirtualMachine* vm) {
 		rd = (instruction >> 21) & 0x1f;
 		ra = (instruction >> 16) & 0x1f;
 		rb = (instruction >> 11) & 0x1f;
+		address_imm = (rd << 11) + imm & 0x7ff;
 		imm = imm_valid ? (imm_value << 16) + (int)(instruction & 0xffff) : (signed)(instruction << 16) >> 16;
 		imm_valid = 0;
 		switch (op) {
@@ -91,7 +92,7 @@ void vmachine_run(VirtualMachine* vm) {
 			vm->RegFile[rd] = vm->RegFile[ra] ^ vm->RegFile[rb];
 			break;
 		case 0x7:
-			vm->RegFile[rd] = imm & 1 ? (int)vm->RegFile[ra] & 0xffff : (int)vm->RegFile[ra] & 0xff;
+			vm->RegFile[rd] = imm & 1 ? (int)(vm->RegFile[ra] & 0xffff) : (int)(vm->RegFile[ra] & 0xff);
 			break;
 		case 0x8:
 			switch (imm & 0xC0)
@@ -183,7 +184,7 @@ void vmachine_run(VirtualMachine* vm) {
 			vm->vmem->byte[vm->RegFile[ra] + imm] = vm->RegFile[rd];
 			break;
 		case 0x30:
-			vm->PC = (vm->RegFile[rd] == vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			vm->PC = (vm->RegFile[ra] == vm->RegFile[rb]) ? (imm - 4) : vm->PC;
 			break;
 		case 0x31:
 			vm->PC = (vm->RegFile[rd] != vm->RegFile[ra]) ? (imm - 4) : vm->PC;
@@ -240,7 +241,6 @@ int main(int argc, char ** argv)
 		return;
 	}
 	binary = fopen(argv[1], "rb");
-	//binary = fopen("string.asm.bin", "rb");
 	if (!binary) {
 		printf("Error input file couldn't be opened!");
 		return;
