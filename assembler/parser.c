@@ -1,7 +1,7 @@
 #include "parser.h"
 
 int roundUp(int n) {
-	return ((n & 0x3) == 0) ? n : n + 4 & ~0x3;
+	return ((n & 0x3) == 0) ? n : n + 4 & ~0x3; //Make sure labels are word aligned
 }
 
 int parse(token * tk_array, instr * instr_array, hashtable_t * labels, label_to_be_replaced * replace_labels, char * binary)
