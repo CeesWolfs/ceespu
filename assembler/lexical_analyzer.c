@@ -172,12 +172,3 @@ void string_unescaper(char * string) {
 			escape_sequence = strchr(escape_sequence, '\\');	
 	}
 }
-
-void print_lexer_list(lexer_list * tokens) {
-	printf("Tokens:\n");
-	while (tokens){
-	  printf("%s - ",tokens->lexer);
-	  tokens = tokens->next;
-	}
-	printf("\nDone\n");
-}
