@@ -19,24 +19,24 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module ceespu_pc(
-    input I_clk,
-    input I_rst,
-	input I_stall,
-    input I_branch,
-    input [13:0] I_branchAddress,
-    output reg [13:0] O_PC = 0
-    );
+  input I_clk,
+  input I_rst,
+  input I_stall,
+  input I_branch,
+  input [13:0] I_branchAddress,
+  output reg [13:0] O_PC = 0
+);
 
   always @(posedge I_clk) begin
-	 if (I_rst) begin
-	   O_PC <= 0;
+    if (I_rst) begin
+      O_PC <= 0;
     end
-	 else if (! I_stall) begin
-	   O_PC <= O_PC + 1;
-	 end
-	 else if (I_branch) begin
-	   O_PC <= I_branchAddress;
-	 end
+    else if (! I_stall) begin
+      O_PC <= O_PC + 1;
+    end
+    else if (I_branch) begin
+      O_PC <= I_branchAddress;
+    end
   end
 
 endmodule
