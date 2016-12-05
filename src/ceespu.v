@@ -25,9 +25,9 @@ module ceespu(
     output [15:0] O_imemAddress,
     input [31:0] I_dmemData,
     output [15:0] O_dmemAddress,
-	output [31:0] O_dmemWData,
-	output O_dmemE,
-	output [3:0]  O_dmemWe
+    output [31:0] O_dmemWData,
+    output O_dmemE,
+    output [3:0]  O_dmemWe
     );
 	 
 wire [13:0] fetch_PC, dec_PC, ex_branchAddress;
