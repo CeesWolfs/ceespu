@@ -10,7 +10,7 @@
 // Target Devices: 
 // Tool versions: 
 // Description: 
-//
+// The "top-level" module containing the cpu
 // Dependencies: 
 //
 // Revision: 
@@ -50,8 +50,8 @@ ceespu_decode decode(I_clk, I_rst, branch, stall, regA, regB, I_imemData, fetch_
 ceespu_execute execute(I_clk, I_rst, dec_regD, dec_aluop, dec_we, dec_selWe, dec_isBranch, dec_branchOp, dec_dataA, dec_dataB, I_dmemData, dec_selCin, dec_selMem, fetch_PC, ex_regD, ex_we, ex_dataD, stall, branch);
 ceespu_regfile regfile(I_clk, I_rst, I_imemData[20:16], I_imemData[15:11], ex_we, ex_regD, ex_dataD, regA, regB);
 
-always @(posedge I_clk) begin
-  if (
+//Todo: add forwarding and hazard detection logic
+always @(posedge I_clk) begin 
 end
 
 endmodule
