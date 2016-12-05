@@ -13,7 +13,7 @@ instruction word. The size of memory locations are 16 bit due to a limitation in
 An instruction is 32 bits wide. The opcode is 6 bits an register address 5, and an immidiate 16 bits.
 There are three main types of instructions:
 ```
-TypeA:  Opcode RegD RegA RegB // "normal"
+TypeA:  Opcode RegD RegA RegB 
 TypeB:  Opcode RegD RegA Immidiate
 TypeC:  Opcode RegA RegB Immidiate
 ```
@@ -61,3 +61,13 @@ There are 32 32-bit registers.
 | SW            | b100000       | Store word in memory Mem[Ra + Imm] = Rb|
 | SH            | b100000       | Store halfword in memory Mem[Ra + Imm] = (short)Rb |
 | SB            | b100000       | Store byte in memory Mem[Ra + Imm] = (byte)Rb|
+| BEQ           | b111000       | Branch if equal PC = Imm if(Ra == Rb)        |
+| BNE           | b111001       | Branch if not equal PC = Imm if(Ra != Rb)        |
+| BGU           | b111010       | Branch if  PC = Imm if(Ra > Rb)         |
+| BGEU          | b111011       | Branch if equal PC = Imm if(Ra == Rb)        |
+| BG            | b111100       | Branch if  PC = Imm if(Ra > Rb)         |
+| BGE           | b111101       | Branch if equal PC = Imm if(Ra == Rb)        |
+| BC            | b111110       | Branch if carry flag is set PC = Imm if(carry) |
+| B             | b111111       | Unconditional branch PC = Imm                  |
+| BX            | b111111       | Branch to register PC = Ra                     |
+| CALL          | b111111       | Branch and set the link register LR= PC; PC = Imm |
