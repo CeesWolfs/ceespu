@@ -75,3 +75,13 @@ There are 32 32-bit registers.
 Pipeline Stages
 ----------------
 ![alt tag](https://github.com/CeesWolfs/ceespu/blob/master/Ceespu.png)
+This is a rough overwiew of the proccesor. It consist of four pipeline stage. In the first clock cycle the PC is incremented and the instruction is loaded. In the second the instruction is decoded and the proccesor decides what to do. In the third the proccesor executes the instruction, the relevant calculations are performed and the memory is accessed. In the fourth the result is written back into a register and the instruction is done.
+
+Hazards
+------------------
+To increase performance the proccesor is pipelined, this means that while an instruction is decoded the next one is already loaded. While this does increase performance this does mean that hazards arise. For example an instruction might read a value before that value is written back thus resulting in an incorrect value being used
+```
+0: addi c20, c0, 23
+4: addi c21, c20, 32
+```
+Here the second instruction
