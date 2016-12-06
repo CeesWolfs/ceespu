@@ -71,3 +71,7 @@ There are 32 32-bit registers.
 | B             | b111111       | Unconditional branch PC = Imm                  |
 | BX            | b111111       | Branch to register PC = Ra                     |
 | CALL          | b111111       | Branch and set the link register LR= PC; PC = Imm |
+
+Pipeline Stages
+----------------
+![alt tag](https://www.dropbox.com/home/Apps/drawio?preview=Ceespu.png)
