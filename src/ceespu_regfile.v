@@ -10,7 +10,7 @@
 // Target Devices: 
 // Tool versions: 
 // Description: 
-//
+// The register files, it contains the registers
 // Dependencies: 
 //
 // Revision: 
@@ -32,12 +32,12 @@ module ceespu_regfile(
 
   reg [31:0] regfile [31:0];
 
-  assign O_dataA = regfile[I_selA];
-  assign O_dataB = regfile[I_selB];
+  assign O_dataA = regfile[I_selA]; //Read A
+  assign O_dataB = regfile[I_selB]; //Read B
 
   /* Sequential Logic */
   always @(posedge I_clk) begin
-    if (I_we) begin
+    if (I_we) begin //Writeback
       regfile[I_selD] = I_dataD;
     end 
   end
