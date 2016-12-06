@@ -53,7 +53,7 @@ void vmachine_destroy(VirtualMachine* vm) {
 
 void vmachine_run(VirtualMachine* vm) {
 	unsigned int instruction,rd,ra,rb,op;
-	int imm;
+	int imm, address_imm;
 	char imm_valid = 0;
 	unsigned short imm_value = 0;
 	for (;;) {
@@ -62,7 +62,7 @@ void vmachine_run(VirtualMachine* vm) {
 		rd = (instruction >> 21) & 0x1f;
 		ra = (instruction >> 16) & 0x1f;
 		rb = (instruction >> 11) & 0x1f;
-		address_imm = (rd << 11) + imm & 0x7ff;
+		address_imm = (signed)((rd << 11) + imm & 0x7ff);
 		imm = imm_valid ? (imm_value << 16) + (int)(instruction & 0xffff) : (signed)(instruction << 16) >> 16;
 		imm_valid = 0;
 		switch (op) {
@@ -193,19 +193,19 @@ void vmachine_run(VirtualMachine* vm) {
 			vm->PC = (vm->RegFile[ra] == vm->RegFile[rb]) ? (imm - 4) : vm->PC;
 			break;
 		case 0x39:
-			vm->PC = (vm->RegFile[rd] != vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			vm->PC = (vm->RegFile[ra] != vm->RegFile[rb]) ? (imm - 4) : vm->PC;
 			break;
 		case 0x3A:
-			vm->PC = ((unsigned)vm->RegFile[rd] > (unsigned)vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			vm->PC = ((unsigned)vm->RegFile[ra] > (unsigned)vm->RegFile[rb]) ? (imm - 4) : vm->PC;
 			break;
 		case 0x3B:
-			vm->PC = ((unsigned)vm->RegFile[rd] >= (unsigned)vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			vm->PC = ((unsigned)vm->RegFile[ra] >= (unsigned)vm->RegFile[rb]) ? (imm - 4) : vm->PC;
 			break;
 		case 0x3C:
-			vm->PC = (vm->RegFile[rd] > vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			vm->PC = (vm->RegFile[ra] > vm->RegFile[rb]) ? (imm - 4) : vm->PC;
 			break;
 		case 0x3D:
-			vm->PC = (vm->RegFile[rd] >= vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			vm->PC = (vm->RegFile[ra] >= vm->RegFile[rb]) ? (imm - 4) : vm->PC;
 			break;
 		case 0x3E:
 			vm->PC = vm->carry_flag ? (imm - 4) : vm->PC;
@@ -229,17 +229,17 @@ int main(int argc, char ** argv)
 	FILE * binary;
 	if (argc < 2) {
 		printf("Error no input file\nUsage: ceespu <inputfile>");
-		return;
+		return 1;
 	}
 	binary = fopen(argv[1], "rb");
 	if (!binary) {
 		printf("Error input file couldn't be opened!");
-		return;
+		return 1;
 	}
 	printf("Starting Machine Simulation...\n");
 	VirtualMachine* vm = vmachine_create();
 	if (!vm) {
-		return;
+		return 1;
 	}
 	printf("Machine Created...\n");
 	fseek (binary , 0 , SEEK_END);
