@@ -84,4 +84,4 @@ To increase performance the proccesor is pipelined, this means that while an ins
 0: addi c20, c0, 23
 4: addi c21, c20, 32
 ```
-Here the second instruction
+Here the second instruction reads c20 before the first instruction has written the accurate result back. This means that the result of the second instruction will be incorrect. To deal with this a technique called forwarding is used. The alu result is then directly forwarded to the alu input hereby bypassing the writeback stage. In cases where this is not possible the proccesor is stalled until the instruction is completed.
