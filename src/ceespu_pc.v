@@ -10,7 +10,7 @@
 // Target Devices: 
 // Tool versions: 
 // Description: 
-//
+// The program counter, it points to the instruction that should be loaded
 // Dependencies: 
 //
 // Revision: 
