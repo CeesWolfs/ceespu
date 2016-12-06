@@ -74,4 +74,4 @@ There are 32 32-bit registers.
 
 Pipeline Stages
 ----------------
-![alt tag](https://www.dropbox.com/home/Apps/drawio?preview=Ceespu.png)
+![alt tag](https://github.com/CeesWolfs/ceespu/blob/master/Ceespu.png)
