@@ -38,7 +38,7 @@ module ceespu_execute(
   output reg [4:0] O_selD = 0,
   output reg O_we = 0,
   output reg [31:0] O_dataD = 0,
-  output reg O_busy = 0,
+  output O_busy = 0,
   output O_branch
 );
 
@@ -54,7 +54,8 @@ module ceespu_execute(
   ceespu_compare compare(I_dataA, I_dataB, I_branchop, Carry, doBranch);
 
   assign O_branch  = doBranch & I_branch;
-
+  assign O_busy = ! ready & multiCycle;
+  
   always @* begin
     casez (I_selMem) 
       4'b?000:
@@ -113,7 +114,6 @@ module ceespu_execute(
   reg [31:0] loaddata;
 
   always @(posedge I_clk) begin
-    O_busy = ! ready & multiCycle;
     Carry = Cout;
     O_selD = I_selD;
     O_we = I_we & ! O_busy;		 
