@@ -33,7 +33,7 @@ VirtualMachine* vmachine_create() {
 		return NULL;
 	}
 	vm->vmem = calloc(1, sizeof(VirtualMem));
-	vm->RegFile[18] = 0xfffc;
+	vm->RegFile[18] = 0xfff0;
 	return vm;
 }
 
@@ -174,54 +174,45 @@ void vmachine_run(VirtualMachine* vm) {
 		case 0x22:
 			vm->RegFile[rd] = (int)vm->vmem->byte[vm->RegFile[ra] + imm];
 			break;
+		case 0x23:
+			vm->RegFile[rd] = vm->vmem->byte[vm->RegFile[ra] + imm];
+			break;
 		case 0x24:
-			vm->vmem->word[(vm->RegFile[ra] + imm) >> 2] = vm->RegFile[rd];
-			break;
-		case 0x25:
-			vm->vmem->hword[(vm->RegFile[ra] + imm) >> 1] = vm->RegFile[rd];
-			break;
-		case 0x26:
-			vm->vmem->byte[vm->RegFile[ra] + imm] = vm->RegFile[rd];
-			break;
-		case 0x30:
-			vm->PC = (vm->RegFile[ra] == vm->RegFile[rb]) ? (imm - 4) : vm->PC;
-			break;
-		case 0x31:
-			vm->PC = (vm->RegFile[rd] != vm->RegFile[ra]) ? (imm - 4) : vm->PC;
-			break;
-		case 0x32:
-			vm->PC = (vm->RegFile[rd] > vm->RegFile[ra]) ? (imm - 4) : vm->PC;
-			break;
-		case 0x33:
-			vm->PC = (vm->RegFile[rd] >= vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			vm->RegFile[rd] = vm->vmem->byte[vm->RegFile[ra] + imm];
 			break;
 		case 0x34:
-			vm->PC = (vm->RegFile[rd] < vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			vm->vmem->word[(vm->RegFile[ra] + address_imm) >> 2] = vm->RegFile[rb];
 			break;
 		case 0x35:
-			vm->PC = (vm->RegFile[rd] <= vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			vm->vmem->hword[(vm->RegFile[ra] + address_imm) >> 1] = vm->RegFile[rb];
 			break;
 		case 0x36:
-			vm->PC = ((unsigned)vm->RegFile[rd] > (unsigned)vm->RegFile[ra]) ? (imm - 4) : vm->PC;
-			break;
-		case 0x37:
-			vm->PC = ((unsigned)vm->RegFile[rd] >= (unsigned)vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			vm->vmem->byte[vm->RegFile[ra] + address_imm] = vm->RegFile[rb];
 			break;
 		case 0x38:
-			vm->PC = ((unsigned)vm->RegFile[rd] < (unsigned)vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			vm->PC = (vm->RegFile[ra] == vm->RegFile[rb]) ? (imm - 4) : vm->PC;
 			break;
 		case 0x39:
-			vm->PC = ((unsigned)vm->RegFile[rd] <= (unsigned)vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			vm->PC = (vm->RegFile[rd] != vm->RegFile[ra]) ? (imm - 4) : vm->PC;
 			break;
 		case 0x3A:
-			vm->PC = vm->carry_flag ? (imm - 4) : vm->PC;
+			vm->PC = ((unsigned)vm->RegFile[rd] > (unsigned)vm->RegFile[ra]) ? (imm - 4) : vm->PC;
 			break;
 		case 0x3B:
-			vm->PC = !vm->carry_flag ? (imm - 4) : vm->PC;
+			vm->PC = ((unsigned)vm->RegFile[rd] >= (unsigned)vm->RegFile[ra]) ? (imm - 4) : vm->PC;
 			break;
 		case 0x3C:
+			vm->PC = (vm->RegFile[rd] > vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			break;
+		case 0x3D:
+			vm->PC = (vm->RegFile[rd] >= vm->RegFile[ra]) ? (imm - 4) : vm->PC;
+			break;
+		case 0x3E:
+			vm->PC = vm->carry_flag ? (imm - 4) : vm->PC;
+			break;
+		case 0x3F:
 			vm->RegFile[19] = (imm & 0x0001) ? (vm->PC + 4) : vm->RegFile[19];
-			vm->PC = (imm & 0x0002) ? vm->RegFile[rd] - 4 : (imm - 4) & 0xfffc;
+			vm->PC = (imm & 0x0002) ? vm->RegFile[rd] - 4 : ((imm & 0xfffc) - 4);
 			break;
 		default:
 			printf("invalid instruction at 0x%X", vm->PC);
