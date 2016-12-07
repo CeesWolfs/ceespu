@@ -52,11 +52,6 @@ void vmachine_destroy(VirtualMachine* vm) {
 }
 
 void vmachine_run(VirtualMachine* vm) {
-	unsigned int instruction,rd,ra,rb,op;
-	int imm, address_imm;
-	char imm_valid = 0;
-	unsigned short imm_value = 0;
-	void vmachine_run(VirtualMachine* vm) {
 	unsigned int instruction, rd, ra, rb, op;
 	int imm, address_imm;
 	char imm_valid = 0;
@@ -68,7 +63,7 @@ void vmachine_run(VirtualMachine* vm) {
 		ra = (instruction >> 16) & 0x1f;
 		rb = (instruction >> 11) & 0x1f;
 		address_imm = (signed)((rd << 11) + instruction & 0x7ff);
-		imm = imm_valid ? (imm_value << 16) + (int)(instruction & 0xffff) : (signed)(instruction << 16) >> 16;
+		imm = imm_valid ? (imm_value << 16) + (instruction & 0xffff) : (int)(short)(instruction);
 		imm_valid = 0;
 		switch (op) {
 		case 0x0:
@@ -97,7 +92,7 @@ void vmachine_run(VirtualMachine* vm) {
 			vm->RegFile[rd] = vm->RegFile[ra] ^ vm->RegFile[rb];
 			break;
 		case 0x7:
-			vm->RegFile[rd] = imm & 1 ? (int)(vm->RegFile[ra] & 0xffff) : (int)(vm->RegFile[ra] & 0xff);
+			vm->RegFile[rd] = imm & 1 ? (int)(short)(vm->RegFile[ra]) : (int)(char)(vm->RegFile[ra]);
 			break;
 		case 0x8:
 			switch (imm & 0xC0)
@@ -225,7 +220,7 @@ void vmachine_run(VirtualMachine* vm) {
 		}
 		vm->PC += 4;
 	}
-stop: 
+stop:
 	printf("Running program done...\n");
 }
 
