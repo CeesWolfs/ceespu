@@ -56,13 +56,18 @@ void vmachine_run(VirtualMachine* vm) {
 	int imm, address_imm;
 	char imm_valid = 0;
 	unsigned short imm_value = 0;
+	void vmachine_run(VirtualMachine* vm) {
+	unsigned int instruction, rd, ra, rb, op;
+	int imm, address_imm;
+	char imm_valid = 0;
+	unsigned short imm_value = 0;
 	for (;;) {
 		instruction = vm->vmem->word[(vm->PC) >> 2];
 		op = (instruction >> 26) & 0x3f;
 		rd = (instruction >> 21) & 0x1f;
 		ra = (instruction >> 16) & 0x1f;
 		rb = (instruction >> 11) & 0x1f;
-		address_imm = (signed)((rd << 11) + imm & 0x7ff);
+		address_imm = (signed)((rd << 11) + instruction & 0x7ff);
 		imm = imm_valid ? (imm_value << 16) + (int)(instruction & 0xffff) : (signed)(instruction << 16) >> 16;
 		imm_valid = 0;
 		switch (op) {
@@ -190,29 +195,29 @@ void vmachine_run(VirtualMachine* vm) {
 			vm->vmem->byte[vm->RegFile[ra] + address_imm] = vm->RegFile[rb];
 			break;
 		case 0x38:
-			vm->PC = (vm->RegFile[ra] == vm->RegFile[rb]) ? (imm - 4) : vm->PC;
+			vm->PC = (vm->RegFile[ra] == vm->RegFile[rb]) ? ((address_imm & 0xfffc) - 4) : vm->PC;
 			break;
 		case 0x39:
-			vm->PC = (vm->RegFile[ra] != vm->RegFile[rb]) ? (imm - 4) : vm->PC;
+			vm->PC = (vm->RegFile[ra] != vm->RegFile[rb]) ? ((address_imm & 0xfffc) - 4) : vm->PC;
 			break;
 		case 0x3A:
-			vm->PC = ((unsigned)vm->RegFile[ra] > (unsigned)vm->RegFile[rb]) ? (imm - 4) : vm->PC;
+			vm->PC = ((unsigned)vm->RegFile[ra] > (unsigned)vm->RegFile[rb]) ? ((address_imm & 0xfffc) - 4) : vm->PC;
 			break;
 		case 0x3B:
-			vm->PC = ((unsigned)vm->RegFile[ra] >= (unsigned)vm->RegFile[rb]) ? (imm - 4) : vm->PC;
+			vm->PC = ((unsigned)vm->RegFile[ra] >= (unsigned)vm->RegFile[rb]) ? ((address_imm & 0xfffc) - 4) : vm->PC;
 			break;
 		case 0x3C:
-			vm->PC = (vm->RegFile[ra] > vm->RegFile[rb]) ? (imm - 4) : vm->PC;
+			vm->PC = (vm->RegFile[ra] > vm->RegFile[rb]) ? ((address_imm & 0xfffc) - 4) : vm->PC;
 			break;
 		case 0x3D:
-			vm->PC = (vm->RegFile[ra] >= vm->RegFile[rb]) ? (imm - 4) : vm->PC;
+			vm->PC = (vm->RegFile[ra] >= vm->RegFile[rb]) ? ((address_imm & 0xfffc) - 4) : vm->PC;
 			break;
 		case 0x3E:
-			vm->PC = vm->carry_flag ? (imm - 4) : vm->PC;
+			vm->PC = vm->carry_flag ? ((address_imm & 0xfffc) - 4) : vm->PC;
 			break;
 		case 0x3F:
 			vm->RegFile[19] = (imm & 0x0001) ? (vm->PC + 4) : vm->RegFile[19];
-			vm->PC = (imm & 0x0002) ? vm->RegFile[rd] - 4 : ((imm & 0xfffc) - 4);
+			vm->PC = (imm & 0x0002) ? vm->RegFile[ra] - 4 : ((imm & 0xfffc) - 4);
 			break;
 		default:
 			printf("invalid instruction at 0x%X", vm->PC);
