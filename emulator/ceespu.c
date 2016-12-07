@@ -101,10 +101,10 @@ void vmachine_run(VirtualMachine* vm) {
 				vm->RegFile[rd] = vm->RegFile[ra] << vm->RegFile[rb];
 				break;
 			case 0x40:
-				vm->RegFile[rd] = (unsigned)vm->RegFile[ra] >> (unsigned)vm->RegFile[rb];
+				vm->RegFile[rd] = vm->RegFile[ra] >> vm->RegFile[rb];
 				break;
 			case 0x80:
-				vm->RegFile[rd] = vm->RegFile[ra] >> vm->RegFile[rb];
+				vm->RegFile[rd] = (signed)vm->RegFile[ra] >> vm->RegFile[rb];
 				break;
 			default:
 				printf("invalid shift instruction at 0x%X", vm->PC);
@@ -146,10 +146,10 @@ void vmachine_run(VirtualMachine* vm) {
 				vm->RegFile[rd] = vm->RegFile[ra] <<  (imm & 0x3f);
 				break;
 			case 0x40:
-				vm->RegFile[rd] = (unsigned)vm->RegFile[ra] >>  (imm & 0x3f);
+				vm->RegFile[rd] = vm->RegFile[ra] >>  (imm & 0x3f);
 				break;
 			case 0x80:
-				vm->RegFile[rd] = vm->RegFile[ra] >>  (imm & 0x3f);
+				vm->RegFile[rd] = (signed)vm->RegFile[ra] >>  (imm & 0x3f);
 				break;
 			default:
 				printf("invalid shift instruction at 0x%X", vm->PC);
