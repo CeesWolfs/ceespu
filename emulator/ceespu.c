@@ -215,7 +215,7 @@ void vmachine_run(VirtualMachine* vm) {
 			vm->PC = (imm & 0x0002) ? vm->RegFile[ra] - 4 : ((imm & 0xfffc) - 4);
 			break;
 		default:
-			printf("invalid instruction at 0x%X", vm->PC);
+			printf("invalid instruction at 0x%X\n", vm->PC);
 			exit(1);
 		}
 		vm->PC += 4;
@@ -228,12 +228,12 @@ int main(int argc, char ** argv)
 {
 	FILE * binary;
 	if (argc < 2) {
-		printf("Error no input file\nUsage: ceespu <inputfile>");
+		printf("Error no input file\nUsage: ceespu <inputfile>\n");
 		return 1;
 	}
 	binary = fopen(argv[1], "rb");
 	if (!binary) {
-		printf("Error input file couldn't be opened!");
+		printf("Error input file couldn't be opened!\n");
 		return 1;
 	}
 	printf("Starting Machine Simulation...\n");
