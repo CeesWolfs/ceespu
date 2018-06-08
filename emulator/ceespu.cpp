@@ -315,8 +315,9 @@ void crash(Ceespu* cpu, const char* error)
     std::fprintf(stderr, error);
     std::fprintf(stderr, "\nDo you want a detailed dump of proccesor info? [Y/n]");
     int ans = getchar();
-    if(ans == 'Y' || ans == 'y')
-        std::fprintf(stderr, "Registers:\n");
+    if(ans != 'Y' && ans != 'y')
+        exit(-1);
+    std::fprintf(stderr, "Registers:\n");
     for(uint8_t reg = 0; reg < 32; reg++) {
         std::fprintf(stderr, "c%d : %08X\n", reg, cpu->Regs[reg]);
     }
