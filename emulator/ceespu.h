@@ -1,8 +1,15 @@
 #define CeespuMemorySize (1 << 14)
 #pragma once
 #include <stdint.h>
-#include <Windows.h>
+#include <string>
 #include <cstdio>
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+#ifdef __linux__
+#include <time.h>
+#include <unistd.h>
+#endif
 
 class Video;
 
@@ -24,6 +31,7 @@ public:
 	uint32_t getWord(uint16_t location);
 	uint16_t getHalfword(uint16_t location);
 	uint8_t getByte(uint16_t location);
+    friend void crash(Ceespu* cpu, const char* error);
 
 private:
 	void storeWord(uint16_t location, uint32_t data);

@@ -1,4 +1,4 @@
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include "ceespu.h"
 
 #define CEESPU_SCREEN_WIDTH 640
@@ -17,7 +17,7 @@ public:
 	~Video();
 	void init();
 	void reset();
-	void drawChar(Ceespu &cpu, uint8_t value, uint8_t colour, uint8_t x, uint8_t y);
+	void drawChar(Ceespu &cpu, uint8_t x, uint8_t y);
 	void update();
 private:
 	unsigned char framebuffer[480][640];

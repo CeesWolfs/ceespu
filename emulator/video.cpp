@@ -1,4 +1,4 @@
-#include "Video.h"
+#include "video.h"
 
 Video::Video() {};
 Video::~Video() {};
@@ -25,10 +25,13 @@ void Video::reset() {
 	
 }
 
-void Video::drawChar(Ceespu &cpu, uint8_t value, uint8_t fg_colour, uint8_t bg_colour ,uint8_t x, uint8_t y)  {
+void Video::drawChar(Ceespu &cpu ,uint8_t x, uint8_t y)  {
+    uint8_t fg_colour = cpu.getByte(CEESPU_COLOUR_MEMORY_OFFSET + y * 160 + x * 2);
+    uint8_t bg_colour = cpu.getByte(CEESPU_COLOUR_MEMORY_OFFSET + y * 160 + x * 2 + 1);
+    uint8_t val = cpu.getByte(CEESPU_TEXT_MEMORY_OFFSET + y * 80 + x);
 	for (int i = 0; i < 16; ++i)
 	{
-		unsigned char pixeldata = cpu.getByte(CEESPU_FONT_MEMORY_OFFSET + (value * 16) + i);
+		uint8_t pixeldata = cpu.getByte(CEESPU_FONT_MEMORY_OFFSET + val * 16 + i);
 		this->framebuffer[y * 16 + i][x * 8] = (pixeldata & 1) ? fg_colour : bg_colour;
 		this->framebuffer[y * 16 + i][x * 8 + 1] = (pixeldata & 2) ? fg_colour : bg_colour;
 		this->framebuffer[y * 16 + i][x * 8 + 2] = (pixeldata & 4) ? fg_colour : bg_colour;
