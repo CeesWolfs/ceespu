@@ -1,40 +1,40 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date:    19:07:31 04/27/2017 
-// Design Name: 
-// Module Name:    ceespu_font_mem 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
+// Company:
+// Engineer:
 //
-// Dependencies: 
+// Create Date:    19:07:31 04/27/2017
+// Design Name:
+// Module Name:    ceespu_font_mem
+// Project Name:
+// Target Devices:
+// Tool versions:
+// Description:
 //
-// Revision: 
+// Dependencies:
+//
+// Revision:
 // Revision 0.01 - File Created
-// Additional Comments: 
+// Additional Comments:
 //
 //////////////////////////////////////////////////////////////////////////////////
-module ceespu_font_mem ( 
-		 input		clk,
-		 input  [6:0]	ascii_code,
-		 input  [3:0]	row,
-		 input  [2:0]  col,
-		 output wire	pixel
-		 );
+module ceespu_font_mem (
+         input		clk,
+         input  [6:0]	ascii_code,
+         input  [3:0]	row,
+         input  [2:0]  col,
+         output wire	pixel
+       );
 
 RAMB16_S1 BRAM_PC_VGA_0	(
-	.CLK(clk),
-	.EN(1'b1),
-	.WE(1'b0),
-	.ADDR({ascii_code[6:1], ~ascii_code[0], row, ~col}),
-	.SSR(1'b0),
-	.DI(1'b0),
-	.DO(pixel)
-	);
+            .CLK(clk),
+            .EN(1'b1),
+            .WE(1'b0),
+            .ADDR({ascii_code[6:1], ~ascii_code[0], row, ~col}),
+            .SSR(1'b0),
+            .DI(1'b0),
+            .DO(pixel)
+          );
 
 defparam BRAM_PC_VGA_0.INIT_00 = 256'h00000000000000000000000000000000000000007e818199bd8181a5817e0000;
 defparam BRAM_PC_VGA_0.INIT_01 = 256'h000000007effffe7c3ffffdbff7e00000000000010387cfefefefe6c00000000;
@@ -86,8 +86,8 @@ defparam BRAM_PC_VGA_0.INIT_2C = 256'h00000000c3c3663c18183c66c3c30000000000003c
 defparam BRAM_PC_VGA_0.INIT_2D = 256'h00000000ffc3c16030180c86c3ff0000000000003c30303030303030303c0000;
 defparam BRAM_PC_VGA_0.INIT_2E = 256'h0000000002060e1c3870e0c080000000000000003c0c0c0c0c0c0c0c0c3c0000;
 defparam BRAM_PC_VGA_0.INIT_2F = 256'h000000000000000000000000c66c38100000ff00000000000000000000000000;
-	
-	 
+
+
 defparam BRAM_PC_VGA_0.INIT_30 = 256'h000000000000000000000000001830300000000076cccccc7c0c780000000000;
 defparam BRAM_PC_VGA_0.INIT_31 = 256'h000000007c666666666c786060e00000000000007cc6c0c0c0c67c0000000000;
 defparam BRAM_PC_VGA_0.INIT_32 = 256'h0000000076cccccccc6c3c0c0c1c0000000000007cc6c0c0fec67c0000000000;

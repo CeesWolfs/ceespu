@@ -1,21 +1,21 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date:    17:44:23 11/11/2016 
-// Design Name: 
-// Module Name:    ceespu_decode 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
+// Company:
+// Engineer:
 //
-// Dependencies: 
+// Create Date:    17:44:23 11/11/2016
+// Design Name:
+// Module Name:    ceespu_decode
+// Project Name:
+// Target Devices:
+// Tool versions:
+// Description:
 //
-// Revision: 
+// Dependencies:
+//
+// Revision:
 // Revision 0.01 - File Created
-// Additional Comments: 
+// Additional Comments:
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -59,199 +59,199 @@
 `define ALU_DIV    4'd10
 
 module ceespu_decode(
-  input I_clk,
-  input I_rst,
-  input I_flush,
-  input I_stall,
-  input I_justBranched,
-  input I_int,
-  input [1:0] I_int_vector,
-  input [31:0] I_regA,
-  input [31:0] I_regB,
-  input [31:0] I_instruction,
-  input [13:0] I_PC,
-  output reg [31:0] O_dataA = 0,
-  output reg [31:0] O_dataB = 0,
-  output reg [31:0] O_storeData  = 0,
-  output reg [3:0]  O_aluop = 0,
-  output reg O_we = 0,
-  output reg O_isBranch = 0,
-  output reg [4:0] O_regD = 0,
-  output reg [4:0] O_regA = 0,
-  output reg [4:0] O_regB = 0,
-  output reg [1:0] O_selCin = 0,
-  output reg [2:0] O_selMem = 0,
-  output reg [2:0] O_branchOp = 0,
-  output reg [1:0] O_selWb = 0,
-  output reg O_int_ack,
-  output reg O_memE = 0,
-  output reg O_memWe = 0,
-  output reg [13:0] O_PC = 0,
-  output reg [13:0] O_branchAddress = 0
-);
- 
-  reg enable_interrupts = 1;
-  reg not_interrupt = 0;
-  reg [15:0] imm; // contains the immidiate from immidiate I_instruction
-  reg imm_valid = 0;  // indicates wether the immidiate is valid
+         input I_clk,
+         input I_rst,
+         input I_flush,
+         input I_stall,
+         input I_justBranched,
+         input I_int,
+         input [1:0] I_int_vector,
+         input [31:0] I_regA,
+         input [31:0] I_regB,
+         input [31:0] I_instruction,
+         input [13:0] I_PC,
+         output reg [31:0] O_dataA = 0,
+         output reg [31:0] O_dataB = 0,
+         output reg [31:0] O_storeData  = 0,
+         output reg [3:0]  O_aluop = 0,
+         output reg O_we = 0,
+         output reg O_isBranch = 0,
+         output reg [4:0] O_regD = 0,
+         output reg [4:0] O_regA = 0,
+         output reg [4:0] O_regB = 0,
+         output reg [1:0] O_selCin = 0,
+         output reg [2:0] O_selMem = 0,
+         output reg [2:0] O_branchOp = 0,
+         output reg [1:0] O_selWb = 0,
+         output reg O_int_ack,
+         output reg O_memE = 0,
+         output reg O_memWe = 0,
+         output reg [13:0] O_PC = 0,
+         output reg [13:0] O_branchAddress = 0
+       );
 
-  wire [31:0] immidiate;
-  assign immidiate = imm_valid ? {imm, `imm_value} : {{16{I_instruction[15]}}, `imm_value}; 
+reg enable_interrupts = 1;
+reg not_interrupt = 0;
+reg [15:0] imm; // contains the immidiate from immidiate I_instruction
+reg imm_valid = 0;  // indicates wether the immidiate is valid
 
-  always @* begin 
-    O_regA = `rega_sel; // defaults
-    O_regB = `regb_sel;
-    if (! I_stall ) begin
-      if (I_instruction[31:29] == 3'b100) begin // LOAD
-        O_regB = 0; // Do not use register b
-      end
-      else if (I_instruction[31:28] == 4'b1101) begin // STORE
-        O_regB = `regd; // Store so register in wierd place
-		end
-      if (I_instruction[31:30] == 3'b01) begin // Alu immidiate operation
-        O_regB = 0; // Do not use register b  
-      end 
-      if (I_instruction[31:29] == 3'b111) begin
-        O_regB = `regd;
-      end
+wire [31:0] immidiate;
+assign immidiate = imm_valid ? {imm, `imm_value} : {{16{I_instruction[15]}}, `imm_value};
+
+always @* begin
+  O_regA = `rega_sel; // defaults
+  O_regB = `regb_sel;
+  if (! I_stall ) begin
+    if (I_instruction[31:29] == 3'b100) begin // LOAD
+      O_regB = 0; // Do not use register b
+    end
+    else if (I_instruction[31:28] == 4'b1101) begin // STORE
+      O_regB = `regd; // Store so register in wierd place
+    end
+    if (I_instruction[31:30] == 3'b01) begin // Alu immidiate operation
+      O_regB = 0; // Do not use register b
+    end
+    if (I_instruction[31:29] == 3'b111) begin
+      O_regB = `regd;
     end
   end
+end
 
-  always @(posedge I_clk) begin
-    O_storeData <= I_regB;
-	 not_interrupt <= I_justBranched;
-	 O_PC <= I_PC;
-    if (I_rst | I_flush) begin
-      imm_valid = 0;
-      O_we = 0;
-      O_memE = 0;
-		O_isBranch = 0;
-		O_int_ack = 1'b0;
-		$display("bubble or branch O_memE = %d", O_memE);
+always @(posedge I_clk) begin
+  O_storeData <= I_regB;
+  not_interrupt <= I_justBranched;
+  O_PC <= I_PC;
+  if (I_rst | I_flush) begin
+    imm_valid = 0;
+    O_we = 0;
+    O_memE = 0;
+    O_isBranch = 0;
+    O_int_ack = 1'b0;
+    $display("bubble or branch O_memE = %d", O_memE);
+  end
+  else if (! I_stall ) begin
+    O_dataA = I_regA;
+    O_dataB = I_regB;
+    O_aluop = `ALU_ADD;
+    O_regD = `regd;
+    O_we = 1 && (`regd != 5'h0);
+    O_int_ack = 1'b0;
+    imm_valid = 0;
+    O_isBranch = 0;
+    O_selCin = 0;
+    O_selMem = 0;
+    O_memE = 0;
+    O_memWe = 0;
+    O_branchOp = 0;
+    O_selWb = 0;
+    if (I_int && enable_interrupts &! I_justBranched) begin
+      O_isBranch = 1;
+      O_branchOp = 3'b111;
+      O_we = 1'b1;
+      O_regD = 17;
+      O_branchAddress = I_int_vector;
+      $display("int 0x%h, called at %d, 17 = %h", O_branchAddress, $time, O_PC);
+      O_selWb = 2'b10;
+      O_int_ack = 1'b1;
+      enable_interrupts = 0;
     end
-    else if (! I_stall ) begin  
-      O_dataA = I_regA;
-      O_dataB = I_regB;
-      O_aluop = `ALU_ADD;
-      O_regD = `regd;
-      O_we = 1 && (`regd != 5'h0);
-		O_int_ack = 1'b0;
-      imm_valid = 0;
-      O_isBranch = 0;
-      O_selCin = 0;
-      O_selMem = 0;
-      O_memE = 0;
-      O_memWe = 0;
-      O_branchOp = 0;
-      O_selWb = 0;
-		if (I_int && enable_interrupts &! I_justBranched) begin
-		  O_isBranch = 1;
-        O_branchOp = 3'b111;
-        O_we = 1'b1;
-		  O_regD = 17;
-        O_branchAddress = I_int_vector;
-		  $display("int 0x%h, called at %d, 17 = %h", O_branchAddress, $time, O_PC);
-        O_selWb = 2'b10;
-		  O_int_ack = 1'b1;
-		  enable_interrupts = 0;
-		end
-		else begin
+    else begin
       casez (`opcode)
         `ADD:
-          begin 
-            O_selCin = `C_bit ? 2'd1 : 2'd0;
-            O_dataB = `IMM_bit ? immidiate : I_regB;
-          end
-        `SUB: 
-          begin 
-            O_selCin = `C_bit ? 2'd2 : 2'd3;
-            O_dataA = ~ I_regA;
-            O_dataB = `IMM_bit ? immidiate : I_regB;
-          end
-        `LOGIC_OR: 
-          begin 
-            O_aluop = `ALU_OR; 
-            O_dataB = `IMM_bit ? immidiate : I_regB;
-          end
-        `LOGIC_AND: 
-          begin 
-            O_aluop = `ALU_AND; 
-            O_dataB = `IMM_bit ? immidiate : I_regB;
-          end
-        `LOGIC_XOR: 
-          begin 
-            O_aluop = `ALU_XOR; 
-            O_dataB = `IMM_bit ? immidiate : I_regB;
-          end
+        begin
+          O_selCin = `C_bit ? 2'd1 : 2'd0;
+          O_dataB = `IMM_bit ? immidiate : I_regB;
+        end
+        `SUB:
+        begin
+          O_selCin = `C_bit ? 2'd2 : 2'd3;
+          O_dataA = ~ I_regA;
+          O_dataB = `IMM_bit ? immidiate : I_regB;
+        end
+        `LOGIC_OR:
+        begin
+          O_aluop = `ALU_OR;
+          O_dataB = `IMM_bit ? immidiate : I_regB;
+        end
+        `LOGIC_AND:
+        begin
+          O_aluop = `ALU_AND;
+          O_dataB = `IMM_bit ? immidiate : I_regB;
+        end
+        `LOGIC_XOR:
+        begin
+          O_aluop = `ALU_XOR;
+          O_dataB = `IMM_bit ? immidiate : I_regB;
+        end
         `SEXT:
-          begin
-            O_aluop = `SE_bit ? `ALU_SEXT16 : `ALU_SEXT8;
-          end
+        begin
+          O_aluop = `SE_bit ? `ALU_SEXT16 : `ALU_SEXT8;
+        end
         `SHF:
-          begin
-            case (`SHF_bits) 
-              0: O_aluop = `ALU_SHL;
-              1: O_aluop = `ALU_SHR;
-              2: O_aluop = `ALU_SAR;
-              3: O_aluop = `ALU_SHL;					  
-            endcase
-            O_dataB = `IMM_bit ? immidiate : I_regB;
-          end
+        begin
+          case (`SHF_bits)
+            0: O_aluop = `ALU_SHL;
+            1: O_aluop = `ALU_SHR;
+            2: O_aluop = `ALU_SAR;
+            3: O_aluop = `ALU_SHL;
+          endcase
+          O_dataB = `IMM_bit ? immidiate : I_regB;
+        end
         `MUL:
-          begin
-            O_aluop = `ALU_MUL;
-            O_dataB = `IMM_bit ? immidiate : I_regB;
-          end
+        begin
+          O_aluop = `ALU_MUL;
+          O_dataB = `IMM_bit ? immidiate : I_regB;
+        end
         `IMM:
-          begin
-            O_we = 0;
-            imm = `imm_value;
-            imm_valid = 1;
-          end
-		  `EINT:
-		    begin
-			   O_we = 0;
-				enable_interrupts = I_instruction[0];
-			 end	  
+        begin
+          O_we = 0;
+          imm = `imm_value;
+          imm_valid = 1;
+        end
+        `EINT:
+        begin
+          O_we = 0;
+          enable_interrupts = I_instruction[0];
+        end
         `LOAD:
-          begin
-            O_selWb = 1;
-            O_memE =  1;
-            O_selMem = I_instruction[28:26];
-            O_dataB = immidiate;
-				$display("selmem %b", O_selMem);
-          end
+        begin
+          O_selWb = 1;
+          O_memE =  1;
+          O_selMem = I_instruction[28:26];
+          O_dataB = immidiate;
+          $display("selmem %b", O_selMem);
+        end
         `STORE:
-          begin
-            O_memE = 1;
-            O_memWe = 1;
-            O_selMem = I_instruction[27:26];
-            O_we = 0;
-            O_regD = 0;
-            O_dataB = immidiate;
-          end
+        begin
+          O_memE = 1;
+          O_memWe = 1;
+          O_selMem = I_instruction[27:26];
+          O_we = 0;
+          O_regD = 0;
+          O_dataB = immidiate;
+        end
         `BRANCH:
-          begin
-            O_isBranch = 1;
-            O_branchOp = `branch_condition;
-            O_we = `LINK_bit ? 1'b1 : 1'b0;
-            O_branchAddress = I_instruction[15:2];
-            if (`LINK_bit) begin
-              O_selWb = 2;
-				  O_regD = 19;
-            end
-            if (I_instruction[1]) begin
-              O_branchAddress = I_regA[15:2];
-            end
-				if (O_regA == 17) begin
-				  enable_interrupts = 1;
-				end
+        begin
+          O_isBranch = 1;
+          O_branchOp = `branch_condition;
+          O_we = `LINK_bit ? 1'b1 : 1'b0;
+          O_branchAddress = I_instruction[15:2];
+          if (`LINK_bit) begin
+            O_selWb = 2;
+            O_regD = 19;
           end
+          if (I_instruction[1]) begin
+            O_branchAddress = I_regA[15:2];
+          end
+          if (O_regA == 17) begin
+            enable_interrupts = 1;
+          end
+        end
         default:
-          begin
-          end
-      endcase	
-      end		
+        begin
+        end
+      endcase
     end
   end
+end
 endmodule
