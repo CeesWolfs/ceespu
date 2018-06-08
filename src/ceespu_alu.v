@@ -26,6 +26,7 @@ module ceespu_alu(
   input I_Cin,
   input [3:0] I_aluop,
   output reg O_multiCycle,
+  output reg [31:0] O_adderResult,
   output reg [31:0] O_dataResult,
   output reg O_Cout,
   output O_dataReady
@@ -33,6 +34,7 @@ module ceespu_alu(
 
   always @* begin
     O_multiCycle 	<= 0;
+	 O_adderResult <= I_dataA + I_dataB + I_Cin;
     case(I_aluop) 
       4'd1:
         begin
