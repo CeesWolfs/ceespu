@@ -1,10 +1,10 @@
 #pragma once
-#define VMEM_SIZE (1 << 14)
+#define VMEM_SIZE 64 * 1024  // 64KB of ram is available
 
 typedef union _VirtualMem {
-  int word[VMEM_SIZE];
-  short hword[VMEM_SIZE * 2];
-  char byte[VMEM_SIZE * 4];
+  int word[VMEM_SIZE >> 2];
+  short hword[VMEM_SIZE >> 1];
+  char byte[VMEM_SIZE];
 } VirtualMem;
 
 typedef struct _VirtualMachine {

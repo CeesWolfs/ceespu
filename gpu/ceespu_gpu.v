@@ -1,23 +1,5 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date:    22:54:22 04/26/2017 
-// Design Name: 
-// Module Name:    ceespu_gpu 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
-//
-//////////////////////////////////////////////////////////////////////////////////
+// The main gpu module for the ceespu system on chip, intended to work with hdmi controller
 module ceespu_gpu(
   input I_clk,
   input I_sys_clk,
