@@ -1,8 +1,8 @@
 #include "semantic_analyzer.h"
 
-void semantic_analysis(instr* instr_array, int num_instr,
-                       label_to_be_replaced* replace_labels,
-                       hashtable_t* symbols, char* binary) {
+void semantic_analysis(instr *instr_array, int num_instr,
+                       label_to_be_replaced *replace_labels,
+                       hashtable_t *symbols, char *binary) {
   for (int x = 0; x < num_instr; x++) {
     if (instr_array->symbol) {
       uint16_t val;
@@ -22,7 +22,8 @@ void semantic_analysis(instr* instr_array, int num_instr,
       }
     }
     if (!(instr_array->op && (1 << 5))) {
-      if (instr_array->rd == 0) print_err_msg(0, ERR_ZERO_REG);
+      if (instr_array->rd == 0)
+        print_err_msg(0, ERR_ZERO_REG);
     }
     instr_array++;
   }

@@ -47,49 +47,50 @@ const char *directive_table[11] = {".globl",  ".space", ".text", ".data",
                                    ".extern", ".align", ".comm"};
 
 void print_err_msg(uint32_t line, uint8_t error) {
-  if (line > 0) fprintf(stderr, "line %d:\n", line);
+  if (line > 0)
+    fprintf(stderr, "line %d:\n", line);
   switch (error) {
-    case ERR_TK_INV:
-      fprintf(stderr, "lexical error -> invalid token\n");
-      break;
-    case ERR_TK_REG_INV:
-      fprintf(stderr, "lexical error -> invalid register name\n");
-      break;
-    case ERR_TK_IMM_INV:
-      fprintf(stderr, "lexical error -> invalid immidiate\n");
-      break;
-    case ERR_INV_DIRECT:
-      fprintf(stderr, "lexical error -> invalid directive\n");
-      break;
-    case ERR_TK_SYMBOL_INV:
-      fprintf(stderr, "lexical error -> invalid symbol\n");
-      break;
-    case ERR_TK_STRING_INV:
-      fprintf(stderr, "lexical error -> invalid string literal\n");
-      break;
-    case ERR_INV_INST:
-      fprintf(stderr, "syntax error -> invalid instruction\n");
-      break;
-    case ERR_TYPE_ARG:
-      fprintf(stderr, "syntax error -> wrong argument type\n");
-      break;
-    case ERR_MANY_ARG:
-      fprintf(stderr, "syntax error -> too many arguments\n");
-      break;
-    case ERR_INV_IMM:
-      fprintf(stderr, "syntax error -> invalid size of immidiate\n");
-      break;
-    case ERR_DUP_LABEL:
-      fprintf(stderr, "semantic error -> duplicate label found\n");
-      break;
-    case ERR_NO_LABEL:
-      fprintf(stderr, "semantic error -> non existent label referenced\n");
-      break;
-    case ERR_ZERO_REG:
-      fprintf(stderr, "semantic error -> register zero as target register\n");
-      break;
-    default:
-      break;
+  case ERR_TK_INV:
+    fprintf(stderr, "lexical error -> invalid token\n");
+    break;
+  case ERR_TK_REG_INV:
+    fprintf(stderr, "lexical error -> invalid register name\n");
+    break;
+  case ERR_TK_IMM_INV:
+    fprintf(stderr, "lexical error -> invalid immidiate\n");
+    break;
+  case ERR_INV_DIRECT:
+    fprintf(stderr, "lexical error -> invalid directive\n");
+    break;
+  case ERR_TK_SYMBOL_INV:
+    fprintf(stderr, "lexical error -> invalid symbol\n");
+    break;
+  case ERR_TK_STRING_INV:
+    fprintf(stderr, "lexical error -> invalid string literal\n");
+    break;
+  case ERR_INV_INST:
+    fprintf(stderr, "syntax error -> invalid instruction\n");
+    break;
+  case ERR_TYPE_ARG:
+    fprintf(stderr, "syntax error -> wrong argument type\n");
+    break;
+  case ERR_MANY_ARG:
+    fprintf(stderr, "syntax error -> too many arguments\n");
+    break;
+  case ERR_INV_IMM:
+    fprintf(stderr, "syntax error -> invalid size of immidiate\n");
+    break;
+  case ERR_DUP_LABEL:
+    fprintf(stderr, "semantic error -> duplicate label found\n");
+    break;
+  case ERR_NO_LABEL:
+    fprintf(stderr, "semantic error -> non existent label referenced\n");
+    break;
+  case ERR_ZERO_REG:
+    fprintf(stderr, "semantic error -> register zero as target register\n");
+    break;
+  default:
+    break;
   }
   exit(1);
 }

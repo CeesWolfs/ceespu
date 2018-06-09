@@ -1,20 +1,20 @@
 #include "lexical_analysis.h"
 
-void lexical_analysis(FILE* file, token* tk_array) {
+void lexical_analysis(FILE *file, token *tk_array) {
   uint32_t code_count = 0;
   uint32_t inst_count;
-  lexer_list* line_lexicons = malloc(sizeof(lexer_list));
-  token* cur_token = tk_array;
-  void* to_free;
+  lexer_list *line_lexicons = malloc(sizeof(lexer_list));
+  token *cur_token = tk_array;
+  void *to_free;
   char line[MAX_LINE_LEN];
   while (fgets(line, sizeof line, file) != NULL) {
     code_count++;
-    line_lexicons = string_tokenizer(line, (char*)" ,()\n\t");
-    if (line_lexicons == NULL) {  // Empty line
+    line_lexicons = string_tokenizer(line, (char *)" ,()\n\t");
+    if (line_lexicons == NULL) { // Empty line
       continue;
     }
     if (*line_lexicons->lexer ==
-        ';') {  // Line is a comment .. go to the next line
+        ';') { // Line is a comment .. go to the next line
       continue;
     }
     if (!strcmp(line_lexicons->lexer, ".section")) {
@@ -23,14 +23,14 @@ void lexical_analysis(FILE* file, token* tk_array) {
     while (line_lexicons) {
       cur_token->code_line = code_count;
       if (line_lexicons->lexer[strlen(line_lexicons->lexer) - 1] ==
-          ':') {  // Label
+          ':') { // Label
         line_lexicons->lexer[strlen(line_lexicons->lexer) - 1] = NULL;
         cur_token->type = LABEL;
         cur_token->value_str = line_lexicons->lexer;
         goto next_loop;
-      } else if (*line_lexicons->lexer == ';') {  // Comment go to next line
+      } else if (*line_lexicons->lexer == ';') { // Comment go to next line
         break;
-      } else if (*line_lexicons->lexer == '"') {  // String literal
+      } else if (*line_lexicons->lexer == '"') { // String literal
         cur_token->type = STRING_LITERAL;
         if (line_lexicons->lexer[strlen(line_lexicons->lexer) - 1] != '"')
           print_err_msg(code_count, ERR_TK_STRING_INV);
@@ -39,7 +39,7 @@ void lexical_analysis(FILE* file, token* tk_array) {
         cur_token->value_str = line_lexicons->lexer;
         string_unescaper(cur_token->value_str);
         goto next_loop;
-      } else if (*line_lexicons->lexer == '.') {  // Assembler directive
+      } else if (*line_lexicons->lexer == '.') { // Assembler directive
         cur_token->type = DIRECTIVE;
         for (int i = 0; i < 11; i++) {
           if (strcmp(line_lexicons->lexer, directive_table[i]) ==
@@ -67,9 +67,9 @@ void lexical_analysis(FILE* file, token* tk_array) {
           }
         }
         if (*line_lexicons->lexer == '+' | *line_lexicons->lexer == '-' |
-            isdigit(*line_lexicons->lexer)) {  // Immidiate
+            isdigit(*line_lexicons->lexer)) { // Immidiate
           int imm_value;
-          char* endptr;
+          char *endptr;
           imm_value = strtol(line_lexicons->lexer, &endptr, 0);
           imm_value += strtol(endptr, &endptr, 0);
           if ((line_lexicons->lexer + strlen(line_lexicons->lexer) - endptr) ==
@@ -108,17 +108,18 @@ void lexical_analysis(FILE* file, token* tk_array) {
   *cur_token++ = (token){0, 0, 0, 0};
 }
 
-lexer_list* string_tokenizer(char* str, char* delim) {
-  char* tok;
-  char* quote = strchr(str, '"');
-  char* second_quote;
-  char* escaped_string;
-  lexer_list* list = NULL;
+lexer_list *string_tokenizer(char *str, char *delim) {
+  char *tok;
+  char *quote = strchr(str, '"');
+  char *second_quote;
+  char *escaped_string;
+  lexer_list *list = NULL;
   lexer_list *cur_list, *next_list;
   if (quote) {
     escaped_string = malloc(strlen(str));
     second_quote = strchr(quote + 1, '"');
-    if (!second_quote) print_err_msg(0, ERR_TK_STRING_INV);
+    if (!second_quote)
+      print_err_msg(0, ERR_TK_STRING_INV);
     *(second_quote + 1) = '\0';
     strcpy(escaped_string, quote);
     *(quote + 1) = '\0';
@@ -128,9 +129,9 @@ lexer_list* string_tokenizer(char* str, char* delim) {
 
   while (tok != NULL) {
     /* For each token, create a new node and insert it in the string list*/
-    next_list = (lexer_list*)malloc(sizeof(lexer_list));
+    next_list = (lexer_list *)malloc(sizeof(lexer_list));
     next_list->next = 0;
-    next_list->lexer = (char*)malloc(strlen(tok) + 1);
+    next_list->lexer = (char *)malloc(strlen(tok) + 1);
     strcpy(next_list->lexer, tok);
 
     if (*tok == '"') {
@@ -139,7 +140,8 @@ lexer_list* string_tokenizer(char* str, char* delim) {
     }
 
     /* Adding first token to the list */
-    if (list == NULL) list = next_list;
+    if (list == NULL)
+      list = next_list;
     /* Connecting the token to the last token of the list */
     else
       cur_list->next = next_list;
@@ -150,37 +152,37 @@ lexer_list* string_tokenizer(char* str, char* delim) {
   return list;
 }
 
-void string_unescaper(char* string) {
+void string_unescaper(char *string) {
   if (string == NULL) {
     return;
   }
-  char* escape_sequence = strchr(string, '\\');
+  char *escape_sequence = strchr(string, '\\');
   while (escape_sequence) {
     char c;
-    char* end;
+    char *end;
     end = escape_sequence + 1;
     if (escape_sequence == NULL) {
       break;
     }
     char es = *(escape_sequence + 1);
     switch (es) {
-      case 'n':
-        c = '\n';
-        break;
-      case 't':
-        c = '\t';
-        break;
-      case '0':
-        c = '\0';
-        break;
-      case 'r':
-        c = '\r';
-        break;
-      case '\\':
-        c = '\\';
-        break;
-      default:
-        c = *(escape_sequence + 1);
+    case 'n':
+      c = '\n';
+      break;
+    case 't':
+      c = '\t';
+      break;
+    case '0':
+      c = '\0';
+      break;
+    case 'r':
+      c = '\r';
+      break;
+    case '\\':
+      c = '\\';
+      break;
+    default:
+      c = *(escape_sequence + 1);
     }
     *end = c;
     strcpy(escape_sequence, end);
@@ -188,7 +190,7 @@ void string_unescaper(char* string) {
   }
 }
 
-void print_lexer_list(lexer_list* tokens) {
+void print_lexer_list(lexer_list *tokens) {
   printf("Tokens:\n");
   while (tokens) {
     printf("%s - ", tokens->lexer);

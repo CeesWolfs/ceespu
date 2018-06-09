@@ -37,7 +37,7 @@
 #define ERR_INV_INST (0x11)     /* Invalid instruction	    	  */
 #define ERR_INV_IMM (0x12)      /* Invalid size of immediate 	  */
 #define ERR_NO_LABEL (0x13)     /* Label called nonexistent 	  */
-#define ERR_DUP_LABEL \
+#define ERR_DUP_LABEL                                                          \
   (0x14)                        /* Duplicated label			 	  */
 #define ERR_ZERO_REG (0x15)     /* Register ZERO set as target 	  */
 #define ERR_INV_DIRECT (0x16)   /* Invalid directive 			  */
@@ -61,10 +61,10 @@
 #define TYPE_B3 (0x05) /* opcode rd, imm, ra*/
 #define TYPE_B4 (0x06) /* opcode rd, imm, ra*/
 
-char* cas_input_file;
+char *cas_input_file;
 
-const char* reg_table[32];
-const char* directive_table[11];
+const char *reg_table[32];
+const char *directive_table[11];
 
 typedef enum token_type {
   INSTR,
@@ -78,14 +78,14 @@ typedef enum token_type {
 
 typedef struct label_to_be_replaced {
   uint16_t address;
-  char* value;
+  char *value;
 } label_to_be_replaced;
 
 typedef struct token_st {
   uint32_t code_line;
   token_type type;
   int value;
-  char* value_str;
+  char *value_str;
 } token;
 
 typedef struct instr_st {
@@ -96,11 +96,11 @@ typedef struct instr_st {
   uint8_t rb;
   uint16_t imm;
   uint16_t funct;
-  char* symbol;
+  char *symbol;
 } instr;
 
 typedef struct {
-  const char* name;
+  const char *name;
   uint8_t type;
   uint8_t opcode;
   uint16_t funct;

@@ -1,6 +1,6 @@
 #include "code_generator.h"
 
-void code_generation(instr* instr_array, int num_instr, char* binary) {
+void code_generation(instr *instr_array, int num_instr, char *binary) {
   uint32_t instruction;
   for (int x = 0; x < num_instr; x++) {
     instruction = 0;

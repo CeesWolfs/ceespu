@@ -5,7 +5,8 @@ hashtable_t *ht_create(int size) {
   hashtable_t *hashtable = NULL;
   int i;
 
-  if (size < 1) return NULL;
+  if (size < 1)
+    return NULL;
 
   /* Allocate the table itself. */
   if ((hashtable = malloc(sizeof(hashtable_t))) == NULL) {
@@ -122,6 +123,6 @@ int ht_get(hashtable_t *hashtable, char *key, uint16_t *value) {
 
   } else {
     *value = pair->value;
-    return ERR_NO_ERROR;  // success
+    return ERR_NO_ERROR; // success
   }
 }
