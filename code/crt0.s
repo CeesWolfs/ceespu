@@ -19,11 +19,11 @@ timer_irq:                                ; @timer_irq
 	.align	4
 uart_rx_irqv:                           ; uart_rx_irq
 ; BB#0:                                 ; %entry
-	lb c20, 65524(c0)
+	lb c1, 65524(c0)
 	lbu c3, system_receive_irq_buffer_top(c0)
-	addi c24, c0, 59
-	add c22, c0, c0
-	bgu c24, c23, LPBB0_3
+	addi c4, c0, 59
+	add c2, c0, c0
+	bgu c4, c3, LPBB0_3
 LPBB0_1:                                ; %for.body
                                         ; =>This Inner Loop Header: Depth=1
 	addi c23, c0, system_receive_irq_buffer
@@ -31,18 +31,15 @@ LPBB0_1:                                ; %for.body
 	lb c24, 1(c23)
 	sb c24, 0(c23)
 	addi c22, c22, 1
-	addi c23, c0, 58
-	bne c22, c23, LPBB0_1
+	addi c3, c0, 58
+	bne c2, c3, LPBB0_1
 ; BB#2:                                 ; %for.end
-	addi c22, c0, system_receive_irq_buffer_top
-	sb c23, 0(c22)
+	sb c3, system_receive_irq_buffer_top(c0)
 LPBB0_3:                                ; %if.end
-	lbu c22, 0(c21)
-	addi c23, c22, 1
-	sb c23, 0(c21)
-	addi c21, c0, system_receive_irq_buffer
-	add c21, c22, c21
-	sb c20, 0(c21)
+	lbu c2, system_receive_irq_buffer_top(c0)
+	addi c3, c2, 1
+	sb c3, system_receive_irq_buffer_top(c0)
+	sb c20, system_receive_irq_buffer(c2)
 	bx clr
 
 	.globl	system_receive_irq_buffer ; @system_receive_irq_buffer
