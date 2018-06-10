@@ -28,6 +28,7 @@ public:
 	void emulate_cycle();               // Emulate one cycle
 	bool load(const char *file_path);   // Load application
 	void timer_interrupt();
+    void recieve_interrupt(char c);
 	uint32_t getWord(uint16_t location);
 	uint16_t getHalfword(uint16_t location);
 	uint8_t getByte(uint16_t location);

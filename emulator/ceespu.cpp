@@ -259,6 +259,13 @@ void Ceespu::timer_interrupt()
     this->int_vector = 8;
 }
 
+void Ceespu::recieve_interrupt(char c)
+{
+    this->interrupt = true;
+    this->int_vector = 4;
+    this->storeByte(0xfff4, (uint8_t)c);
+}
+
 uint32_t Ceespu::getWord(uint16_t location)
 {
     return this->memory[location >> 2].word;
@@ -323,8 +330,7 @@ void crash(Ceespu* cpu, const char* error)
     }
     std::fprintf(stderr, "carryflag : %s", cpu->carry ? "on" : "off");
     std::fprintf(stderr, "int_flag : %s", cpu->interrupt ? "on" : "off");
-    std::fprintf(stderr, "int_vector : %u%u%u%u", cpu->int_vector & 1, cpu->int_vector & 2, cpu->int_vector & 4,
-        cpu->int_vector & 8);
+    std::fprintf(stderr, "int_vector : %04X", cpu->int_vector);
     std::fprintf(stderr, "immidiate_flag : %s", cpu->immidiate_valid ? "on" : "off");
     std::fprintf(stderr, "immidiate : %04X", cpu->immidiate_reg);
     std::fprintf(stderr, "Do you want to dump the memory file to disk? [Y/n] ");
