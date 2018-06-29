@@ -25,7 +25,9 @@ Copyright (c) 2016 Cees Wolfs
 
 #include "ceespu.h"
 #include "video.h"
+#include "receive.h"
 
+#include <thread>
 Ceespu::Ceespu()
 {
 }
@@ -367,6 +369,7 @@ int main(int argc, char** argv)
     cpu.init(&screen);
     screen.init();
     cpu.load(argv[1]);
+    std::thread input_thread(receive_input, std::ref(cpu));
     uint64_t cycles = 0;
     for(;;) {
 #ifdef _WIN32
@@ -386,6 +389,7 @@ int main(int argc, char** argv)
         if(cycles > 1000)
             clock_gettime(CLOCK_REALTIME, &curtime);
         if((curtime.tv_nsec - timer_time.tv_nsec) > 1 * 1000 * 1000) {
+
             timer_time = curtime;
             cpu.timer_interrupt();
         }
@@ -405,4 +409,5 @@ int main(int argc, char** argv)
             }
         }
     }
+    input_thread.join();
 }

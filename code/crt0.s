@@ -1,6 +1,6 @@
 ; The ceespu common runtime which sets up the runtime enviroment and interrupt handles
 ; This file is linked into every ceespu executable.
-int_vector:
+intie_vector:
 	b main
 	b uart_rx_irq
 	b timer_irq
@@ -49,5 +49,5 @@ system_receive_irq_buffer:
 	.globl	system_receive_irq_buffer_top ; @system_receive_irq_buffer_top
 system_receive_irq_buffer_top:
 	.byte	0                       ; 0x0
-system_timer_irq_counter:  
-    .dword 0
+system_timer_irq_counter: 
+        .word 0

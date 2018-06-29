@@ -106,13 +106,13 @@ int main(int argc, char **argv) {
   char *binary = calloc(1, 65536);
   char *outstring;
   if (argc < 2) {
-    fprintf(stderr, "Error no input file\nUsage: ceespu-cas <inputfile>");
-    return;
+    fprintf(stderr, "Error no input file\nUsage: ceespu-cas <inputfile>\n");
+    return 1;
   }
   infile = fopen(argv[1], "r");
   if (!infile) {
-    fprintf(stderr, "Error input file couldn't be opened");
-    return;
+    fprintf(stderr, "Error input file couldn't be opened\n");
+    return 1;
   }
   cas_input_file = argv[1];
   outstring = malloc(strlen(argv[1]) + 4);
@@ -128,4 +128,5 @@ int main(int argc, char **argv) {
   free(instr_array);
   free(labels->table);
   free(binary);
+  return 0;
 }
