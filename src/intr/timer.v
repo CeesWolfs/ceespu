@@ -1,37 +1,26 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company:
-// Engineer:
+// Copyright (c) 2018 Cees Wolfs
 //
-// Create Date:    14:13:30 01/09/2017
-// Design Name:
-// Module Name:    timer
-// Project Name:
-// Target Devices:
-// Tool versions:
-// Description:
-//
-// Dependencies:
-//
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-//
-//////////////////////////////////////////////////////////////////////////////////
+// Module: timer
+// Project: Ceespu
+// Description: Simple timer that sends out an interrupt every millisecond
+
+#include "../ceespu_constants.vh"
+
 module timer(
          input I_clk,
          input I_rst,
          output reg O_pulse = 0
        );
 
-reg [16:0] timer = 0;
+reg [$clog2(CLOCK_SPEED):0] timer = 0;
 
 always @(posedge I_clk) begin
   if( I_rst ) begin
     timer <= 0;
     O_pulse <= 0;
   end
-  else if (timer == 104999) begin
+  else if (timer == CLOCK_SPEED) begin
     timer <= 0;
     O_pulse <= 1;
     $display("timer pulse at %d", $time);

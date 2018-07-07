@@ -108,7 +108,7 @@ always @* begin
     else if (I_instruction[31:28] == 4'b1101) begin // STORE
       O_regB = `regd; // Store so register in wierd place
     end
-    if (I_instruction[31:30] == 3'b01) begin // Alu immidiate operation
+    if (I_instruction[31:30] == 2'b01) begin // Alu immidiate operation
       O_regB = 0; // Do not use register b
     end
     if (I_instruction[31:29] == 3'b111) begin

@@ -9,7 +9,7 @@
      PCLK_DIV = 2
      Y_RES = Y_RES
      X_RES = X_RES
-     Y_FRAME = 521
+     Y_FRAME = 520
      X_FRAME = 800
 */
 module hdmi_encoder (
@@ -29,7 +29,7 @@ module hdmi_encoder (
 localparam PCLK_DIV = 2'h2;
 localparam Y_RES = 9'h190;
 localparam X_RES = 10'h280;
-localparam Y_FRAME = 10'h209;
+localparam Y_FRAME = 10'h208;
 localparam X_FRAME = 10'h320;
 
 

@@ -40,7 +40,7 @@ always @(posedge I_clk) begin
 
   if (I_we) begin
     $display("%d = %d, out is now %d at %d", I_selD, I_dataD, O_dataB, $stime);
-    regfile[I_selD] = I_dataD;
+    regfile[I_selD] <= I_dataD;
   end
 end
 

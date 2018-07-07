@@ -82,20 +82,20 @@ colour_ram colours (
 
 always @ (posedge pix_clk) begin
   if (I_sys_rst) begin
-    tram_address = 0;
-    tram_enable = 0;
+    tram_address <= 0;
+    tram_enable <= 0;
   end else begin
     if (y[3:0] == 4'b1111) begin
-      tram_address = (((y[9:4] + 1) & 4'hF) << 4) + (((y[8:4] + 1 ) & 4'hF) << 6) + ((x[10:3] + 1) & 4'hF);
+      tram_address <= (((y[9:4] + 1) & 4'hF) << 4) + (((y[8:4] + 1 ) & 4'hF) << 6) + ((x[10:3] + 1) & 4'hF);
     end
     else begin
-      tram_address = (y[9:4] << 4) + (y[9:4] << 6) + ((x[10:3] + 1) & 4'hF);
+      tram_address <= (y[9:4] << 4) + (y[9:4] << 6) + ((x[10:3] + 1) & 4'hF);
     end
     // The sequence of getting a pixel to display is clocked by pix_x[2:0]
     // Font is 8x16 pixels, that is two 8-bit words for each line
     case (x[2:0])
-      3'b110: tram_enable  = 1'b1;
-      default: tram_enable = 1'b0;
+      3'b110: tram_enable  <= 1'b1;
+      default: tram_enable <= 1'b0;
     endcase
   end
 end

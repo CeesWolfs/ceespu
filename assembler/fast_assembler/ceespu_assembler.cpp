@@ -1,5 +1,4 @@
 // Copyright 2018 <Cees Wolfs>
-
 #include "ceespu_assembler.h"
 
 bool inline is16bit(int x) { return ((int16_t)x == x); }
@@ -39,38 +38,48 @@ uint8_t Tokenize(const std::string& str, uint8_t& curtoken, uint8_t start) {
 }
 
 int64_t getImmidiate(const char* immidiate, uint8_t size) {
-  if (size > 11 || size < 1) {
+  // All 32-bit immidiates fit in 10 charachters
+  if (size > 10 || size < 1) {
     return invalid_immidiate;
   }
-  char buf[12];
+  char buf[10];
   char* endptr = buf;
   errno = 0;
   memcpy(buf, immidiate, size);
   buf[size] = 0;
+  // do the actual conversion
   int64_t imm = (strtol(buf, &endptr, 0) & 0xffffffff);
   if (errno != 0 || (endptr == buf)) {
+    // Error occured thus immidiate is invalid
     return invalid_immidiate;
   }
   return imm;
 }
 
 std::string getLabel(char* label, uint8_t size) {
+  // if the token ends with ':' it is a label
   if (label[size - 1] != ':') {
+    // not a label return empty string
     return std::string();
   }
+  // return the label without the ':' character
   return std::string(label, size - 1);
 }
 
 uint8_t getDirective(char* directive, uint8_t size) {
+  // all directives start with '.'
   if (!(directive[0] == '.')) {
     return INVALID;
   }
+  // skip the '.' character
   directive++;
+  // perform binary search for directive in table
   uint8_t left = 0;
-  uint8_t right = 11 - 1;
-  while (left < right) {
+  uint8_t right = nDirect - 1;
+  while (left <= right) {
     uint8_t middle = (left + right) / 2;
     if (strncmp(directive, directives[middle], size - 1) == 0) {
+      // directive found
       return middle;
     }
     if (strncmp(directive, directives[middle], size - 1) > 0) {
@@ -79,19 +88,23 @@ uint8_t getDirective(char* directive, uint8_t size) {
       right = middle - 1;
     }
   }
+  // directive not in table, return invalid
   return INVALID;
 }
 
 InstructionInfo getInstruction(char* mnemonic, uint8_t size) {
-  uint8_t left = 0;
+  // strcmp requires null termination
   mnemonic[size] = '\0';
   if (size > 5) {
     return invalid_instruction;
   }
+  // perform binary search on instruction table
+  uint8_t left = 0;
   uint8_t right = nInstrs - 1;
   while (left <= right) {
     uint8_t middle = (left + right) / 2;
     if (strcmp(mnemonic, instr[middle].Mnemonic) == 0) {
+      // found instruction
       return instr[middle];
     }
     if (strcmp(mnemonic, instr[middle].Mnemonic) > 0) {
@@ -100,6 +113,7 @@ InstructionInfo getInstruction(char* mnemonic, uint8_t size) {
       right = middle - 1;
     }
   }
+  // instruction not found return invalid
   return invalid_instruction;
 }
 
@@ -116,8 +130,9 @@ uint8_t getRegister(const char* reg, uint8_t size) {
     }
     return -1;
   }
+  // bit of a hack, but it does work
   int regnum = ((reg[1] - '0') * 10 + (reg[2] - '0'));
-  if ((regnum < 32) && (regnum > -1)) {
+  if ((regnum < 32) && (regnum >= 0)) {
     return regnum;
   }
   if (reg[1] == 's' && reg[2] == 'p') {
@@ -179,7 +194,6 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
     }
     case A2: {
       rd = getRegister(&line[curtoken], token_len);
-
       if (rd == 0xff) {
         return -1;
       }
@@ -218,13 +232,12 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
         return -1;
       }
       rb = getRegister(&line[curtoken], token_len);
-      token_len = Tokenize(line, curtoken, curtoken + token_len);
       if (rb == 0xff) {
         return -1;
       }
       token_len = Tokenize(line, curtoken, curtoken + token_len);
       uint64_t immidiate = getImmidiate(&line[curtoken], token_len);
-      if (!is16bit(immidiate)) {
+      if (immidiate == invalid_immidiate) {
         // Not an immidiate push relocation
         Relocation reloc = {std::string(line, curtoken, token_len), offset,
                             REL_LO12};
@@ -236,7 +249,7 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
     }
     case B2: {
       uint64_t immidiate = getImmidiate(&line[curtoken], token_len);
-      if (!is16bit(immidiate)) {
+      if (immidiate == invalid_immidiate) {
         // Not an immidiate push relocation
         Relocation reloc = {std::string(line, curtoken, token_len), offset,
                             REL_LO16};
@@ -256,7 +269,7 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
       }
       token_len = Tokenize(line, curtoken, curtoken + token_len);
       uint64_t immidiate = getImmidiate(&line[curtoken], token_len);
-      if (!is16bit(immidiate)) {
+      if (immidiate == invalid_immidiate) {
         // Not an immidiate push relocation
         Relocation reloc = {std::string(line, curtoken, token_len), offset,
                             REL_LO16};
@@ -272,13 +285,14 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
       break;
     }
     case B4: {
-      ra = getRegister(&line[curtoken], token_len);
-      if (ra == 0xff) {
+      // store so rb goes first
+      rb= getRegister(&line[curtoken], token_len);
+      if (rb == 0xff) {
         return -1;
       }
       token_len = Tokenize(line, curtoken, curtoken + token_len);
       uint64_t immidiate = getImmidiate(&line[curtoken], token_len);
-      if (!is16bit(immidiate)) {
+      if (immidiate == invalid_immidiate) {
         // Not an immidiate push relocation
         Relocation reloc = {std::string(line, curtoken, token_len), offset,
                             REL_LO12};
@@ -286,8 +300,8 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
         immidiate = 0;
       }
       token_len = Tokenize(line, curtoken, curtoken + token_len);
-      rb = getRegister(&line[curtoken], token_len);
-      if (rb == 0xff) {
+      ra = getRegister(&line[curtoken], token_len);
+      if (ra == 0xff) {
         return -1;
       }
       imm = immidiate & 0x3FF;
@@ -313,6 +327,12 @@ int main(int argc, char* argv[]) {
     fprintf(stderr, "Error no input file specified\nUsage: %s <inputfile>\n",
             argv[0]);
     return 1;
+  }
+  std::string outputfile;
+  if (argc == 3) {
+    outputfile = argv[2];
+  } else {
+    outputfile = "output.bin";
   }
   std::ifstream input_file;
   std::string line;
@@ -368,7 +388,7 @@ int main(int argc, char* argv[]) {
     }
     std::string label = getLabel(&line[curtoken], token_len);
     if (!label.empty()) {
-      printf("line %d : label %s found\n", line_num, label.c_str());
+      // printf("line %d : label %s found\n", line_num, label.c_str());
       parseLabel(label, line_num, function_label, symbol_table, offset);
       token_len = Tokenize(line, curtoken, curtoken + token_len);
       if (token_len == 0) {
@@ -377,19 +397,21 @@ int main(int argc, char* argv[]) {
     }
     uint8_t directive = getDirective(&line[curtoken], token_len);
     if (directive != INVALID) {
-      printf("line %d : directive %d found\n", line_num, directive);
+      // printf("line %d : directive %d found\n", line_num, directive);
       token_len = Tokenize(line, curtoken, curtoken + token_len);
       if (token_len == 0) {
         fprintf(stderr, "Error expected token after directive .%s\n",
                 directives[directive]);
+        exit(1);
       }
       switch (directive) {
         case ALIGN: {
           uint64_t align = getImmidiate(&line[curtoken], token_len);
           if (!ispowerof2(align)) {
-            fprintf(stderr, "Error invalid alignement requested at line\n");
+            fprintf(stderr, "Error invalid alignement requested at line%d\n",
+                    line_num);
           }
-          roundUp(offset, align);
+          offset = roundUp(offset, align);
           break;
         }
         case DATA: {
@@ -413,7 +435,7 @@ int main(int argc, char* argv[]) {
           // STB_GLOBAL, STT_FUNC, 0,
           //                         text_sec->get_index());
           // function_labels.clear();
-          Label labelValue = {offset, LABEL_GLOBL, nullptr};
+          Label labelValue = {offset, LABEL_GLOBL | LABEL_UNDEFINED, nullptr};
           std::string label_name = std::string(line, curtoken, token_len);
           // Check if the label is already defined
           auto ret =
@@ -422,17 +444,62 @@ int main(int argc, char* argv[]) {
             if (ret.first->second.type & LABEL_UNDEFINED) {
               symbol_table[label_name] = labelValue;
             }
-            fprintf(stderr, "Error duplicate label definition at line %d",
+            fprintf(stderr, "Error duplicate label definition at line %d\n",
                     line_num);
+            exit(1);
           }
           break;
         }
+        case SPACE: {
+          uint64_t space = getImmidiate(&line[curtoken], token_len);
+          if (space == invalid_immidiate) {
+            printf("Error invalid immidiate after align directive\n");
+          }
+          data.insert(data.end(), space, 0);
+          offset += space;
+          break;
+        }
+        case WORD: {
+          uint64_t value = getImmidiate(&line[curtoken], token_len);
+          if (value == invalid_immidiate) {
+            printf("Error invalid immidiate after word directive\n");
+          }
+          for (int i = 3; i >= 0; --i) {
+            data.push_back((value >> (i * 8)) & 0xff);
+          }
+          offset += 4;
+          break;
+        }
+        case HWORD: {
+          uint64_t value = getImmidiate(&line[curtoken], token_len);
+          if (value == invalid_immidiate) {
+            printf("Error invalid immidiate after hword directive\n");
+          }
+          for (int i = 2; i >= 0; --i) {
+            data.push_back((value >> (i * 8)) & 0xff);
+          }
+          offset += 2;
+          break;
+        }
+        case BYTE: {
+          uint64_t value = getImmidiate(&line[curtoken], token_len);
+          if (value == invalid_immidiate) {
+            printf("Error invalid immidiate after byte directive\n");
+          }
+          data.push_back(value & 0xff);
+          offset++;
+          break;
+        }
+      }
+      token_len = Tokenize(line, curtoken, curtoken + token_len);
+      if (token_len == 0) {
+        continue;
       }
     }
     InstructionInfo instruction = getInstruction(&line[curtoken], token_len);
     if (instruction.Type != invalid_instruction.Type) {
-      printf("line %d : instruction %s found of type : %d\n", line_num,
-             instruction.Mnemonic, instruction.Type);
+      // printf("line %d : instruction %s found of type : %d\n", line_num,
+      // instruction.Mnemonic, instruction.Type);
       curtoken += token_len + 1;
       uint32_t instr = parseInstruction(line, curtoken, immset, offset,
                                         instruction, relocation_table);
@@ -445,16 +512,24 @@ int main(int argc, char* argv[]) {
                 instruction.Mnemonic, line_num);
         exit(1);
       }
-      printf("%08X\n", instr);
       for (int i = 3; i >= 0; --i) {
         data.push_back((instr >> (i * 8)) & 0xff);
       }
       continue;
     }
+    fprintf(stderr, "Error invalid token on line %d\n", line_num);
+    exit(1);
   }
+  // here comes the linking portion, replace all label relocations with their
+  // value. if the value is not found an error is returned
   for (auto it = relocation_table.begin(); it != relocation_table.end(); ++it) {
-    printf("replace %s at offset %d with value %d\n", it->label.c_str(),
-           it->offset, symbol_table[it->label].offset);
+    auto label = symbol_table.find(it->label);
+    if (label == symbol_table.end()) {
+      fprintf(stderr, "Error label %s was never resolved\n", it->label.c_str());
+      exit(1);
+    }
+    // printf("replace %s at offset %d with value %d\n", it->label.c_str(),
+    //       it->offset, symbol_table[it->label].offset);
     if (it->type == REL_LO12) {
       data[it->offset + 1] |= symbol_table[it->label].offset >> 14;
       data[it->offset + 2] |= ((symbol_table[it->label].offset >> 11) & 0xE0);
@@ -466,7 +541,11 @@ int main(int argc, char* argv[]) {
       data[it->offset + 3] = symbol_table[it->label].offset & 0xff;
     }
   }
-  for (auto it = data.begin(); it != data.end(); ++it) {
-    printf("%02X", *it);
+  for (auto i = data.begin(); i != data.end(); ++i) {
+    printf("%02X", *i);
   }
+  std::ofstream out(outputfile, std::ios_base::binary);
+  out.write(reinterpret_cast<char*>(&data[0]), data.size());
+  out.close();
+  return 0;
 }

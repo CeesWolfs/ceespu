@@ -33,58 +33,58 @@ module ceespu_alu(
        );
 
 always @* begin
-  O_multiCycle 	<= 0;
-  O_adderResult <= I_dataA + I_dataB + I_Cin;
+  O_multiCycle 	= 0;
+  O_adderResult = I_dataA + I_dataB + I_Cin;
   case(I_aluop)
-    4'd1:
+    default: // add
     begin
-      O_dataResult <= I_dataA | I_dataB;
-      O_Cout <= 0;
+      {O_Cout, O_dataResult} = I_dataA + I_dataB + I_Cin;
     end
-    4'd2:
+    4'd1: // bitwise or
     begin
-      O_dataResult <= I_dataA & I_dataB;
-      O_Cout <= 0;
+      O_dataResult = I_dataA | I_dataB;
+      O_Cout = 0;
     end
-    4'd3:
+    4'd2: // bitwise and
     begin
-      O_dataResult <= I_dataA ^ I_dataB;
-      O_Cout <= 0;
+      O_dataResult = I_dataA & I_dataB;
+      O_Cout = 0;
     end
-    4'd4:
+    4'd3: // bitwise xor
     begin
-      O_dataResult <= {{(24){I_dataA[7]}}, I_dataA[7:0]};
-      O_Cout <= 0;
+      O_dataResult = I_dataA ^ I_dataB;
+      O_Cout = 0;
     end
-    4'd5:
+    4'd4: // sign extend byte
     begin
-      O_dataResult <= {{(16){I_dataA[15]}}, I_dataA[15:0]};
-      O_Cout <= 0;
+      O_dataResult = {{(24){I_dataA[7]}}, I_dataA[7:0]};
+      O_Cout = 0;
     end
-    4'd6:
+    4'd5: // sign extend halfword
     begin
-      O_dataResult <= I_dataA << I_dataB[4:0];
-      O_Cout <= 0;
+      O_dataResult = {{(16){I_dataA[15]}}, I_dataA[15:0]};
+      O_Cout = 0;
     end
-    4'd7:
+    4'd6: // shift left
     begin
-      O_dataResult <= I_dataA >> I_dataB[4:0];
-      O_Cout <= 0;
+      O_dataResult = I_dataA << I_dataB[4:0];
+      O_Cout = 0;
     end
-    4'd8:
+    4'd7: // sift right
+    begin
+      O_dataResult = I_dataA >> I_dataB[4:0];
+      O_Cout = 0;
+    end
+    4'd8: // shift right arithmetic
     begin
       O_dataResult <= I_dataA >>> I_dataB[4:0];
-      O_Cout <= 0;
+      O_Cout = 0;
     end
-    4'd9:
+    4'd9: // multiply
     begin
-      O_multiCycle <= 1;
-      O_dataResult <= mul_result;
-      O_Cout <= 0;
-    end
-    default:
-    begin
-      {O_Cout, O_dataResult} <= I_dataA + I_dataB + I_Cin;
+      O_multiCycle = 1;
+      O_dataResult = mul_result;
+      O_Cout = 0;
     end
   endcase
 end

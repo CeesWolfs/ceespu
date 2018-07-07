@@ -24,7 +24,7 @@ module ceespu_execute(
          input [3:0] I_aluop,
          input I_we,
          input [1:0] I_selWb,
-         input [0:0] I_branch,
+         input I_branch,
          input [2:0] I_branchop,
          input [31:0] I_storeData,
          input [31:0] I_dataA,
@@ -58,6 +58,7 @@ wire multiCycle;
 wire Cout;
 wire ready;
 wire doBranch;
+
 ceespu_alu alu(I_clk, I_rst, I_dataA, I_dataB, Cin, I_aluop, multiCycle, adderResult, aluResult, Cout, ready);
 ceespu_compare compare(I_dataA, I_dataB, I_branchop, Carry, doBranch);
 
@@ -66,7 +67,6 @@ assign O_branch  = doBranch & I_branch;
 
 always @* begin
   O_busy = ! ready & multiCycle;
-  O_memWe = 4'd0;
   O_memE = I_memE;
   if (I_selMem[1:0] == 2) begin
     O_StoreData = {I_storeData[7:0], I_storeData[7:0], I_storeData[7:0], I_storeData[7:0]};
@@ -79,42 +79,26 @@ always @* begin
   end
   if (I_memWe) begin
     if (I_selMem[1:0] == 2) begin
-      if (adderResult[1:0] == 2'b11) begin
-        O_memWe = 4'b1000;
-      end
-      else if (adderResult[1:0] == 2'b10) begin
-        O_memWe = 4'b0100;
-      end
-      else if (adderResult[1:0] == 2'b01) begin
-        O_memWe = 4'b0010;
-      end
-      else begin
-        O_memWe = 4'b0001;
-      end
+      case (adderResult[1:0])
+        0: O_memWe = 4'b0001;
+        1: O_memWe = 4'b0010;
+        2: O_memWe = 4'b0100;
+        3: O_memWe = 4'b1000;
+      endcase
     end
     else if (I_selMem[1:0] == 1) begin
       O_memWe = (adderResult[0]) ? 4'b1100 : 4'b0011;
     end else begin
       O_memWe = 4'b1111;
     end
+  end else begin
+  	O_memWe = 4'b0000;
   end
   case (I_selCin)
-    2'd0:
-    begin
-      Cin = 0;
-    end
-    2'd1:
-    begin
-      Cin = Carry;
-    end
-    2'd2:
-    begin
-      Cin = !Carry;
-    end
-    2'd3:
-    begin
-      Cin = 1;
-    end
+    2'd0: Cin = 0;
+    2'd1: Cin = Carry;
+    2'd2: Cin = !Carry;
+    2'd3: Cin = 1;
   endcase
 end
 

@@ -155,9 +155,9 @@ always @(*) begin
   if (dec_we & dec_memE & ((dec_regA == dec_regD) | (dec_regB == dec_regD)))  begin
     $display( "memory_stall rA = %d, rB = %d, rD = %d at %d", dec_regA, dec_regB, dec_regD, $time);
     stall = 1; // Memory Hazard stall!
-    bubble = 1;
+    bubble = 1; // insert nop instruction to stall
   end
-  stall = stall | ex_busy | I_dmemBusy;
+  stall |=  (ex_busy | I_dmemBusy);
   case (forwardA)
     0: aluA = dec_dataA;
     1: aluA = ex_aluResult;
@@ -193,24 +193,24 @@ always @(posedge I_clk) begin
   if ( O_int_ack ) begin
     $display("DECODE: Inserting INTERRUPT at pc_decode=0x%x, pc_exe=0x%x", dec_PC, ex_PC);
   end
-  forwardA = 0;
-  forwardB = 0;
+  forwardA <= 0;
+  forwardB <= 0;
   if (ex_we && (dec_regA == ex_regD)) begin
     // Data Hazard in writeback stage forward writeback
-    forwardA = 2;
+    forwardA <= 2;
     $display( "forwardA writeback at %d", $time);
   end
   if (ex_we && (dec_regB == ex_regD)) begin
     // Data Hazard in writeback stage forward writeback
     $display( "forwardB writeback at %d", $time);
-    forwardB = 2;
+    forwardB <= 2;
     //$display("forward writeback %d", )
   end
   if (dec_we & dec_regA == dec_regD) begin
-    forwardA = 1; //forward execute stage
+    forwardA <= 1; //forward execute stage
   end
   if (dec_we & dec_regB == dec_regD) begin
-    forwardB = 1; //forward execute stage
+    forwardB <= 1; //forward execute stage
   end
 end
 endmodule

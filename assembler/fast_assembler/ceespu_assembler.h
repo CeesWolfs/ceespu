@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <elfio/elfio.hpp>
+#include <iostream>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -97,6 +98,7 @@ InstructionInfo instr[] = {{{'a', 'd', 'c', 0, 0}, A0, (0x01), 0},
                            {{'s', 'b', 'b', 'i', 0}, B0, (0x13), 0},
                            {{'s', 'e', 'b', 0, 0}, A2, (0x07), 0},
                            {{'s', 'e', 'h', 0, 0}, A2, (0x07), 0x01},
+                           {{'s', 'e', 't', 'i', 0}, B2, (0x2A), 0},
                            {{'s', 'h', 0, 0, 0}, B4, (0x35), 0},
                            {{'s', 'h', 'l', 0, 0}, A0, (0x08), 0},
                            {{'s', 'h', 'l', 'i', 0}, B0, (0x18), 0},
@@ -104,11 +106,10 @@ InstructionInfo instr[] = {{{'a', 'd', 'c', 0, 0}, A0, (0x01), 0},
                            {{'s', 'h', 'r', 'i', 0}, B0, (0x18), 0x40},
                            {{'s', 'u', 'b', 0, 0}, A0, (0x02), 0},
                            {{'s', 'u', 'b', 'i', 0}, B0, (0x12), 0},
-                           {{'s', 'e', 't', 'i', 0}, B2, (0x2A), 0},
                            {{'s', 'w', 0, 0, 0}, B4, (0x34), 0},
                            {{'x', 'o', 'r', 0, 0}, A0, (0x06), 0},
                            {{'x', 'o', 'r', 'i', 0}, B0, (0x16), 0}};
 
 const int nInstrs = sizeof(instr) / sizeof(InstructionInfo);
-const int nDirect = sizeof(directives) / sizeof(char);
+const int nDirect = sizeof(directives) / sizeof(directives[0]);
 #endif  // CEESPU_ASSEMBLER_H
