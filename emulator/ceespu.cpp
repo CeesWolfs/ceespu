@@ -29,7 +29,7 @@ Copyright (c) 2018 Cees Wolfs
 
 #include <thread>
 
-std::thread input_thread;
+//std::thread input_thread;
 
 inline uint32_t swap32(uint32_t k) {
   return ((k << 24) | ((k & 0x0000FF00) << 8) | ((k & 0x00FF0000) >> 8) |
@@ -68,19 +68,27 @@ void Ceespu::emulate_cycle() {
     this->interrupt = false;
   } else {
     uint8_t rd, ra, rb, opcode;
-    uint16_t addres;
+    uint16_t address;
     int32_t immidiate;
     uint32_t instruction = this->getWord(this->pc);
     uint64_t result;
     this->pc += 4;
-    immidiate = this->immidiate_valid
-                    ? (this->immidiate_reg << 16) | (instruction & 0xffff)
-                    : static_cast<int16_t>(instruction);
-    this->immidiate_valid = false;
     opcode = (instruction >> 26) & 0x3f;
     rd = (instruction >> 21) & 0x1f;
     ra = (instruction >> 16) & 0x1f;
     rb = (instruction >> 11) & 0x1f;
+    if ((opcode >= 52 && opcode <= 54) || ((opcode >= 56) && (opcode <= 62))) {
+      immidiate =
+          this->immidiate_valid
+              ? ((this->immidiate_reg << 16) |
+                 ((rd << 11) | (instruction & 0x07ff)))
+              : static_cast<int16_t>((rd << 11) | (instruction & 0x07ff));
+    } else {
+      immidiate = this->immidiate_valid
+                      ? ((this->immidiate_reg << 16) | (instruction & 0xffff))
+                      : static_cast<int16_t>(instruction);
+    }
+    this->immidiate_valid = false;
     switch (opcode) {
       case 0:
         result = Regs[ra] + Regs[rb];
@@ -201,42 +209,42 @@ void Ceespu::emulate_cycle() {
         this->enable_interrupt = (instruction & 1);
         break;
       case 52:
-        addres = Regs[ra] + (rd << 11) +  (immidiate & 0x1ff);
-        storeWord(addres, Regs[rb]);
+        address = Regs[ra] + immidiate;
+        storeWord(address, Regs[rb]);
         break;
       case 53:
-        addres = Regs[ra] + (rd << 11) +  (immidiate & 0x1ff);
-        storeHalfword(addres, Regs[rb]);
+        address = Regs[ra] + immidiate;
+        storeHalfword(address, Regs[rb]);
         break;
       case 54:
-        addres = Regs[ra] + (rd << 11) +  (immidiate & 0x1ff);
-        storeByte(addres, Regs[rb]);
+        address = Regs[ra] + immidiate;
+        storeByte(address, Regs[rb]);
         break;
       case 56:
-        this->pc = (Regs[ra] == Regs[rd]) ? (static_cast<uint16_t>(immidiate))
+        this->pc = (Regs[ra] == Regs[rb]) ? (static_cast<uint16_t>(immidiate))
                                           : this->pc;
         break;
       case 57:
-        this->pc = (Regs[ra] != Regs[rd]) ? (static_cast<uint16_t>(immidiate))
+        this->pc = (Regs[ra] != Regs[rb]) ? (static_cast<uint16_t>(immidiate))
                                           : this->pc;
         break;
       case 58:
-        this->pc = (Regs[ra] > Regs[rd]) ? (static_cast<uint16_t>(immidiate))
+        this->pc = (Regs[ra] > Regs[rb]) ? (static_cast<uint16_t>(immidiate))
                                          : this->pc;
         break;
       case 59:
-        this->pc = (Regs[ra] >= Regs[rd]) ? (static_cast<uint16_t>(immidiate))
+        this->pc = (Regs[ra] >= Regs[rb]) ? (static_cast<uint16_t>(immidiate))
                                           : this->pc;
         break;
       case 60:
         this->pc =
-            (static_cast<int32_t>(Regs[ra]) > static_cast<int32_t>(Regs[rd]))
+            (static_cast<uint32_t>(Regs[ra]) > static_cast<uint32_t>(Regs[rb]))
                 ? (static_cast<uint16_t>(immidiate))
                 : this->pc;
         break;
       case 61:
         this->pc =
-            (static_cast<int32_t>(Regs[ra]) >= static_cast<int32_t>(Regs[rd]))
+            (static_cast<uint32_t>(Regs[ra]) >= static_cast<uint32_t>(Regs[rb]))
                 ? (static_cast<uint16_t>(immidiate))
                 : this->pc;
         break;
@@ -245,9 +253,9 @@ void Ceespu::emulate_cycle() {
             (this->carry) ? (static_cast<uint16_t>(immidiate)) : this->pc;
         break;
       case 63:
-        Regs[19] = (immidiate & 1) ? (this->pc + 4) : Regs[19];
+        Regs[rd] = (immidiate & 1) ? (this->pc) : Regs[rd];
         this->pc = (immidiate & 2) ? static_cast<uint16_t>(Regs[ra])
-                                   : static_cast<uint16_t>(immidiate);
+                                   : static_cast<uint16_t>(immidiate &~ 0x3);
         if (immidiate & 2 && ra == 17) this->enable_interrupt = true;
         break;
       default:
@@ -352,6 +360,8 @@ void crash(Ceespu* cpu, const char* error) {
                cpu->immidiate_valid ? "on" : "off");
   std::fprintf(stderr, "immidiate : %04X\n", cpu->immidiate_reg);
   std::fprintf(stderr, "Do you want to dump the memory file to disk? [Y/n] ");
+  while ((ans = getchar()) != '\n' && ans != EOF) {
+  }
   ans = getchar();
   if (ans == 'Y' || ans == 'y') {
     std::fprintf(stderr, "\nDumping ceespu memory to disk....\n");

@@ -157,7 +157,7 @@ always @(*) begin
     stall = 1; // Memory Hazard stall!
     bubble = 1; // insert nop instruction to stall
   end
-  stall |=  (ex_busy | I_dmemBusy);
+  stall =  stall | ex_busy | I_dmemBusy;
   case (forwardA)
     0: aluA = dec_dataA;
     1: aluA = ex_aluResult;

@@ -204,6 +204,13 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
       }
       break;
     }
+    case A3: {
+      ra = getRegister(&line[curtoken], token_len);
+      if (ra == 0xff) {
+        return -1;
+      }
+      break;
+    }
     case B0: {
       rd = getRegister(&line[curtoken], token_len);
       if (rd == 0xff) {
@@ -221,8 +228,9 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
         Relocation reloc = {std::string(line, curtoken, token_len), offset,
                             REL_LO16};
         relocations.push_back(reloc);
+      } else {
+        imm = immidiate;
       }
-      imm = immidiate;
       break;
     }
     case B1: {
@@ -242,9 +250,10 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
         Relocation reloc = {std::string(line, curtoken, token_len), offset,
                             REL_LO12};
         relocations.push_back(reloc);
+      } else {
+        imm = immidiate & 0x7FF;
+        rd = (immidiate >> 11) & 0x1F;
       }
-      imm = immidiate & 0x3FF;
-      rd = (immidiate >> 11) & 0x1F;
       break;
     }
     case B2: {
@@ -255,11 +264,10 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
                             REL_LO16};
         relocations.push_back(reloc);
         immidiate = 0;
+      } else {
+        imm = immidiate;
       }
-      imm = immidiate;
-      if (instruction.Opcode == 0x2a) {
-        immset = true;
-      }
+      rd = 19;  // fix later !!
       break;
     }
     case B3: {
@@ -275,8 +283,9 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
                             REL_LO16};
         relocations.push_back(reloc);
         immidiate = 0;
+      } else {
+        imm = immidiate;
       }
-      imm = immidiate;
       token_len = Tokenize(line, curtoken, curtoken + token_len);
       ra = getRegister(&line[curtoken], token_len);
       if (ra == 0xff) {
@@ -286,7 +295,7 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
     }
     case B4: {
       // store so rb goes first
-      rb= getRegister(&line[curtoken], token_len);
+      rb = getRegister(&line[curtoken], token_len);
       if (rb == 0xff) {
         return -1;
       }
@@ -298,14 +307,24 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
                             REL_LO12};
         relocations.push_back(reloc);
         immidiate = 0;
+      } else {
+        imm = immidiate & 0x7FF;
+        rd = (immidiate >> 11) & 0x1F;
       }
       token_len = Tokenize(line, curtoken, curtoken + token_len);
       ra = getRegister(&line[curtoken], token_len);
       if (ra == 0xff) {
         return -1;
       }
-      imm = immidiate & 0x3FF;
-      rd = (immidiate >> 11) & 0x1F;
+      break;
+    }
+    case B5: {
+      uint64_t immidiate = getImmidiate(&line[curtoken], token_len);
+      if (immidiate == invalid_immidiate) {
+        return -1;
+      }
+      imm = immidiate;
+      immset = true;
       break;
     }
   }
@@ -537,8 +556,8 @@ int main(int argc, char* argv[]) {
       data[it->offset + 3] = symbol_table[it->label].offset & 0xff;
     } else if (it->type == REL_LO16) {
       /* code */
-      data[it->offset + 2] = symbol_table[it->label].offset >> 8;
-      data[it->offset + 3] = symbol_table[it->label].offset & 0xff;
+      data[it->offset + 2] |= symbol_table[it->label].offset >> 8;
+      data[it->offset + 3] |= symbol_table[it->label].offset & 0xff;
     }
   }
   for (auto i = data.begin(); i != data.end(); ++i) {
