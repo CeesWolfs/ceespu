@@ -63,11 +63,12 @@ ceespu_alu alu(I_clk, I_rst, I_dataA, I_dataB, Cin, I_aluop, multiCycle, adderRe
 ceespu_compare compare(I_dataA, I_dataB, I_branchop, Carry, doBranch);
 
 assign O_memAddress = adderResult;
-assign O_branch  = doBranch & I_branch;
+assign O_branch  = doBranch && I_branch;
 
 always @* begin
-  O_busy = ! ready & multiCycle;
+  O_busy = (!ready) && multiCycle;
   O_memE = I_memE;
+  O_memWe = 4'bxxxx;
   if (I_selMem[1:0] == 2) begin
     O_StoreData = {I_storeData[7:0], I_storeData[7:0], I_storeData[7:0], I_storeData[7:0]};
   end
@@ -92,7 +93,7 @@ always @* begin
       O_memWe = 4'b1111;
     end
   end else begin
-  	O_memWe = 4'b0000;
+  	O_memWe = 4'bxxxx;
   end
   case (I_selCin)
     2'd0: Cin = 0;
@@ -110,7 +111,7 @@ always @(posedge I_clk) begin
   O_aluResult <= aluResult;
   O_selWb <= I_selWb;
   O_selMem <= I_selMem;
+  $display("O_regD is %d at %d from in %d", O_regD, $time, I_regD);
 end
-
 
 endmodule

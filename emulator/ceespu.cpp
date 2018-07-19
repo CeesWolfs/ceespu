@@ -1,27 +1,4 @@
-/*
-Copyright (c) 2018 Cees Wolfs
-
- Permission is hereby granted, free of charge, to any person
- obtaining a copy of this software and associated documentation
- files (the "Software"), to deal in the Software without
- restriction, including without limitation the rights to use,
- copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the
- Software is furnished to do so, subject to the following
- conditions:
-
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- OTHER DEALINGS IN THE SOFTWARE.
-*/
+// Copyright (c) 2018 <Cees Wolfs>
 
 #include "ceespu.h"
 #include "receive.h"
@@ -29,7 +6,9 @@ Copyright (c) 2018 Cees Wolfs
 
 #include <thread>
 
-//std::thread input_thread;
+std::thread input_thread;
+
+namespace helpers {
 
 inline uint32_t swap32(uint32_t k) {
   return ((k << 24) | ((k & 0x0000FF00) << 8) | ((k & 0x00FF0000) >> 8) |
@@ -37,6 +16,15 @@ inline uint32_t swap32(uint32_t k) {
 }
 
 inline uint16_t swap16(uint16_t k) { return ((k << 8) | (k >> 8)); }
+
+inline uint32_t getBits(uint32_t val, const uint8_t upperbit,
+                        const uint8_t lowerbit) {
+  return (val >> lowerbit) & ((1 << ((upperbit + 1) - lowerbit)) - 1);
+}
+
+inline bool getBit(uint32_t val, const uint8_t bit) { return val >> bit & 0x1; }
+
+}  // namespace helpers
 
 Ceespu::Ceespu() {}
 
@@ -60,7 +48,7 @@ void Ceespu::init(Video* screen) {
   this->screen = screen;
 }
 
-void Ceespu::emulate_cycle() {
+void Ceespu::emulateCycle() {
   if (this->interrupt & this->enable_interrupt) {
     this->Regs[17] = this->pc + 4;
     this->pc = this->int_vector;
@@ -73,63 +61,66 @@ void Ceespu::emulate_cycle() {
     uint32_t instruction = this->getWord(this->pc);
     uint64_t result;
     this->pc += 4;
-    opcode = (instruction >> 26) & 0x3f;
-    rd = (instruction >> 21) & 0x1f;
-    ra = (instruction >> 16) & 0x1f;
-    rb = (instruction >> 11) & 0x1f;
+    opcode = helpers::getBits(instruction, 31, 26);
+    rd = helpers::getBits(instruction, 25, 21);
+    ra = helpers::getBits(instruction, 20, 16);
+    rb = helpers::getBits(instruction, 15, 11);
     if ((opcode >= 52 && opcode <= 54) || ((opcode >= 56) && (opcode <= 62))) {
-      immidiate =
-          this->immidiate_valid
-              ? ((this->immidiate_reg << 16) |
-                 ((rd << 11) | (instruction & 0x07ff)))
-              : static_cast<int16_t>((rd << 11) | (instruction & 0x07ff));
-    } else {
       immidiate = this->immidiate_valid
-                      ? ((this->immidiate_reg << 16) | (instruction & 0xffff))
-                      : static_cast<int16_t>(instruction);
+                      ? ((this->immidiate_reg << 16) |
+                         helpers::getBits(instruction, 25, 21) << 11 |
+                         helpers::getBits(instruction, 10, 0))
+                      : static_cast<int16_t>(
+                            helpers::getBits(instruction, 25, 21) << 11 |
+                            helpers::getBits(instruction, 10, 0));
+    } else {
+      immidiate = this->immidiate_valid ? ((this->immidiate_reg << 16) |
+                                           helpers::getBits(instruction, 15, 0))
+                                        : static_cast<int16_t>(instruction);
     }
     this->immidiate_valid = false;
     switch (opcode) {
-      case 0:
+      case ADD:
         result = Regs[ra] + Regs[rb];
         this->carry = result < Regs[ra];
         Regs[rd] = result;
         break;
-      case 1:
+      case ADC:
         result = Regs[ra] + Regs[rb] + this->carry;
         this->carry = result < Regs[ra];
         Regs[rd] = result;
-      case 2:
+      case SUB:
         result = Regs[rb] - Regs[ra];
         this->carry = result > Regs[ra];
         Regs[rd] = result;
-      case 3:
+      case SBB:
         result = Regs[rb] - Regs[ra] - this->carry;
         this->carry = result > Regs[ra];
         Regs[rd] = result;
         break;
-      case 4:
+      case OR:
         Regs[rd] = Regs[ra] | Regs[rb];
         break;
-      case 5:
+      case AND:
         Regs[rd] = Regs[ra] & Regs[rb];
         break;
-      case 6:
+      case XOR:
         Regs[rd] = Regs[ra] ^ Regs[rb];
         break;
-      case 7:
-        Regs[rd] = (immidiate & 1) ? static_cast<int16_t>(Regs[ra])
-                                   : static_cast<int8_t>(Regs[ra]);
+      case SE:
+        Regs[rd] = helpers::getBit(instruction, 0)
+                       ? static_cast<int16_t>(Regs[ra])
+                       : static_cast<int8_t>(Regs[ra]);
         break;
-      case 8:
-        switch (immidiate & 0xC000) {
+      case SHF:
+        switch (helpers::getBits(instruction, 15, 14)) {
           case 0:
             Regs[rd] = Regs[ra] << Regs[rb];
             break;
-          case 0x4000:
+          case 1:
             Regs[rd] = Regs[ra] >> Regs[rb];
             break;
-          case 0x8000:
+          case 2:
             Regs[rd] = static_cast<int32_t>(Regs[ra]) >> Regs[rb];
             break;
           default:
@@ -137,126 +128,131 @@ void Ceespu::emulate_cycle() {
             break;
         }
         break;
-      case 9:
+      case MUL:
         Regs[rd] = Regs[ra] * Regs[rb];
         break;
-      case 16:
+      case ADDI:
         result = Regs[ra] + immidiate;
         this->carry = result < Regs[ra];
         Regs[rd] = result;
         break;
-      case 17:
+      case ADCI:
         result = Regs[ra] + immidiate + this->carry;
         this->carry = result < Regs[ra];
         Regs[rd] = result;
-      case 18:
+      case SUBI:
         result = immidiate - Regs[ra];
         this->carry = result > immidiate;
         Regs[rd] = result;
-      case 19:
+      case SBBI:
         result = immidiate - Regs[ra] - this->carry;
         this->carry = result > immidiate;
         Regs[rd] = result;
         break;
-      case 20:
+      case ORI:
         Regs[rd] = Regs[ra] | immidiate;
         break;
-      case 21:
+      case ANDI:
         Regs[rd] = Regs[ra] & immidiate;
         break;
-      case 22:
+      case XORI:
         Regs[rd] = Regs[ra] ^ immidiate;
         break;
-      case 24:
-        switch (immidiate & 0xC000) {
+      case SHFI:
+        switch (helpers::getBits(instruction, 15, 14)) {
           case 0:
-            Regs[rd] = Regs[ra] << (immidiate & 31);
+            Regs[rd] = Regs[ra] << helpers::getBits(immidiate, 4, 0);
             break;
-          case 0x4000:
-            Regs[rd] = Regs[ra] >> (immidiate & 31);
+          case 1:
+            Regs[rd] = Regs[ra] >> helpers::getBits(immidiate, 4, 0);
             break;
-          case 0x8000:
-            Regs[rd] = static_cast<int32_t>(Regs[ra]) >> (immidiate & 31);
+          case 2:
+            Regs[rd] = static_cast<int32_t>(Regs[ra]) >>
+                       helpers::getBits(immidiate, 4, 0);
             break;
           default:
             crash(this, "Malformed instruction, malformed shift opcode");
             break;
         }
         break;
-      case 25:
+      case MULI:
         Regs[rd] = Regs[ra] * immidiate;
         break;
-      case 32:
+      case LW:
         Regs[rd] = getWord(Regs[ra] + immidiate);
         break;
-      case 33:
+      case LH:
         Regs[rd] = static_cast<int32_t>(getHalfword(Regs[ra] + immidiate));
         break;
-      case 34:
+      case LB:
         Regs[rd] = static_cast<int32_t>(getByte(Regs[ra] + immidiate));
         break;
-      case 35:
+      case LHU:
         Regs[rd] = getHalfword(Regs[ra] + immidiate);
         break;
-      case 36:
+      case LBU:
         Regs[rd] = getByte(Regs[ra] + immidiate);
         break;
-      case 42:
-        this->immidiate_reg = (instruction & 0xffff);
+      case SETI:
+        this->immidiate_reg = helpers::getBits(instruction, 15, 0);
         this->immidiate_valid = true;
         break;
-      case 43:
-        this->enable_interrupt = (instruction & 1);
+      case EI:
+        this->enable_interrupt = helpers::getBit(instruction, 0);
         break;
-      case 52:
+      case SW:
         address = Regs[ra] + immidiate;
         storeWord(address, Regs[rb]);
         break;
-      case 53:
+      case SH:
         address = Regs[ra] + immidiate;
         storeHalfword(address, Regs[rb]);
         break;
-      case 54:
+      case SB:
         address = Regs[ra] + immidiate;
         storeByte(address, Regs[rb]);
         break;
-      case 56:
-        this->pc = (Regs[ra] == Regs[rb]) ? (static_cast<uint16_t>(immidiate))
+      case BEQ:
+        this->pc = (Regs[ra] == Regs[rb]) ? static_cast<uint16_t>(immidiate)
                                           : this->pc;
         break;
-      case 57:
-        this->pc = (Regs[ra] != Regs[rb]) ? (static_cast<uint16_t>(immidiate))
+      case BNE:
+        this->pc = (Regs[ra] != Regs[rb]) ? static_cast<uint16_t>(immidiate)
                                           : this->pc;
         break;
-      case 58:
+      case BGT:
+        this->pc =
+            (static_cast<int32_t>(Regs[ra]) > static_cast<uint32_t>(Regs[rb]))
+                ? (static_cast<uint16_t>(immidiate))
+                : this->pc;
+        break;
+      case BGE:
+        this->pc =
+            (static_cast<int32_t>(Regs[ra]) >= static_cast<int32_t>(Regs[rb]))
+                ? (static_cast<uint16_t>(immidiate))
+                : this->pc;
+
+        break;
+      case BGU:
         this->pc = (Regs[ra] > Regs[rb]) ? (static_cast<uint16_t>(immidiate))
                                          : this->pc;
         break;
-      case 59:
+      case BGEU:
         this->pc = (Regs[ra] >= Regs[rb]) ? (static_cast<uint16_t>(immidiate))
                                           : this->pc;
+
         break;
-      case 60:
-        this->pc =
-            (static_cast<uint32_t>(Regs[ra]) > static_cast<uint32_t>(Regs[rb]))
-                ? (static_cast<uint16_t>(immidiate))
-                : this->pc;
-        break;
-      case 61:
-        this->pc =
-            (static_cast<uint32_t>(Regs[ra]) >= static_cast<uint32_t>(Regs[rb]))
-                ? (static_cast<uint16_t>(immidiate))
-                : this->pc;
-        break;
-      case 62:
+      case BC:
         this->pc =
             (this->carry) ? (static_cast<uint16_t>(immidiate)) : this->pc;
         break;
-      case 63:
-        Regs[rd] = (immidiate & 1) ? (this->pc) : Regs[rd];
-        this->pc = (immidiate & 2) ? static_cast<uint16_t>(Regs[ra])
-                                   : static_cast<uint16_t>(immidiate &~ 0x3);
-        if (immidiate & 2 && ra == 17) this->enable_interrupt = true;
+      case B:
+        Regs[rd] = helpers::getBit(instruction, 0) ? (this->pc) : Regs[rd];
+        this->pc = helpers::getBit(instruction, 1)
+                       ? static_cast<uint16_t>(Regs[ra])
+                       : static_cast<uint16_t>(immidiate & ~0x3);
+        if (helpers::getBit(instruction, 1) && ra == 17)
+          this->enable_interrupt = true;
         break;
       default:
         crash(this, "Invalid opcode");
@@ -279,31 +275,33 @@ bool Ceespu::load(const char* file_path) {
   return true;
 }
 
-void Ceespu::timer_interrupt() {
+void Ceespu::timerInterrupt() {
   this->interrupt = true;
   this->int_vector = 8;
 }
 
-void Ceespu::recieve_interrupt(char c) {
+void Ceespu::recieveInterrupt(char c) {
   this->interrupt = true;
   this->int_vector = 4;
-  this->storeByte(0xfff4, (uint8_t)c);
+  this->reveiced_char = c;
 }
 
-uint32_t Ceespu::getWord(uint16_t location) {
-  return swap32(this->memory[location >> 2].word);
+uint32_t Ceespu::getWord(uint16_t location) const {
+  return helpers::swap32(this->memory[helpers::getBits(location, 15, 2)].word);
 }
 
-uint16_t Ceespu::getHalfword(uint16_t location) {
-  return swap16(this->memory[location >> 2].hword[location & 2]);
+uint16_t Ceespu::getHalfword(uint16_t location) const {
+  return helpers::swap16(this->memory[helpers::getBits(location, 15, 2)]
+                             .hword[helpers::getBit(location, 1)]);
 }
 
-uint8_t Ceespu::getByte(uint16_t location) {
-  return this->memory[location >> 2].byte[location & 3];
+uint8_t Ceespu::getByte(uint16_t location) const {
+  return this->memory[helpers::getBits(location, 15, 2)]
+      .byte[helpers::getBits(location, 1, 0)];
 }
 
 void Ceespu::storeWord(uint16_t location, uint32_t data) {
-  this->memory[location >> 2].word = swap32(data);
+  this->memory[location >> 2].word = helpers::swap32(data);
   if (location >= CEESPU_COLOUR_MEMORY_OFFSET &&
       location < CEESPU_FONT_MEMORY_OFFSET)
     this->screen->drawChar(*this,
@@ -315,7 +313,7 @@ void Ceespu::storeWord(uint16_t location, uint32_t data) {
 }
 
 void Ceespu::storeHalfword(uint16_t location, uint16_t data) {
-  this->memory[location >> 2].hword[location & 2] = swap16(data);
+  this->memory[location >> 2].hword[location & 2] = helpers::swap16(data);
   if (location >= CEESPU_COLOUR_MEMORY_OFFSET &&
       location < CEESPU_FONT_MEMORY_OFFSET)
     this->screen->drawChar(*this,
@@ -340,11 +338,11 @@ void Ceespu::storeByte(uint16_t location, uint8_t data) {
 }
 
 void crash(Ceespu* cpu, const char* error) {
-  // input_thread.detach();
-  // input_thread.~thread();
+  cpu->running = false;
   std::fprintf(stderr, "Error cpu crashed while executing at PC:%04X\nReason: ",
                cpu->pc);
   std::fprintf(stderr, "%s", error);
+  input_thread.join();
   std::fprintf(stderr,
                "\nDo you want a detailed dump of proccesor info? [Y/n] ");
   int ans = getchar();
@@ -355,7 +353,7 @@ void crash(Ceespu* cpu, const char* error) {
   }
   std::fprintf(stderr, "carryflag : %s\n", cpu->carry ? "on" : "off");
   std::fprintf(stderr, "int_flag : %s\n", cpu->interrupt ? "on" : "off");
-  std::fprintf(stderr, "int_vector : %04X\n", cpu->int_vector);
+  std::fprintf(stderr, "int_vector : %04X\n", unsigned(cpu->int_vector));
   std::fprintf(stderr, "immidiate_flag : %s\n",
                cpu->immidiate_valid ? "on" : "off");
   std::fprintf(stderr, "immidiate : %04X\n", cpu->immidiate_reg);
@@ -374,7 +372,7 @@ void crash(Ceespu* cpu, const char* error) {
 
 int main(int argc, char** argv) {
   if (argc != 2) {
-    std::puts("Usage: ceespu <ROM file>");
+    std::fprintf(stderr, "Usage: ceespu <ROM file>\n");
     return 1;
   }
 #ifdef _WIN32
@@ -389,14 +387,15 @@ int main(int argc, char** argv) {
   fps_time = timer_time;
 #endif
   SDL_Event event;
-  Ceespu cpu = Ceespu();
+  Ceespu cpu;
   Video screen = Video();
   cpu.init(&screen);
   screen.init();
   if (!cpu.load(argv[1])) {
     exit(1);
   }
-  // input_thread = std::thread(receive_input, std::ref(cpu));
+  cpu.running = true;
+  input_thread = std::thread(receive_input, &cpu);
   uint64_t cycles = 0;
   for (;;) {
 #ifdef _WIN32
@@ -405,12 +404,21 @@ int main(int argc, char** argv) {
       QueryUnbiasedInterruptTime(&curtime);
       if ((curtime - timer_time) > 10000) {
         timer_time = curtime;
-        cpu.timer_interrupt();
+        cpu.timerInterrupt();
       }
       if ((curtime - fps_time) > 200000) {
         fps_time = curtime;
         screen.update();
       }
+      if (SDL_PollEvent(&event)) {
+        switch (event.type) {
+          case SDL_QUIT:
+            exit(0);
+          default:
+            break;
+        }
+      }
+      cycles = 0;
     }
 #endif
 #ifdef __linux__
@@ -418,24 +426,24 @@ int main(int argc, char** argv) {
       clock_gettime(CLOCK_REALTIME, &curtime);
       if ((curtime.tv_nsec - timer_time.tv_nsec) > 1 * 1000 * 1000) {
         timer_time = curtime;
-        cpu.timer_interrupt();
+        cpu.timerInterrupt();
       }
       if ((curtime.tv_nsec - fps_time.tv_nsec) > 20 * 1000 * 1000) {
         fps_time = curtime;
         screen.update();
       }
+      if (SDL_PollEvent(&event)) {
+        switch (event.type) {
+          case SDL_QUIT:
+            exit(0);
+          default:
+            break;
+        }
+      }
+      cycles = 0;
     }
 #endif
-    cpu.emulate_cycle();
+    cpu.emulateCycle();
     cycles++;
-    if (SDL_PollEvent(&event)) {
-      switch (event.type) {
-        case SDL_QUIT:
-          exit(0);
-        default:
-          break;
-      }
-    }
   }
-  // input_thread.join();
 }

@@ -30,7 +30,7 @@ module ceespu_pc(
 always @(posedge I_clk) begin
   //$display("branch = %b, at %d address %d", I_branch, $time, I_branchAddress);
   if (I_rst) begin
-    O_PC <= 0;
+    O_PC <= -1;
   end
   else if (I_branch) begin
     $display("branched pc is now %d at %d", I_branchAddress, $time);

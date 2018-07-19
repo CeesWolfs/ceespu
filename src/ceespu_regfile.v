@@ -37,7 +37,6 @@ assign O_dataB = regfile[I_selB];
 
 /* Sequential Logic */
 always @(posedge I_clk) begin
-
   if (I_we) begin
     $display("%d = %d, out is now %d at %d", I_selD, I_dataD, O_dataB, $stime);
     regfile[I_selD] <= I_dataD;
@@ -49,6 +48,7 @@ initial begin
   for (k = 0; k <= 31; k = k + 1) begin
     regfile[k] = 0;
   end
+  regfile[18] = 32'h0000fff0;
 end
 
 endmodule
