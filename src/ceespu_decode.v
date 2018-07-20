@@ -1,7 +1,7 @@
 //==================================================================================================
 //  Filename      : ceespu_decode.v
 //  Created On    : 2018-07-17 17:42:55
-//  Last Modified : 2018-07-18 23:28:18
+//  Last Modified : 2018-07-19 23:21:40
 //  Revision      : 
 //  Author        : Cees Wolfs
 //
@@ -57,29 +57,37 @@ module ceespu_decode(
   reg [3:0] aluop; 
   reg [2:0] branchOp, selMem;
   reg [1:0] selWb, selCin;
-  reg we, isBranch, memE, memWe, set_imm_valid, did_interrupt = 0;
+  reg we, isBranch, memE, memWe, set_imm_valid, did_interrupt, set_interrupts_enabled;
 
 
   assign  O_regA = `rega_sel;
   assign  O_regB = `regb_sel;
 
   always @* begin
-    if (`opcode == `C_BRANCH || `opcode == `STORE) begin
-      immidiate[15:0] = {`regd, I_instruction[10:0]};
-    end else begin
-      immidiate[15:0] = `imm_value;
-      $display("imm_value is %d at %d", immidiate, $time);
-    end
+    casez (`opcode)
+      `STORE,`C_BRANCH : immidiate[15:0] = {`regd, I_instruction[10:0]};
+      default : immidiate[15:0] = `imm_value; 
+    endcase
     immidiate[31:16] = imm_valid ? imm_hi : {16{immidiate[15]}};
+    set_interrupts_enabled = 0; 
+    $display("imm_value is %h at PC:%d from regd:%b", immidiate, I_PC, `regd, $time);
     if (I_int && interrupts_enabled && !I_justBranched) begin
       isBranch = 1;
       branchOp = 3'b111;
-      we = 1'b1;
+      we = 1;
       regD = 17;
-      O_branchAddress = I_int_vector;
+      branchAddress = I_int_vector;
       $display("interrupt 0x%h, called at %d, c17 = %h", O_branchAddress, $time, O_PC);
       selWb = 2'b10;
       did_interrupt = 1;
+      set_imm_valid = 0;
+      dataA = 32'hxxxx;
+      dataB = 32'hxxxx;
+      aluop = 32'hxxxx;
+      selCin = 2'bxx;
+      selMem = 2'bxx;
+      memE = 0;
+      memWe = 1'bx;
     end
     else begin
       dataA = I_regA;
@@ -97,7 +105,7 @@ module ceespu_decode(
       memWe = 1'bx;
       branchOp = `branch_condition;
       selWb = 0;
-      $display("----------------------------------\ndecode instruction: opcode %b",`opcode);
+      //$display("----------------------------------\ndecode instruction: opcode %b",`opcode);
       casez (`opcode)
         `ADD:
           begin
@@ -148,7 +156,7 @@ module ceespu_decode(
         `IMM:
           begin
             we = 0;
-            imm_valid = 1;
+            set_imm_valid = 1;
           end
         `EINT:
           begin
@@ -187,7 +195,7 @@ module ceespu_decode(
               branchAddress = immidiate[15:2];
             end
             if (O_regA == 17) begin
-              interrupts_enabled = 1;
+              set_interrupts_enabled = 1;
             end
           end
         default:
@@ -211,16 +219,15 @@ module ceespu_decode(
     end
     else if (! I_stall ) begin
       if (did_interrupt) begin
-        O_int_ack <= 1'b1;
         interrupts_enabled <= 0;
       end
       else if(`opcode == `EINT) begin
         interrupts_enabled <= I_instruction[0];
         O_int_ack <= 0;
+      end else begin 
+        interrupts_enabled <= set_interrupts_enabled;
       end
-      else begin 
-        O_int_ack <= 0;
-      end
+      O_int_ack <= did_interrupt;
       O_storeData <= I_regB;
       O_PC <= I_PC;
       O_dataA <= dataA;
