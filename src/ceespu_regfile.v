@@ -1,23 +1,15 @@
+//==================================================================================================
+//  Filename      : ceespu_regfile.v
+//  Created On    : 2018-07-21 21:13:53
+//  Last Modified : 2018-07-21 21:14:14
+//  Revision      : 
+//  Author        : Cees Wolfs
+//
+//  Description   : The register file for the ceespu
+//
+//
+//==================================================================================================
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company:
-// Engineer:
-//
-// Create Date:    16:41:29 11/10/2016
-// Design Name:
-// Module Name:    ceespu_regfile
-// Project Name:
-// Target Devices:
-// Tool versions:
-// Description:
-//
-// Dependencies:
-//
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-//
-//////////////////////////////////////////////////////////////////////////////////
 module ceespu_regfile(
          input I_clk,  // clock
          input I_rst,  // reset
@@ -44,10 +36,12 @@ always @(posedge I_clk) begin
 end
 
 reg [5:0] k;
+
 initial begin
   for (k = 0; k <= 31; k = k + 1) begin
     regfile[k] = 0;
   end
+  // initialize stack pointer
   regfile[18] = 32'h0000fff0;
 end
 

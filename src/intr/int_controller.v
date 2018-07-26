@@ -17,8 +17,7 @@ module intr_controller(
 reg wait_state = 0;
 reg [2:0] intr_rq = 0;
 
-always @(posedge I_clk)
-begin
+always @(posedge I_clk) begin
   if (I_intr_rq[1]) begin
     intr_rq[1] <= 1;
   end
@@ -31,7 +30,8 @@ begin
       intr_rq[O_intr_vector] <= 0;
       O_intr <= 0;
     end
-  end else begin
+  end
+  else begin
     if(intr_rq[1]) begin
       O_intr <= 1;
       O_intr_vector <= 1;
