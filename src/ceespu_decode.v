@@ -1,7 +1,7 @@
 //==================================================================================================
 //  Filename      : ceespu_decode.v
 //  Created On    : 2018-07-17 17:42:55
-//  Last Modified : 2018-07-25 22:09:57
+//  Last Modified : 2018-07-29 15:37:11
 //  Revision      :
 //  Author        : Cees Wolfs
 //
@@ -41,11 +41,11 @@ module ceespu_decode(
          output reg O_int_ack,
          output reg O_memE = 0,
          output reg O_memWe = 0,
+         output reg interrupts_enabled = 1,
          output reg [24:0] O_PC = 0,
          output reg [24:0] O_branchTarget = 0
        );
 
-reg interrupts_enabled = 1;
 reg [15:0] imm_hi = 0;  // contains the immidiate from seti instruction
 reg imm_valid = 0;  // indicates wether the immidiate is valid
 
@@ -72,7 +72,7 @@ always @* begin
   immidiate[31:16] = imm_valid ? imm_hi : {16{immidiate[15]}};
   set_interrupts_enabled = 0;
   $display("imm_value is %h at PC:%d from regd:%b", immidiate, I_PC, `regd, $time);
-  if (I_int && interrupts_enabled && !I_justBranched) begin
+/*  if (I_int && interrupts_enabled && !I_justBranched) begin
     isBranch = 1;
     branchOp = 3'b111;
     we = 1;
@@ -90,7 +90,7 @@ always @* begin
     memE = 0;
     memWe = 1'bx;
   end
-  else begin
+*/
     dataA = I_regA;
     dataB = I_regB;
     aluop = `ALU_ADD;
@@ -177,6 +177,7 @@ always @* begin
         we = `LINK_bit ? 1'b1 : 1'b0;
         if (`LINK_bit) begin
           selWb = 2;
+          O_regD = I_instruction[25] ? 17 : 19; // interrupt or normal call?
         end
         if (I_instruction[1]) begin
           branchAddress = I_regA[26:2];
@@ -184,9 +185,7 @@ always @* begin
         else begin
           branchAddress = immidiate[26:2];
         end
-        if (O_regA == 17) begin
-          set_interrupts_enabled = 1;
-        end
+        set_interrupts_enabled = I_instruction[25] && `LINK_bit;
       end
       default: begin
         $display("Error invalid opcode at PC:%h", O_PC);

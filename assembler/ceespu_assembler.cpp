@@ -141,6 +141,9 @@ uint8_t getRegister(const char* reg, uint8_t size) {
   if (reg[1] == 'l' && reg[2] == 'r') {
     return 19;  // Ceespu link register
   }
+  if (reg[1] == 'i' && reg[2] == 'r') {
+    return 17;  // Ceespu link register
+  }
   return -1;  // invalid register
 }
 
@@ -261,13 +264,12 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
       if (immidiate == invalid_immidiate) {
         // Not an immidiate push relocation
         Relocation reloc = {std::string(line, curtoken, token_len), offset,
-                            REL_LO16};
+                            REL_LO22};
         relocations.push_back(reloc);
         immidiate = 0;
       } else {
-        imm = immidiate;
+        instr |= immidiate & 0x1fffffc;  // set bits 24-2 with the branchtarget
       }
-      rd = 19;  // fix later !!
       break;
     }
     case B3: {
@@ -321,7 +323,9 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
     case B5: {
       uint64_t immidiate = getImmidiate(&line[curtoken], token_len);
       if (immidiate == invalid_immidiate) {
-        return -1;
+        Relocation reloc = {std::string(line, curtoken, token_len), offset,
+                            REL_HI16};
+        relocations.push_back(reloc);
       }
       imm = immidiate;
       immset = true;
@@ -386,7 +390,7 @@ int main(int argc, char* argv[]) {
   std::unordered_map<std::string, Label> symbol_table;
   Label* function_label = nullptr;
   std::vector<Relocation> relocation_table;
-  uint16_t offset = 0;
+  uint32_t offset = 0;
   int line_num = 0;
   bool immset = false;
   input_file.open(argv[1]);
@@ -547,17 +551,34 @@ int main(int argc, char* argv[]) {
       fprintf(stderr, "Error label %s was never resolved\n", it->label.c_str());
       exit(1);
     }
-    // printf("replace %s at offset %d with value %d\n", it->label.c_str(),
-    //       it->offset, symbol_table[it->label].offset);
-    if (it->type == REL_LO12) {
-      data[it->offset + 1] |= symbol_table[it->label].offset >> 14;
-      data[it->offset + 2] |= ((symbol_table[it->label].offset >> 11) & 0xE0);
-      data[it->offset + 2] |= ((symbol_table[it->label].offset >> 8) & 0x5);
-      data[it->offset + 3] = symbol_table[it->label].offset & 0xff;
+    // relative jump
+    if (it->type == REL_RJMP) {
+      int jumpval = label->second.offset - it->offset;
+      if (!is16bit(jumpval)) {
+        fprintf(stderr, "Error relative jump to target %s is too far\n",
+                label->first.c_str());
+        exit(1);
+      }
+      data[it->offset + 1] |= ((jumpval >> 11) & 0xE0);
+      data[it->offset + 2] |= ((jumpval >> 8) & 0x5);
+      data[it->offset + 3] = jumpval & 0xff;
+    } else if (it->type == REL_LO12) {
+      data[it->offset + 1] |= ((label->second.offset >> 11) & 0xE0);
+      data[it->offset + 2] |= ((label->second.offset >> 8) & 0x5);
+      data[it->offset + 3] = label->second.offset & 0xff;
     } else if (it->type == REL_LO16) {
       /* code */
-      data[it->offset + 2] |= symbol_table[it->label].offset >> 8;
-      data[it->offset + 3] |= symbol_table[it->label].offset & 0xff;
+      data[it->offset + 2] = label->second.offset >> 8;
+      data[it->offset + 3] = label->second.offset & 0xff;
+    } else if (it->type == REL_LO22) {
+      data[it->offset] |= (label->second.offset >> 24) & 0x1;
+      data[it->offset + 1] = label->second.offset >> 16;
+      data[it->offset + 2] = label->second.offset >> 8;
+      data[it->offset + 3] |= label->second.offset & 0x3C;
+    } else if (it->type == REL_HI16) {
+      /* code */
+      data[it->offset + 2] = label->second.offset >> 16;
+      data[it->offset + 3] = label->second.offset >> 24;
     }
   }
   for (auto i = data.begin(); i != data.end(); ++i) {

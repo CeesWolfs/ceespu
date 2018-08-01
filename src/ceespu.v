@@ -1,7 +1,7 @@
 //==================================================================================================
 //  Filename      : ceespu.v
 //  Created On    : 2018-07-17 17:43:39
-//  Last Modified : 2018-07-23 16:41:38
+//  Last Modified : 2018-07-29 16:49:53
 //  Revision      :
 //  Author        : Cees Wolfs
 //
@@ -17,18 +17,19 @@ module ceespu(
          input I_int,
          input [2:0] I_int_vector,
          input [31:0] I_imemData,
-         output reg [15:0] O_imemAddress,
+         input I_imemvalid,
+         output reg [24:0] O_imemAddress,
          output O_imemEnable,
          input [31:0] I_dmemData,
-         input I_dmemBusy,
+         input I_stall,
          output O_int_ack,
-         output [15:0] O_dmemAddress,
+         output [24:0] O_dmemAddress,
          output [31:0] O_dmemWData,
          output O_dmemE,
          output [3:0]  O_dmemWe
        );
 
-wire [13:0] fetch_PC, dec_PC, dec_branchTarget, ex_PC;
+wire [24:0] fetch_PC, dec_PC, dec_branchTarget, ex_PC, predictedBranchTarget;
 wire branch, dec_stall, ex_stall, ex_busy, prediction;
 wire [31:0] regA, regB, dec_dataA, dec_dataB, dec_storeData, wb_dataD, ex_aluResult;
 reg  [31:0] aluA, aluB, storeData;
@@ -64,6 +65,7 @@ ceespu_pc pc (
 ceespu_branch_predictor branch_predictor(
                           .prediction_state(prediction_state),
                           .prediction(prediction),
+                          .O_predictedBranchTarget(predictedBranchTarget),
                           .clk(I_clk),
                           .rst(I_rst),
                           .I_instruction(I_imemData),
@@ -167,7 +169,7 @@ always @(*) begin
     bubble = 1; // insert nop instruction to stall
   end
   else begin
-    stall = (ex_busy | I_dmemBusy);
+    stall = (ex_busy | I_stall);
   end
   case (forwardA)
     0: aluA = dec_dataA;
@@ -193,8 +195,8 @@ always @(*) begin
   if(branch_mispredict) begin
     O_imemAddress = {ex_branchTarget, 2'b00};
   end
-  if(prediction) begin
-    O_imemAddress = {I_imemData[15:2], 2'b00};
+  else if(prediction) begin
+    O_imemAddress = {predictedBranchTarget[24:2], 2'b00};
   end
   else begin 
     O_imemAddress = {fetch_PC, 2'b00};
@@ -243,6 +245,9 @@ always @(posedge I_clk) begin
     else begin
       forwardB <= 0;
     end
+  end
+  else if(I_imemvalid) begin
+    instruction_memory <= I_imemData;
   end
 end
 

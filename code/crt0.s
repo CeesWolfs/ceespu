@@ -5,7 +5,7 @@ intie_vector:
 	b uart_rx_irq
 	b timer_irq
 
-	.globl	uart_rx_irq
+	.globl timer_rx_irq
 	.align	4
 timer_irq:                                ; @timer_irq
 	sw c1, -4(csp)                        ; %entry

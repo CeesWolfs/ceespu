@@ -36,7 +36,7 @@ enum {
 char directives[11][8] = {"align", "ascii", "byte",  "comm", "data", "extern",
                           "globl", "hword", "space", "text", "word"};
 typedef struct Label {
-  uint16_t offset;
+  uint32_t offset;
   uint8_t type;
   Label* base_label;
 } Label;
@@ -50,11 +50,11 @@ enum {
 
 typedef struct Relocation {
   std::string label;
-  uint16_t offset;
+  uint32_t offset;
   uint8_t type;
 } Relocation;
 
-enum { REL_LO16 = 1, REL_LO12 = 2 };
+enum { REL_LO22 = 0, REL_LO16 = 1, REL_HI16 = 2, REL_LO12 = 3, REL_RJMP = 4 };
 
 struct InstructionInfo {
   char Mnemonic[5];
