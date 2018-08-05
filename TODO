@@ -1,0 +1,4 @@
+1. Urgent: Fix text mode hdmi output
+2. Update llvm-port
+3. Test new branch predictor
+4. Fix cahces etc
