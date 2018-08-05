@@ -1,102 +1,88 @@
 `timescale 1ns / 1ps
 // The main gpu module for the ceespu system on chip, intended to work with hdmi controller
 module ceespu_gpu(
-         input I_clk,
+         input I_pix_clk,
          input I_sys_clk,
-         input I_sys_rst,
          input [3:0]  I_sys_write_enable,
-         input [15:0] I_sys_address,
+         input [24:0] I_sys_address,
          input [31:0] I_sys_data,
-         output [3:0] O_tmds,
-         output [3:0] O_tmdsb
+         input [9:0] x,
+         input [8:0] y,
+         output [7:0] red,
+         output [7:0] green,
+         output [7:0] blue
        );
 
-wire pix_clk;
+wire  [6:0] column;        // 80 columns
+wire  [4:0] row;           // 30 rows
+wire [11:0] text_address;
+wire  [7:0] ascii_code;    // character to display
 
-wire [10:0] x;
-wire [9:0] y;
+reg  [2:0] glyph_x;       // coordinates
+reg  [3:0] glyph_y;       // in the grid of the glyph
+wire [13:0] glyph_address;
 
+wire [7:0] colour_data;
+reg  [7:0] colour_delayed;
+reg  [3:0] colour;
 wire pixel;
 
-wire [7:0] red;
-wire [7:0] green;
-wire [7:0] blue;
+// (column, row) = (x / 8, y / 16)
+assign column = x[9:3];
+assign row = y[8:4];
+assign text_address = column + (row * 80);
 
-wire [7:0] colour;
 
-reg [10:0] tram_address;
-reg tram_enable;
-wire [6:0]  ascii_code;
-wire [15:0] colour_data;
+// here we get the remainder
+// it's delayed of the one clock cycle needed
+// to sync with the value from the text memory
+always @(posedge clk) begin
+  glyph_x <= x[2:0];
+  glyph_y <= y[3:0];
+  colour_delayed  <= colour_data; // todo use output regs of bram
+end
 
-assign colour = pixel ? colour_data[7:0] : colour_data[15:8];
+// text_value * (8*16) + glyph_x + (glyph_y * 8)
+assign glyph_address = (text_value << 7) + glyph_x + (glyph_y << 3);
 
-assign red   = colour[7:5] << 5;
-assign green = colour[4:2] << 5;
-assign blue  = colour[1:0] << 6;
 
-hdmi_encoder hdmi (
-               .clk(I_clk),
-               .rst(I_sys_rst),
-               .pclk(pix_clk),
-               .tmds(O_tmds),
-               .tmdsb(O_tmdsb),
-               .active(),
-               .x(x),
-               .y(y),
-               .red(red),
-               .green(green),
-               .blue(blue)
-             );
 
-ceespu_font_mem font (
+assign colour = pixel ? colour_delayed[3:0] : colour_delayed[7:4];
+
+ceespu_colour_palette colour_pallete(
+                        .I_colour(colour),
+                        .red     (red),
+                        .green   (green),
+                        .blue    (blue)
+                      );
+
+ceespu_font_mem font_rom (
                   .clk(pix_clk),
                   .ascii_code(ascii_code),
-                  .row(y[3:0]),
-                  .col(x[2:0]+1),
+                  .row(glyph_x),
+                  .col(glyph_y),
                   .pixel(pixel)
                 );
 
 text_ram text (
            .clka(I_sys_clk), // input clka
-           .ena(I_sys_address[15:11] == 5'b11111), // input ena
+           .ena(I_sys_address[15:11] == 5'b1_1111), // input ena
            .wea(I_sys_write_enable), // input [3 : 0] wea
            .addra(I_sys_address[10:2]), // input [8 : 0] addra
            .dina(I_sys_data), // input [31 : 0] dina
            .clkb(pix_clk), // input clkb
-           .enb(tram_enable), // input enb
-           .addrb(tram_address), // input [10 : 0] addrb
+           .enb(1'b1), // input enb
+           .addrb(text_address), // input [10 : 0] addrb
            .doutb(ascii_code) // output [7 : 0] doutb
          );
 colour_ram colours (
              .clka(I_sys_clk), // input clka
-             .ena(I_sys_address[15:12] == 4'b1110), // input ena
+             .ena(I_sys_address[15:11] == 5'b1_1110), // input ena
              .wea(I_sys_write_enable), // input [3 : 0] wea
-             .addra(I_sys_address[11:2]), // input [8 : 0] addra
+             .addra(I_sys_address[10:2]), // input [8 : 0] addra
              .dina(I_sys_data), // input [31 : 0] dina
              .clkb(pix_clk), // input clkb
-             .enb(tram_enable), // input enb
-             .addrb(tram_address), // input [10 : 0] addrb
+             .enb(1'b1), // input enb
+             .addrb(text_address), // input [10 : 0] addrb
              .doutb(colour_data) // output [7 : 0] doutb
            );
-
-always @ (posedge pix_clk) begin
-  if (I_sys_rst) begin
-    tram_address <= 0;
-    tram_enable <= 0;
-  end else begin
-    if (y[3:0] == 4'b1111) begin
-      tram_address <= (((y[9:4] + 1) & 4'hF) << 4) + (((y[8:4] + 1 ) & 4'hF) << 6) + ((x[10:3] + 1) & 4'hF);
-    end
-    else begin
-      tram_address <= (y[9:4] << 4) + (y[9:4] << 6) + ((x[10:3] + 1) & 4'hF);
-    end
-    // The sequence of getting a pixel to display is clocked by pix_x[2:0]
-    // Font is 8x16 pixels, that is two 8-bit words for each line
-    case (x[2:0])
-      3'b110: tram_enable  <= 1'b1;
-      default: tram_enable <= 1'b0;
-    endcase
-  end
-end
-endmodule

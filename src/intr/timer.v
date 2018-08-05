@@ -7,11 +7,11 @@
 
 #include "../ceespu_constants.vh"
 
-module timer(
-         input I_clk,
-         input I_rst,
-         output reg O_pulse = 0
-       );
+ module timer(
+   input I_clk,
+   input I_rst,
+   output reg O_pulse = 0
+ );
 
 reg [$clog2(CLOCK_SPEED):0] timer = 0;
 

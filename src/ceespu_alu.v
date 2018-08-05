@@ -1,8 +1,8 @@
 //==================================================================================================
 //  Filename      : ceespu_alu.v
 //  Created On    : 2018-07-17 17:47:58
-//  Last Modified : 2018-07-18 23:18:23
-//  Revision      : 
+//  Last Modified : 2018-07-21 20:57:40
+//  Revision      :
 //  Author        : Cees Wolfs
 //
 //  Description   : The alu for the ceespu
@@ -26,7 +26,7 @@ module ceespu_alu(
        );
 
 always @* begin
-  O_multiCycle 	= 0;
+  O_multiCycle  = 0;
   O_adderResult = I_dataA + I_dataB + I_Cin;
   case(I_aluop)
     default: // add
@@ -82,35 +82,32 @@ always @* begin
   endcase
 end
 
-reg [1:0]   mul_counter = 0;
-reg [31:0]	mul_result;
-reg [31:0]	mul_tmp1;
-reg [31:0]	a_in;
-reg [31:0]	b_in;
+reg [1:0]  mul_counter = 0;
+reg [31:0] mul_result;
+reg [31:0] mul_tmp1;
+reg [31:0] a_in;
+reg [31:0] b_in;
 
 assign O_dataReady = O_multiCycle && (mul_counter == 3);
 /* Synchronous logic */
 always @(posedge I_clk) begin
-  if(I_rst)
-  begin
-    a_in		<= 0;
-    b_in		<= 0;
-    mul_tmp1	<= 0;
+  if(I_rst) begin
+    a_in  <= 0;
+    b_in  <= 0;
+    mul_tmp1 <= 0;
     mul_result  <= 0;
     mul_counter <= 0;
   end
-  else
-  begin	// infer pipelined multiplier
-    a_in		<= I_dataA;
-    b_in		<= I_dataB;
-    mul_tmp1	<= a_in * b_in;
-    mul_result	<= mul_tmp1;
+  else begin // infer pipelined multiplier
+    a_in  <= I_dataA;
+    b_in  <= I_dataB;
+    mul_tmp1 <= a_in * b_in;
+    mul_result <= mul_tmp1;
     if (mul_counter == 3 || O_dataReady)
-      mul_counter 	<= 0;
+      mul_counter  <= 0;
     else if (O_multiCycle)
-      mul_counter 	<= mul_counter + 1;
+      mul_counter  <= mul_counter + 1;
   end
 end
-
 
 endmodule

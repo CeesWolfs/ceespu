@@ -1,24 +1,16 @@
+//==================================================================================================
+//  Filename      : ceespu_writeback.v
+//  Created On    : 2018-07-21 21:14:45
+//  Last Modified : 2018-07-21 21:15:23
+//  Revision      : 
+//  Author        : Cees Wolfs
+//
+//  Description   : The writeback selector, selects which value is written back to the register file
+//
+//
+//==================================================================================================
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company:
-// Engineer:
-//
-// Create Date:    16:41:29 11/10/2016
-// Design Name:
-// Module Name:    ceespu_writeback
-// Project Name:
-// Target Devices:
-// Tool versions:
-// Description:
-//
-// Dependencies:
-//
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-//
-//////////////////////////////////////////////////////////////////////////////////
-module ceespu_writeback(
+module ceespu_writeback (
          input I_clk,
          input I_rst,
          input [1:0] I_selWb,
@@ -73,5 +65,4 @@ always @(*) begin
     $display("call c19 = %d", I_PC);
   end
 end
-
 endmodule // ceespu_writeback
