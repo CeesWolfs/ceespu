@@ -19,22 +19,28 @@ const uint64_t invalid_immidiate = 0xC0C0C0C0C0C0C0C0;
 enum { A0, A1, A2, A3, B0, B1, B2, B3, B4, B5 };
 
 enum {
-  ALIGN = 0,
-  ASCII = 1,
-  BYTE = 2,
-  COMM = 3,
-  DATA = 4,
-  EXTERN = 5,
+  ASCII = 0,
+  BYTE = 1,
+  COMM = 2,
+  DATA = 3,
+  EXTERN = 4,
+  FILE_D = 5,
   GLOBL = 6,
+  IDENT = 8,
   HWORD = 7,
-  SPACE = 8,
-  TEXT = 9,
-  WORD = 10,
+  ALIGN = 9,
+  SECTION = 10,
+  SIZE = 11,
+  SPACE = 12,
+  TEXT = 13,
+  TYPE = 14,
+  WORD = 15,
   INVALID = 0xff
 };
 
-char directives[11][8] = {"align", "ascii", "byte",  "comm", "data", "extern",
-                          "globl", "hword", "space", "text", "word"};
+char directives[][8] = {"ascii", "byte",  "comm",  "data",    "extern",  "file",
+                        "globl", "hword", "ident", "p2align", "section", "size",
+                        "space", "text",  "type",  "word"};
 typedef struct Label {
   uint16_t offset;
   uint8_t type;

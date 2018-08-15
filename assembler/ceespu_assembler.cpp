@@ -74,8 +74,8 @@ uint8_t getDirective(char* directive, uint8_t size) {
   // skip the '.' character
   directive++;
   // perform binary search for directive in table
-  uint8_t left = 0;
-  uint8_t right = nDirect - 1;
+  int left = 0;
+  int right = nDirect - 1;
   while (left <= right) {
     uint8_t middle = (left + right) / 2;
     if (strncmp(directive, directives[middle], size - 1) == 0) {
@@ -99,8 +99,8 @@ InstructionInfo getInstruction(char* mnemonic, uint8_t size) {
     return invalid_instruction;
   }
   // perform binary search on instruction table
-  uint8_t left = 0;
-  uint8_t right = nInstrs - 1;
+  int left = 0;
+  int right = nInstrs - 1;
   while (left <= right) {
     uint8_t middle = (left + right) / 2;
     if (strcmp(mnemonic, instr[middle].Mnemonic) == 0) {
@@ -418,19 +418,19 @@ int main(int argc, char* argv[]) {
     if (directive != INVALID) {
       // printf("line %d : directive %d found\n", line_num, directive);
       token_len = Tokenize(line, curtoken, curtoken + token_len);
-      if (token_len == 0) {
-        fprintf(stderr, "Error expected token after directive .%s\n",
-                directives[directive]);
-        exit(1);
-      }
+      // if (token_len == 0) {
+      //  fprintf(stderr, "Error expected token after directive .%s\n",
+      //          directives[directive]);
+      //  exit(1);
+      //}
       switch (directive) {
         case ALIGN: {
           uint64_t align = getImmidiate(&line[curtoken], token_len);
-          if (!ispowerof2(align)) {
+          if (align < 1 || align > 8) {
             fprintf(stderr, "Error invalid alignement requested at line%d\n",
                     line_num);
           }
-          offset = roundUp(offset, align);
+          offset = roundUp(offset, 1 << align);
           break;
         }
         case DATA: {
@@ -440,6 +440,7 @@ int main(int argc, char* argv[]) {
           data_sec->set_flags(SHF_ALLOC | SHF_WRITE);
           data_sec->set_addr_align(0x4);
            */
+          continue;
         }
         case TEXT: {
           // Create code section
@@ -447,7 +448,7 @@ int main(int argc, char* argv[]) {
           // text_sec->set_type(SHT_PROGBITS);
           // text_sec->set_flags(SHF_ALLOC | SHF_EXECINSTR);
           // text_sec->set_addr_align(0x4);
-          break;
+          continue;
         }
         case GLOBL: {
           // symbol_writer.add_symbol(str_writer, &line[curtoken], offset, 0,
@@ -509,6 +510,8 @@ int main(int argc, char* argv[]) {
           offset++;
           break;
         }
+        default:
+          continue;  // skip direcitves that are uniplemented
       }
       token_len = Tokenize(line, curtoken, curtoken + token_len);
       if (token_len == 0) {
