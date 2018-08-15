@@ -1,7 +1,7 @@
 // Copyright 2018 <Cees Wolfs>
 #include "ceespu_assembler.h"
 
-bool inline is16bit(int x) { return ((int16_t)x == x); }
+bool inline is16bit(int x) { return (x < 65536) && !(x < -65536); }
 
 bool ispowerof2(unsigned int x) { return x && !(x & (x - 1)); }
 
@@ -74,8 +74,8 @@ uint8_t getDirective(char* directive, uint8_t size) {
   // skip the '.' character
   directive++;
   // perform binary search for directive in table
-  uint8_t left = 0;
-  uint8_t right = nDirect - 1;
+  int left = 0;
+  int right = nDirect - 1;
   while (left <= right) {
     uint8_t middle = (left + right) / 2;
     if (strncmp(directive, directives[middle], size - 1) == 0) {
@@ -99,8 +99,8 @@ InstructionInfo getInstruction(char* mnemonic, uint8_t size) {
     return invalid_instruction;
   }
   // perform binary search on instruction table
-  uint8_t left = 0;
-  uint8_t right = nInstrs - 1;
+  int left = 0;
+  int right = nInstrs - 1;
   while (left <= right) {
     uint8_t middle = (left + right) / 2;
     if (strcmp(mnemonic, instr[middle].Mnemonic) == 0) {
@@ -134,6 +134,12 @@ uint8_t getRegister(const char* reg, uint8_t size) {
   int regnum = ((reg[1] - '0') * 10 + (reg[2] - '0'));
   if ((regnum < 32) && (regnum >= 0)) {
     return regnum;
+  }
+  if (reg[1] == 'f' && reg[2] == 'p') {
+    return 16;  // Ceespu stack pointer
+  }
+  if (reg[1] == 'i' && reg[2] == 'r') {
+    return 17;  // Ceespu stack pointer
   }
   if (reg[1] == 's' && reg[2] == 'p') {
     return 18;  // Ceespu stack pointer
@@ -267,7 +273,9 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
       } else {
         imm = immidiate;
       }
-      rd = 19;  // fix later !!
+      if (instruction.FuncCode & 0x1) {
+        rd = 19;
+      }
       break;
     }
     case B3: {
@@ -418,19 +426,51 @@ int main(int argc, char* argv[]) {
     if (directive != INVALID) {
       // printf("line %d : directive %d found\n", line_num, directive);
       token_len = Tokenize(line, curtoken, curtoken + token_len);
-      if (token_len == 0) {
-        fprintf(stderr, "Error expected token after directive .%s\n",
-                directives[directive]);
-        exit(1);
-      }
+      // if (token_len == 0) {
+      //  fprintf(stderr, "Error expected token after directive .%s\n",
+      //          directives[directive]);
+      //  exit(1);
+      //}
       switch (directive) {
+        case ASCII: {
+          size_t start = line.find_first_of("\"", curtoken);
+          if (start == std::string::npos) {
+            fprintf(stderr, "invalid ascii string on line %d\n", line_num);
+            exit(1);
+          }
+          if (line.back() != '\"') {
+            fprintf(stderr, "invalid string directive on line%d\n", line_num);
+            exit(1);
+          }
+          for (int i = start; i < line.length(); ++i) {
+            if (line[i] == '\\') {
+              switch (line[++i]) {
+                case 'n': {
+                  data.push_back('\n');
+                  break;
+                }
+                case 'r': {
+                  data.push_back('\r');
+                  break;
+                }
+                case '\"': {
+                  data.push_back('\"');
+                  break;
+                }
+              }
+            }
+            data.push_back(line[i]);
+          }
+          data.push_back(0);
+          continue;
+        }
         case ALIGN: {
           uint64_t align = getImmidiate(&line[curtoken], token_len);
-          if (!ispowerof2(align)) {
+          if (align < 1 || align > 8) {
             fprintf(stderr, "Error invalid alignement requested at line%d\n",
                     line_num);
           }
-          offset = roundUp(offset, align);
+          offset = roundUp(offset, 1 << align);
           break;
         }
         case DATA: {
@@ -440,6 +480,7 @@ int main(int argc, char* argv[]) {
           data_sec->set_flags(SHF_ALLOC | SHF_WRITE);
           data_sec->set_addr_align(0x4);
            */
+          continue;
         }
         case TEXT: {
           // Create code section
@@ -447,11 +488,11 @@ int main(int argc, char* argv[]) {
           // text_sec->set_type(SHT_PROGBITS);
           // text_sec->set_flags(SHF_ALLOC | SHF_EXECINSTR);
           // text_sec->set_addr_align(0x4);
-          break;
+          continue;
         }
         case GLOBL: {
-          // symbol_writer.add_symbol(str_writer, &line[curtoken], offset, 0,
-          // STB_GLOBAL, STT_FUNC, 0,
+          // symbol_writer.add_symbol(str_writer, &line[curtoken],
+          // offset, 0, STB_GLOBAL, STT_FUNC, 0,
           //                         text_sec->get_index());
           // function_labels.clear();
           Label labelValue = {offset, LABEL_GLOBL | LABEL_UNDEFINED, nullptr};
@@ -509,6 +550,8 @@ int main(int argc, char* argv[]) {
           offset++;
           break;
         }
+        default:
+          continue;  // skip direcitves that are uniplemented
       }
       token_len = Tokenize(line, curtoken, curtoken + token_len);
       if (token_len == 0) {
@@ -517,8 +560,8 @@ int main(int argc, char* argv[]) {
     }
     InstructionInfo instruction = getInstruction(&line[curtoken], token_len);
     if (instruction.Type != invalid_instruction.Type) {
-      // printf("line %d : instruction %s found of type : %d\n", line_num,
-      // instruction.Mnemonic, instruction.Type);
+      // printf("line %d : instruction %s found of type : %d\n",
+      // line_num, instruction.Mnemonic, instruction.Type);
       curtoken += token_len + 1;
       uint32_t instr = parseInstruction(line, curtoken, immset, offset,
                                         instruction, relocation_table);
@@ -539,15 +582,16 @@ int main(int argc, char* argv[]) {
     fprintf(stderr, "Error invalid token on line %d\n", line_num);
     exit(1);
   }
-  // here comes the linking portion, replace all label relocations with their
-  // value. if the value is not found an error is returned
+  // here comes the linking portion, replace all label relocations with
+  // their value. if the value is not found an error is returned
   for (auto it = relocation_table.begin(); it != relocation_table.end(); ++it) {
     auto label = symbol_table.find(it->label);
     if (label == symbol_table.end()) {
       fprintf(stderr, "Error label %s was never resolved\n", it->label.c_str());
       exit(1);
     }
-    // printf("replace %s at offset %d with value %d\n", it->label.c_str(),
+    // printf("replace %s at offset %d with value %d\n",
+    // it->label.c_str(),
     //       it->offset, symbol_table[it->label].offset);
     if (it->type == REL_LO12) {
       data[it->offset + 1] |= symbol_table[it->label].offset >> 14;

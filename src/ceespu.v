@@ -1,7 +1,7 @@
 //==================================================================================================
 //  Filename      : ceespu.v
 //  Created On    : 2018-07-17 17:43:39
-//  Last Modified : 2018-07-23 16:41:38
+//  Last Modified : 2018-08-15 10:45:42
 //  Revision      :
 //  Author        : Cees Wolfs
 //
@@ -57,8 +57,13 @@ ceespu_pc pc (
             .I_clk(I_clk),
             .I_rst(I_rst),
             .I_stall(stall),
+<<<<<<< HEAD
             .I_branch(branch_mispredict || prediction),
             .I_branchAddress(O_imemAddress[15:2]),
+=======
+            .I_branch(branch_misprediction || prediction),
+            .I_branchAddress(branch_misprediction ? ex_branchTarget : O_imemAddress[15:2]),
+>>>>>>> origin/master
             .O_PC(fetch_PC)
           );
 ceespu_branch_predictor branch_predictor(
@@ -220,6 +225,7 @@ always @(posedge I_clk) begin
     $display("fetching addr:%d =  %h at %d", O_imemAddress, I_imemData, $time);
     if ( O_int_ack ) begin
       $display("decode: inserting INTERRUPT at pc_decode=0x%x, pc_exe=0x%x", dec_PC, ex_PC);
+      instruction_memory <= {28'h0xFE00_000, I_int_vector[2:0]};
     end
     if (dec_we && (dec_regA == dec_regD)) begin
       forwardA <= 1; //forward execute stage
