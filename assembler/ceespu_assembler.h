@@ -38,7 +38,7 @@ enum {
   INVALID = 0xff
 };
 
-char directives[][8] = {"ascii", "byte",  "comm",  "data",    "extern",  "file",
+char directives[][8] = {"asciz", "byte",  "comm",  "data",    "extern",  "file",
                         "globl", "hword", "ident", "p2align", "section", "size",
                         "space", "text",  "type",  "word"};
 typedef struct Label {
@@ -77,7 +77,7 @@ InstructionInfo instr[] = {{{'a', 'd', 'c', 0, 0}, A0, (0x01), 0},
                            {{'a', 'd', 'c', 'i', 0}, B0, (0x11), 0},
                            {{'a', 'd', 'd', 'i', 0}, B0, (0x10), 0},
                            {{'a', 'n', 'd', 0, 0}, A0, (0x05), 0},
-                           {{'a', 'n', 'd', 'i', 0}, A0, (0x15), 0},
+                           {{'a', 'n', 'd', 'i', 0}, B0, (0x15), 0},
                            {{'b', 0, 0, 0, 0}, B2, (0x3F), 0},
                            {{'b', 'c', 0, 0, 0}, B2, (0x3E), 0},
                            {{'b', 'e', 'q', 0, 0}, B1, (0x38), 0},
@@ -104,7 +104,7 @@ InstructionInfo instr[] = {{{'a', 'd', 'c', 0, 0}, A0, (0x01), 0},
                            {{'s', 'b', 'b', 'i', 0}, B0, (0x13), 0},
                            {{'s', 'e', 'b', 0, 0}, A2, (0x07), 0},
                            {{'s', 'e', 'h', 0, 0}, A2, (0x07), 0x01},
-                           {{'s', 'e', 't', 'i', 0}, B5, (0x2A), 0},
+                           {{'s', 'e', 't', 'i', 0}, B2, (0x2A), 0},
                            {{'s', 'h', 0, 0, 0}, B4, (0x35), 0},
                            {{'s', 'h', 'l', 0, 0}, A0, (0x08), 0},
                            {{'s', 'h', 'l', 'i', 0}, B0, (0x18), 0},
