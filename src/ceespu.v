@@ -28,7 +28,7 @@ module ceespu(
          output [3:0]  O_dmemWe
        );
 
-wire [13:0] fetch_PC, dec_PC, dec_branchTarget, ex_PC;
+wire [13:0] fetch_PC, dec_PC, dec_branchTarget, ex_branchTarget ,ex_PC;
 wire branch, dec_stall, ex_stall, ex_busy, prediction;
 wire [31:0] regA, regB, dec_dataA, dec_dataB, dec_storeData, wb_dataD, ex_aluResult;
 reg  [31:0] aluA, aluB, storeData;
@@ -57,18 +57,18 @@ ceespu_pc pc (
             .I_clk(I_clk),
             .I_rst(I_rst),
             .I_stall(stall),
-            .I_branch(branch_misprediction || prediction),
+            .I_branch(branch_mispredict || prediction),
             .I_branchAddress(O_imemAddress[15:2]),
             .O_PC(fetch_PC)
           );
 ceespu_branch_predictor branch_predictor(
                           .prediction_state(prediction_state),
                           .prediction(prediction),
+								  .I_PC(fetch_PC),
                           .clk(I_clk),
                           .rst(I_rst),
                           .I_instruction(I_imemData),
-                          .I_address(fetch_PC), //FIXME not actual address
-                          .branch_address({dec_PC, 2'b00}),
+                          .branch_address(dec_PC),
                           .branch_prediction_state(prediction_state_2),
                           .branch_taken(branch_taken),
                           .update_table(dec_isBranch));
@@ -120,6 +120,7 @@ ceespu_execute execute (
                  .I_memWe(dec_memWe),
                  .I_selMem(dec_selMem),
                  .I_PC(dec_PC),
+					  .I_prediction(prediction_2),
                  .I_branchTarget(dec_branchTarget),
                  .O_branchTarget(ex_branchTarget),
                  .O_memAddress(O_dmemAddress),

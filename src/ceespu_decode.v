@@ -84,7 +84,7 @@ always @* begin
     set_imm_valid = 0;
     dataA = 32'hxxxx;
     dataB = 32'hxxxx;
-    aluop = 32'hxxxx;
+    aluop = 4'bxxxx;
     selCin = 2'bxx;
     selMem = 2'bxx;
     memE = 0;

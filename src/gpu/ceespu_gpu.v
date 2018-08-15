@@ -25,7 +25,7 @@ wire [13:0] glyph_address;
 wire [7:0] colour_data;
 reg  [7:0] colour_delayed;
 reg  [3:0] colour;
-wire pixel;
+wire [7:0] pixel;
 
 // (column, row) = (x / 8, y / 16)
 assign column = x[9:3];
@@ -43,11 +43,11 @@ always @(posedge clk) begin
 end
 
 // text_value * (8*16) + glyph_x + (glyph_y * 8)
-assign glyph_address = (text_value << 7) + glyph_x + (glyph_y << 3);
+assign glyph_address = (text_value << 7) + (glyph_y << 3);
 
 
 
-assign colour = pixel ? colour_delayed[3:0] : colour_delayed[7:4];
+assign colour = pixel[glyph_x] ? colour_delayed[3:0] : colour_delayed[7:4];
 
 ceespu_colour_palette colour_pallete(
                         .I_colour(colour),
@@ -56,13 +56,16 @@ ceespu_colour_palette colour_pallete(
                         .blue    (blue)
                       );
 
-ceespu_font_mem font_rom (
-                  .clk(pix_clk),
-                  .ascii_code(ascii_code),
-                  .row(glyph_x),
-                  .col(glyph_y),
-                  .pixel(pixel)
-                );
+font_ram font (
+  .clka(I_sysclk), // input clka
+  .ena(I_sys_address[15:11] == 5'b1_1101), // input ena
+  .wea(I_sys_write_enable), // input [3 : 0] wea
+  .addra(I_sys_address[10:2]), // input [8 : 0] addra
+  .dina(I_sys_data[31:0]), // input [31 : 0] dina
+  .clkb(I_pix_clk), // input clkb
+  .addrb(glyph_address), // input [10 : 0] addrb
+  .doutb(pixel) // output [7 : 0] doutb
+);
 
 text_ram text (
            .clka(I_sys_clk), // input clka
@@ -71,7 +74,6 @@ text_ram text (
            .addra(I_sys_address[10:2]), // input [8 : 0] addra
            .dina(I_sys_data), // input [31 : 0] dina
            .clkb(pix_clk), // input clkb
-           .enb(1'b1), // input enb
            .addrb(text_address), // input [10 : 0] addrb
            .doutb(ascii_code) // output [7 : 0] doutb
          );
@@ -82,7 +84,6 @@ colour_ram colours (
              .addra(I_sys_address[10:2]), // input [8 : 0] addra
              .dina(I_sys_data), // input [31 : 0] dina
              .clkb(pix_clk), // input clkb
-             .enb(1'b1), // input enb
              .addrb(text_address), // input [10 : 0] addrb
              .doutb(colour_data) // output [7 : 0] doutb
            );

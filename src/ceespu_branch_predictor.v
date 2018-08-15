@@ -15,7 +15,8 @@ module ceespu_branch_predictor (
          input clk,
          input rst,
          input [31:0] I_instruction,
-         input [15:0] branch_address,
+			input [13:0] I_PC, 
+         input [13:0] branch_address,
          input [1:0]  branch_prediction_state,
          input branch_taken,
          input update_table,
@@ -27,7 +28,6 @@ localparam weakly_nontacken = 0, strongly_nontacken = 1, weakly_tacken = 2, stro
 
 reg [1:0] prediction_table [(2 ** PREDICTION_TABLE_SIZE) - 1:0];
 reg [PREDICTION_TABLE_SIZE-1:0] branch_history = 0;
-wire [1:0] prediction_state;
 reg  [1:0] new_state;
 
 reg [PREDICTION_TABLE_SIZE:0] k;
@@ -37,7 +37,7 @@ initial begin
   end
 end
 
-assign prediction_state = prediction_table[branch_address[PREDICTION_TABLE_SIZE+2:2] ^ branch_history];
+assign prediction_state = prediction_table[I_PC[PREDICTION_TABLE_SIZE:0] ^ branch_history];
 
 always @(*) begin
   if(`opcode == `BRANCH) begin
@@ -92,8 +92,8 @@ always @(posedge clk) begin
   end
   else begin
     if(update_table) begin
-      prediction_table[branch_address[PREDICTION_TABLE_SIZE+2:2] ^ branch_history] <= new_state;
-      branch_history <= {branch_taken, branch_history[PREDICTION_TABLE_SIZE-2:0]};
+      prediction_table[branch_address[PREDICTION_TABLE_SIZE:0] ^ branch_history] <= new_state;
+      branch_history <= {branch_history[PREDICTION_TABLE_SIZE-2:0], branch_taken};
     end
   end
 end

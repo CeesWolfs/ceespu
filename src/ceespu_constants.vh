@@ -1,4 +1,4 @@
-`define CLOCK_SPEED = 104999;
+`define CLOCK_SPEED = 99999;
 `define opcode	   I_instruction[31:26]
 `define regd 	   I_instruction[25:21]
 `define rega_sel   I_instruction[20:16]

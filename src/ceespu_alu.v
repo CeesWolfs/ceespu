@@ -88,7 +88,7 @@ reg [31:0] mul_tmp1;
 reg [31:0] a_in;
 reg [31:0] b_in;
 
-assign O_dataReady = O_multiCycle && (mul_counter == 3);
+assign O_dataReady = O_multiCycle && (mul_counter == 2);
 /* Synchronous logic */
 always @(posedge I_clk) begin
   if(I_rst) begin
