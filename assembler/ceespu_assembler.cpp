@@ -8,7 +8,7 @@ bool ispowerof2(unsigned int x) { return x && !(x & (x - 1)); }
 inline int roundUp(int n, int a) {
   // align value n to alignment a, works only for powers of 2
   // fails miserably otherwise
-  return ((n & (a - 1)) == 0) ? n : n + a & ~(a - 1);
+  return ((n & (a - 1)) == 0) ? n : (n + a) & ~(a - 1);
 }
 
 uint8_t Tokenize(const std::string& str, uint8_t& curtoken, uint8_t start) {
@@ -363,33 +363,6 @@ int main(int argc, char* argv[]) {
   }
   std::ifstream input_file;
   std::string line;
-
-  /*    elfio elffile;
-      elffile.create(ELFCLASS32, ELFDATA2MSB);
-
-      section* str_sec = elffile.sections.add(".strtab");
-      str_sec->set_type(SHT_STRTAB);
-      str_sec->set_addr_align(0x1);
-      string_section_accessor str_writer(str_sec);
-
-      section* sym_sec = elffile.sections.add(".symtab");
-      sym_sec->set_type(SHT_SYMTAB);
-      sym_sec->set_info(2);
-      sym_sec->set_link(str_sec->get_index());
-      sym_sec->set_addr_align(2);
-      sym_sec->set_entry_size(2);
-
-      std::vector<Label> function_labels;
-
-      section* text_sec = nullptr;
-      section* data_sec = nullptr;
-
-      symbol_section_accessor symbol_writer(elffile, sym_sec);
-
-      // Another way to add symbol
-      // symbol_writer.add_symbol(str_writer, "_start", 0x00000000, 0, STB_WEAK,
-      // STT_FUNC, 0, text_sec->get_index());
-  */
   std::vector<uint8_t> data;
   std::unordered_map<std::string, Label> symbol_table;
   Label* function_label = nullptr;
@@ -409,7 +382,7 @@ int main(int argc, char* argv[]) {
       fprintf(stderr, "Error max line length execeeded at line %d\n", line_num);
       return 1;
     }
-    int token_len = Tokenize(line, curtoken, 0);
+    uint8_t token_len = Tokenize(line, curtoken, 0);
     if (token_len == 0) {
       continue;
     }
@@ -604,6 +577,7 @@ int main(int argc, char* argv[]) {
       data[it->offset + 3] |= symbol_table[it->label].offset & 0xff;
     }
   }
+  printf("@0000 ");
   for (auto i = data.begin(); i != data.end(); ++i) {
     printf("%02X", *i);
   }

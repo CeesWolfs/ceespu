@@ -6,8 +6,10 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <elfio/elfio.hpp>
+#include <cstring>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -15,7 +17,7 @@
 #define MAX_LINE_LENGTH 120
 
 const uint64_t invalid_directive = 0xC0C0C0C0C0C0C0C0;
-const uint64_t invalid_immidiate = 0xC0C0C0C0C0C0C0C0;
+const int64_t invalid_immidiate = 0xC0C0C0C0C0C0C0C0;
 enum { A0, A1, A2, A3, B0, B1, B2, B3, B4, B5 };
 
 enum {
