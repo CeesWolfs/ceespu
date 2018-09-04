@@ -16,24 +16,20 @@ module ceespu_pc(
          input I_stall,
          input I_branch,
          input [13:0] I_branchAddress,
-         output [13:0] O_PC
+         output reg [13:0] O_PC
        );
-
-reg [13:0] PC;
-
-assign O_PC = PC + 1;
 
 always @(posedge I_clk) begin
   //$display("branch = %b, at %d address %d", I_branch, $time, I_branchAddress);
   if (I_rst) begin
-    PC <= -1;
+    O_PC <= 0;
   end
   else if (I_branch) begin
     $display("branched pc is now %d at %d", I_branchAddress, $time);
-    PC <= I_branchAddress;
+    O_PC <= I_branchAddress;
   end
   else if (! I_stall) begin
-    PC <= PC + 1;
+    O_PC <= O_PC + 1;
   end
 end
 

@@ -99,6 +99,9 @@ always @* begin
       O_memWe = 4'b1111;
     end
   end
+  else if(I_memE) begin
+    O_memWe = 4'b0000;
+  end
   case (I_selCin)
     2'd0: Cin = 0;
     2'd1: Cin = Carry;

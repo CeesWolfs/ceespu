@@ -18,13 +18,11 @@ module ceespu_decode(
          input I_rst,
          input I_flush,
          input I_stall,
-         input I_justBranched,
-         input I_int,
-         input [1:0] I_int_vector,
          input [31:0] I_regA,
          input [31:0] I_regB,
          input [31:0] I_instruction,
          input [13:0] I_PC,
+			input did_interrupt,
          output reg [31:0] O_dataA = 0,
          output reg [31:0] O_dataB = 0,
          output reg [31:0] O_storeData  = 0,
@@ -38,14 +36,13 @@ module ceespu_decode(
          output reg [2:0] O_selMem = 0,
          output reg [2:0] O_branchOp = 0,
          output reg [1:0] O_selWb = 0,
-         output reg O_int_ack,
+			output reg useRegB = 0,
          output reg O_memE = 0,
          output reg O_memWe = 0,
+			output reg interrupts_enabled = 1,
          output reg [13:0] O_PC = 0,
          output reg [13:0] O_branchTarget = 0
        );
-
-reg interrupts_enabled = 1;
 reg [15:0] imm_hi = 0;  // contains the immidiate from seti instruction
 reg imm_valid = 0;  // indicates wether the immidiate is valid
 
@@ -57,14 +54,14 @@ reg [4:0] regD;
 reg [3:0] aluop;
 reg [2:0] branchOp, selMem;
 reg [1:0] selWb, selCin;
-reg we, isBranch, memE, memWe, set_imm_valid, did_interrupt, set_interrupts_enabled;
+reg we, isBranch, memE, memWe, set_imm_valid,  set_interrupts_enabled;
 
 assign  O_regA = `rega_sel;
 assign  O_regB = `regb_sel;
 
 always @* begin
   casez (`opcode)
-    `STORE,`C_BRANCH :
+    `STORE,`BRANCH :
       immidiate[15:0] = {`regd, I_instruction[10:0]};
     default :
       immidiate[15:0] = `imm_value;
@@ -72,32 +69,13 @@ always @* begin
   immidiate[31:16] = imm_valid ? imm_hi : {16{immidiate[15]}};
   set_interrupts_enabled = 0;
   $display("imm_value is %h at PC:%d from regd:%b", immidiate, I_PC, `regd, $time);
-  if (I_int && interrupts_enabled && !I_justBranched) begin
-    isBranch = 1;
-    branchOp = 3'b111;
-    we = 1;
-    regD = 17;
-    branchAddress = I_int_vector;
-    $display("interrupt 0x%h, called at %d, c17 = %h", O_branchTarget, $time, O_PC);
-    selWb = 2'b10;
-    did_interrupt = 1;
-    set_imm_valid = 0;
-    dataA = 32'hxxxx;
-    dataB = 32'hxxxx;
-    aluop = 4'bxxxx;
-    selCin = 2'bxx;
-    selMem = 2'bxx;
-    memE = 0;
-    memWe = 1'bx;
-  end
-  else begin
     dataA = I_regA;
     dataB = I_regB;
     aluop = `ALU_ADD;
+	 useRegB = !`IMM_bit;
     regD = `regd;
     we = 1 && (`regd != 5'h0);
     set_imm_valid = 0;
-    did_interrupt = 0;
     isBranch = 0;
     branchAddress = 13'dx;
     selCin = 2'bxx;
@@ -147,13 +125,16 @@ always @* begin
         $display("mul c%d = %d * %d, rega %d, regb %d", `regd, O_dataA, O_dataB, `rega_sel, `regb_sel);
       end
       `IMM: begin
+		  useRegB = 0; 
         we = 0;
         set_imm_valid = 1;
       end
       `EINT: begin
         we = 0;
+		  useRegB = 0; 
       end
       `LOAD: begin
+		  useRegB = 0; 
         selWb = 1;
         memE =  1;
         memWe = 0;
@@ -161,15 +142,12 @@ always @* begin
         dataB = immidiate;
       end
       `STORE: begin
+		  useRegB = 0; 
         memE = 1;
         memWe = 1;
         selMem = I_instruction[27:26];
         we = 0;
         dataB = immidiate;
-      end
-      `C_BRANCH: begin
-        isBranch = 1;
-        branchAddress = immidiate[15:2];
       end
       `BRANCH: begin
         isBranch = 1;
@@ -177,13 +155,13 @@ always @* begin
         if (`LINK_bit) begin
           selWb = 2;
         end
-        if (I_instruction[1]) begin
+        if (I_instruction[1] && (I_instruction[28:26] == 3'b111)) begin
           branchAddress = I_regA[15:2];
         end
         else begin
           branchAddress = immidiate[15:2];
         end
-        if (O_regA == 17) begin
+        if (I_instruction[1] && (O_regA == 17)) begin
           set_interrupts_enabled = 1;
         end
       end
@@ -193,7 +171,6 @@ always @* begin
       end
     endcase
   end
-end
 
 always @(posedge I_clk) begin
   imm_hi <= `imm_value;
@@ -202,7 +179,6 @@ always @(posedge I_clk) begin
     O_we <= 0;
     O_memE <= 0;
     O_isBranch <= 0;
-    O_int_ack <= 1'b0;
     $display("bubble or branch O_PC = %h", O_PC);
   end
   else if (! I_stall ) begin
@@ -211,12 +187,10 @@ always @(posedge I_clk) begin
     end
     else if(`opcode == `EINT) begin
       interrupts_enabled <= I_instruction[0];
-      O_int_ack <= 0;
     end
     else begin
       interrupts_enabled <= set_interrupts_enabled;
     end
-    O_int_ack <= did_interrupt;
     O_storeData <= I_regB;
     O_PC <= I_PC;
     O_dataA <= dataA;

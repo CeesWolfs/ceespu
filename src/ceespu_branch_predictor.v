@@ -40,7 +40,7 @@ end
 assign prediction_state = prediction_table[I_PC[PREDICTION_TABLE_SIZE:0] ^ branch_history];
 
 always @(*) begin
-  if(`opcode == `BRANCH) begin
+  if(`opcode == 6'b111111) begin
     // non conditional branch, always taken, except if the branch target is in a register
     prediction = ~ I_instruction[1];
   end
@@ -92,7 +92,7 @@ always @(posedge clk) begin
   end
   else begin
     if(update_table) begin
-      prediction_table[branch_address[PREDICTION_TABLE_SIZE:0] ^ branch_history] <= new_state;
+      prediction_table[branch_address[PREDICTION_TABLE_SIZE-1:0] ^ branch_history] <= new_state;
       branch_history <= {branch_history[PREDICTION_TABLE_SIZE-2:0], branch_taken};
     end
   end

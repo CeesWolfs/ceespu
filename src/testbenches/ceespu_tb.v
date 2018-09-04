@@ -10,10 +10,11 @@ wire [15:0]O_imemAddress;
 wire I_int;
 wire [2:0]I_int_vector;
 reg clk, rst;
-wire O_dmemE;
+wire O_dmemE, imemReset, imemEnable;
 wire [31:0]O_dmemWData;
 wire I_dmemBusy;
 reg [31:0]I_imemData;
+
 
 reg [31:0] Icache [0:16383];
 
@@ -33,6 +34,8 @@ assign I_dmemBusy = 0;
 
 ceespu ceespu_test(
 			.O_imemAddress(O_imemAddress[15:0]),
+			.O_imemEnable(imemEnable),
+			.O_imemReset(imemReset),
 			.O_int_ack(O_int_ack),
 			.O_dmemAddress(O_dmemAddress[15:0]),
 			.O_dmemWData(O_dmemWData[31:0]),
@@ -40,7 +43,7 @@ ceespu ceespu_test(
 			.O_dmemWe(O_dmemWe[3:0]),
 			.I_clk(clk),
 			.I_rst(rst),
-			.I_int(I_int),
+			.I_int_req(I_int),
 			.I_int_vector(I_int_vector[2:0]),
 			.I_imemData(I_imemData[31:0]),
 			.I_dmemData(I_dmemData[31:0]),
@@ -59,15 +62,16 @@ end
 
 initial
  begin
-    $dumpfile("test.lxt");
-    $dumpvars(0,ceespu_test);
+    //$dumpfile("test.lxt");
+    //$dumpvars(0,ceespu_test);
  end
 
-always @(negedge clk) begin
-	if (rst) begin
+always @(posedge clk) begin
+#2;
+	if (rst || imemReset) begin
 	   I_imemData = 0;
 	end
-	else begin
+	else if (imemEnable) begin
 	    // $display("---------------------------");
 	    // $display("reading addr %h", O_imemAddress);
 		I_imemData = Icache[O_imemAddress / 4];
@@ -77,18 +81,18 @@ always @(negedge clk) begin
 end
 
 initial begin
-	#150
+	#250
     $finish;
 end
-integer file, r;
+integer file, num;
 initial begin
     $display("Loading rom");
-    file = $fopenr("output.bin");
+    file = $fopen("output.bin", "r");
     if (file == 0) begin
       $display("Can't open rom, quiting...");
       $finish;
     end
-	r = $fread(Icache, file);
-	$display("Loaded %0d entries \n", r); 
+	num = $fread(Icache, file);
+	$display("Loaded %0d entries \n", num); 
 end
 endmodule

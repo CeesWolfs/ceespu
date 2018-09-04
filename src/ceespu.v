@@ -14,11 +14,12 @@
 module ceespu(
          input I_clk,
          input I_rst,
-         input I_int,
+         input I_int_req,
          input [2:0] I_int_vector,
          input [31:0] I_imemData,
-         output reg [15:0] O_imemAddress,
+         output [15:0] O_imemAddress,
          output O_imemEnable,
+			output O_imemReset, 
          input [31:0] I_dmemData,
          input I_dmemBusy,
          output O_int_ack,
@@ -36,7 +37,7 @@ reg  [31:0] writeback_result;
 reg  [31:0] instruction_memory = 0;
 reg justBranched = 0;
 wire [3:0] dec_aluop;
-wire dec_we, dec_memE, dec_memWe, dec_isBranch, ex_we;
+wire dec_we, dec_memE, dec_memWe, dec_isBranch, ex_we, interrupts_enabled, useRegB;
 wire [4:0] dec_regD, ex_regD, dec_regA, dec_regB;
 wire [1:0] dec_selCin, dec_selWb, ex_selWb;
 wire [2:0] dec_selMem, ex_selMem;
@@ -50,20 +51,20 @@ reg stall = 0;
 reg bubble = 0;
 reg [1:0] forwardA = 0;
 reg [1:0] forwardB = 0;
+reg [1:0] forwardStore = 0;
 
+assign O_imemAddress = {fetch_PC, 2'b00};
+assign O_imemReset = branch_mispredict || prediction;
 assign O_imemEnable = ! stall;
+
+assign O_int_ack = I_int_req && interrupts_enabled;
 
 ceespu_pc pc (
             .I_clk(I_clk),
             .I_rst(I_rst),
             .I_stall(stall),
-<<<<<<< HEAD
             .I_branch(branch_mispredict || prediction),
-            .I_branchAddress(O_imemAddress[15:2]),
-=======
-            .I_branch(branch_misprediction || prediction),
-            .I_branchAddress(branch_misprediction ? ex_branchTarget : O_imemAddress[15:2]),
->>>>>>> origin/master
+            .I_branchAddress(branch_mispredict ? ex_branchTarget : I_imemData[10:2]), //FIXME conditional branches have other encoding types
             .O_PC(fetch_PC)
           );
 ceespu_branch_predictor branch_predictor(
@@ -73,18 +74,15 @@ ceespu_branch_predictor branch_predictor(
                           .clk(I_clk),
                           .rst(I_rst),
                           .I_instruction(I_imemData),
-                          .branch_address(dec_PC),
+                          .branch_address(ex_PC),
                           .branch_prediction_state(prediction_state_2),
                           .branch_taken(branch_taken),
-                          .update_table(dec_isBranch));
+                          .update_table(dec_isBranch && (dec_branchOp != 3'b111)));
 ceespu_decode decode (
                 .I_clk(I_clk),
                 .I_rst(I_rst),
                 .I_flush(bubble || branch_mispredict),
                 .I_stall(ex_busy),
-                .I_int(I_int),
-                .I_justBranched(justBranched),
-                .I_int_vector(I_int_vector),
                 .I_regA(regA),
                 .I_regB(regB),
                 .I_instruction(instruction_memory),
@@ -102,9 +100,11 @@ ceespu_decode decode (
                 .O_selMem(dec_selMem),
                 .O_branchOp(dec_branchOp),
                 .O_selWb(dec_selWb),
-                .O_int_ack(O_int_ack),
                 .O_memE(dec_memE),
                 .O_memWe(dec_memWe),
+					 .useRegB(useRegB),
+					 .did_interrupt(O_int_ack),
+					 .interrupts_enabled(interrupts_enabled),
                 .O_PC(dec_PC),
                 .O_branchTarget(dec_branchTarget)
               );
@@ -182,7 +182,7 @@ always @(*) begin
     3: aluA = 32'hx;
   endcase
   //if (dec_memE && dec_memWe) begin
-  case (forwardB)
+  case (forwardStore)
     0: storeData = dec_storeData;
     1: storeData = ex_aluResult;
     2: storeData = writeback_result;
@@ -196,15 +196,6 @@ always @(*) begin
     2: aluB = writeback_result;
     3: aluB = 32'hx;
   endcase
-  if(branch_mispredict) begin
-    O_imemAddress = {ex_branchTarget, 2'b00};
-  end
-  if(prediction) begin
-    O_imemAddress = {I_imemData[15:2], 2'b00};
-  end
-  else begin 
-    O_imemAddress = {fetch_PC, 2'b00};
-  end
 end
 
 always @(posedge I_clk) begin
@@ -214,19 +205,25 @@ always @(posedge I_clk) begin
     forwardA <= 0;
     forwardB <= 0;
     writeback_result <= 0;
+	 prediction_1 <= 0;
+	 prediction_2 <= 0;
   end
   else if ( !stall ) begin
     writeback_result <= wb_dataD;
     instruction_memory <= I_imemData;
     prediction_state_1 <= prediction_state;
     prediction_state_2 <= prediction_state_1;
-    prediction_1 <= prediction;
     prediction_2 <= prediction_1;
     $display("fetching addr:%d =  %h at %d", O_imemAddress, I_imemData, $time);
     if ( O_int_ack ) begin
       $display("decode: inserting INTERRUPT at pc_decode=0x%x, pc_exe=0x%x", dec_PC, ex_PC);
-      instruction_memory <= {28'h0xFE00_000, I_int_vector[2:0]};
+      instruction_memory <= {28'h0xFE00_000, {I_int_vector[2:0], 2'b00}};
+		prediction_1 <= 0;
     end
+	 else begin
+	   prediction_1 <= prediction;
+		instruction_memory <= I_imemData;
+	 end
     if (dec_we && (dec_regA == dec_regD)) begin
       forwardA <= 1; //forward execute stage
     end
@@ -239,16 +236,19 @@ always @(posedge I_clk) begin
       forwardA <= 0;
     end
     if (dec_we & dec_regB == dec_regD) begin
-      forwardB <= 1; //forward execute stage
+      forwardB <= useRegB ? 1 : 0; //forward execute stage
+		forwardStore <= 1;
     end
     else if (ex_we && (dec_regB == ex_regD)) begin
       // Data Hazard in writeback stage forward writeback
       $display( "forwardB writeback at %d", $time);
-      forwardB <= 2;
+      forwardB <= useRegB ? 2 : 0;
+		forwardStore <= 2;
       //$display("forward writeback %d", )
     end
     else begin
       forwardB <= 0;
+		forwardStore <= 0;
     end
   end
 end

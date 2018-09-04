@@ -24,8 +24,8 @@
 `define IMM       6'b101010
 `define EINT      6'b101011
 `define STORE     6'b1101??
-`define C_BRANCH  6'b111??0
-`define BRANCH    6'b111111
+`define BRANCH    6'b111??? // FIXME!!!!!!!!!!!!!!!!!!!! last zero should not be there
+//`define BRANCH    6'b111111
 
 `define ALU_ADD    4'd0
 `define ALU_OR     4'd1
