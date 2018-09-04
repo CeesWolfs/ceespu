@@ -109,7 +109,7 @@ always @* begin
     2'd3: Cin = 1;
   endcase
   if(I_prediction) begin
-    O_branchTarget = I_PC + 1;
+    O_branchTarget = I_PC;
   end
   else begin //FIXME: writeback data hazards are not handled yet for bx instructions
     O_branchTarget = I_branchTarget;

@@ -62,8 +62,8 @@ end
 
 initial
  begin
-    //$dumpfile("test.lxt");
-    //$dumpvars(0,ceespu_test);
+    $dumpfile("test.lxt");
+    $dumpvars(0,ceespu_test);
  end
 
 always @(posedge clk) begin

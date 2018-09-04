@@ -217,7 +217,7 @@ always @(posedge I_clk) begin
     $display("fetching addr:%d =  %h at %d", O_imemAddress, I_imemData, $time);
     if ( O_int_ack ) begin
       $display("decode: inserting INTERRUPT at pc_decode=0x%x, pc_exe=0x%x", dec_PC, ex_PC);
-      instruction_memory <= {28'h0xFE00_000, {I_int_vector[2:0], 2'b00}};
+      instruction_memory <= {28'hFE00_000, {I_int_vector[2:0], 2'b00}};
 		prediction_1 <= 0;
     end
 	 else begin
