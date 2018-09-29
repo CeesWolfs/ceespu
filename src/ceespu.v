@@ -1,7 +1,7 @@
 //==================================================================================================
 //  Filename      : ceespu.v
 //  Created On    : 2018-07-17 17:43:39
-//  Last Modified : 2018-08-15 10:45:42
+//  Last Modified : 2018-09-29 08:28:49
 //  Revision      :
 //  Author        : Cees Wolfs
 //
@@ -70,7 +70,7 @@ ceespu_pc pc (
 ceespu_branch_predictor branch_predictor(
                           .prediction_state(prediction_state),
                           .prediction(prediction),
-								  .I_PC(fetch_PC),
+								          .I_PC(fetch_PC),
                           .clk(I_clk),
                           .rst(I_rst),
                           .I_instruction(I_imemData),
@@ -102,9 +102,9 @@ ceespu_decode decode (
                 .O_selWb(dec_selWb),
                 .O_memE(dec_memE),
                 .O_memWe(dec_memWe),
-					 .useRegB(useRegB),
-					 .did_interrupt(O_int_ack),
-					 .interrupts_enabled(interrupts_enabled),
+					      .useRegB(useRegB),
+					      .did_interrupt(O_int_ack),
+					      .interrupts_enabled(interrupts_enabled),
                 .O_PC(dec_PC),
                 .O_branchTarget(dec_branchTarget)
               );
@@ -125,7 +125,7 @@ ceespu_execute execute (
                  .I_memWe(dec_memWe),
                  .I_selMem(dec_selMem),
                  .I_PC(dec_PC),
-					  .I_prediction(prediction_2),
+					       .I_prediction(prediction_2),
                  .I_branchTarget(dec_branchTarget),
                  .O_branchTarget(ex_branchTarget),
                  .O_memAddress(O_dmemAddress),

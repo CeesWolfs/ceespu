@@ -67,21 +67,20 @@ initial
  end
 
 always @(posedge clk) begin
-#2;
 	if (rst || imemReset) begin
 	   I_imemData = 0;
 	end
 	else if (imemEnable) begin
 	    // $display("---------------------------");
 	    // $display("reading addr %h", O_imemAddress);
-		I_imemData = Icache[O_imemAddress / 4];
+		I_imemData = Icache[(O_imemAddress / 4)];
 		// $display("yielded %h", I_imemData);
 		// $display("---------------------------");
 	end
 end
 
 initial begin
-	#250
+	#1250
     $finish;
 end
 integer file, num;
