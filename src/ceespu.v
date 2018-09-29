@@ -30,6 +30,7 @@ module ceespu(
        );
 
 wire [13:0] fetch_PC, dec_PC, dec_branchTarget, ex_branchTarget ,ex_PC;
+reg [13:0] ins_PC;
 wire branch, dec_stall, ex_stall, ex_busy, prediction;
 wire [31:0] regA, regB, dec_dataA, dec_dataB, dec_storeData, wb_dataD, ex_aluResult;
 reg  [31:0] aluA, aluB, storeData;
@@ -70,7 +71,7 @@ ceespu_pc pc (
 ceespu_branch_predictor branch_predictor(
                           .prediction_state(prediction_state),
                           .prediction(prediction),
-								  .I_PC(fetch_PC),
+								  .I_PC(ins_PC),
                           .clk(I_clk),
                           .rst(I_rst),
                           .I_instruction(I_imemData),
@@ -86,7 +87,7 @@ ceespu_decode decode (
                 .I_regA(regA),
                 .I_regB(regB),
                 .I_instruction(instruction_memory),
-                .I_PC(fetch_PC),
+                .I_PC(ins_PC),
                 .O_dataA(dec_dataA),
                 .O_dataB(dec_dataB),
                 .O_storeData(dec_storeData),
@@ -209,6 +210,7 @@ always @(posedge I_clk) begin
 	 prediction_2 <= 0;
   end
   else if ( !stall ) begin
+    ins_PC <= fetch_PC;
     writeback_result <= wb_dataD;
     instruction_memory <= I_imemData;
     prediction_state_1 <= prediction_state;
@@ -217,7 +219,7 @@ always @(posedge I_clk) begin
     $display("fetching addr:%d =  %h at %d", O_imemAddress, I_imemData, $time);
     if ( O_int_ack ) begin
       $display("decode: inserting INTERRUPT at pc_decode=0x%x, pc_exe=0x%x", dec_PC, ex_PC);
-      instruction_memory <= {28'h0xFE00_000, {I_int_vector[2:0], 2'b00}};
+      instruction_memory <= {28'hFE00_000, {I_int_vector[2:0], 2'b00}};
 		prediction_1 <= 0;
     end
 	 else begin

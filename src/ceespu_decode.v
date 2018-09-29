@@ -160,6 +160,7 @@ always @* begin
         end
         else begin
           branchAddress = immidiate[15:2];
+			 useRegB = 1; 
         end
         if (I_instruction[1] && (O_regA == 17)) begin
           set_interrupts_enabled = 1;

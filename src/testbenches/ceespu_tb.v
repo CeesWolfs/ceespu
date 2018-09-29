@@ -65,16 +65,16 @@ initial
     //$dumpfile("test.lxt");
     //$dumpvars(0,ceespu_test);
  end
-
+reg [31:0] cached_addr;
 always @(posedge clk) begin
-#2;
 	if (rst || imemReset) begin
-	   I_imemData = 0;
+	   #2 I_imemData <= 0;
 	end
 	else if (imemEnable) begin
+	    cached_addr = (O_imemAddress / 4) + 1;
 	    // $display("---------------------------");
 	    // $display("reading addr %h", O_imemAddress);
-		I_imemData = Icache[O_imemAddress / 4];
+		 #2 I_imemData <= Icache[cached_addr];
 		// $display("yielded %h", I_imemData);
 		// $display("---------------------------");
 	end
@@ -87,7 +87,7 @@ end
 integer file, num;
 initial begin
     $display("Loading rom");
-    file = $fopen("output.bin", "r");
+    file = $fopen("output.bin", "rb");
     if (file == 0) begin
       $display("Can't open rom, quiting...");
       $finish;
