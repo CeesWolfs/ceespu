@@ -62,8 +62,8 @@ end
 
 initial
  begin
-    //$dumpfile("test.lxt");
-    //$dumpvars(0,ceespu_test);
+    $dumpfile("test.lxt");
+    $dumpvars(0,ceespu_test);
  end
 reg [31:0] cached_addr;
 always @(posedge clk) begin
@@ -74,14 +74,18 @@ always @(posedge clk) begin
 	    cached_addr = (O_imemAddress / 4) + 1;
 	    // $display("---------------------------");
 	    // $display("reading addr %h", O_imemAddress);
+<<<<<<< HEAD
 		 #2 I_imemData <= Icache[cached_addr];
+=======
+		I_imemData = Icache[(O_imemAddress / 4)];
+>>>>>>> a8906183d7184df160004a6596c5a786d644c203
 		// $display("yielded %h", I_imemData);
 		// $display("---------------------------");
 	end
 end
 
 initial begin
-	#250
+	#1250
     $finish;
 end
 integer file, num;

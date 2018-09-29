@@ -109,7 +109,11 @@ always @* begin
     2'd3: Cin = 1;
   endcase
   if(I_prediction) begin
+<<<<<<< HEAD
     O_branchTarget = I_PC; // PC is already the PC of the next instruction
+=======
+    O_branchTarget = I_PC;
+>>>>>>> a8906183d7184df160004a6596c5a786d644c203
   end
   else begin //FIXME: writeback data hazards are not handled yet for bx instructions
     O_branchTarget = I_branchTarget;

@@ -33,9 +33,8 @@ Ceespu::~Ceespu() {}
 void Ceespu::init(Video* screen) {
   memset(&this->memory[0], 0, 65536);
   memcpy(&this->memory[CEESPU_FONT_MEMORY_OFFSET / 4], font, 2048);
-  for (int i = 0; i < 4096; i += 2) {
-    this->memory[(CEESPU_COLOUR_MEMORY_OFFSET + i) >> 2]
-        .hword[(CEESPU_COLOUR_MEMORY_OFFSET + i) & 2] = 0xff00;
+  for (int i = 0; i < 2048; i += 4) {
+    this->memory[(CEESPU_COLOUR_MEMORY_OFFSET + i) / 4].word = 0x0f0f0f0f;
   }
   this->pc = 0;
   this->carry = false;
