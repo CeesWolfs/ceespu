@@ -273,9 +273,6 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
       } else {
         imm = immidiate;
       }
-      if (instruction.FuncCode & 0x1) {
-        rd = 19;
-      }
       break;
     }
     case B3: {
@@ -327,12 +324,20 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
       break;
     }
     case B5: {
+      token_len = Tokenize(line, curtoken, curtoken + token_len);
       uint64_t immidiate = getImmidiate(&line[curtoken], token_len);
       if (immidiate == invalid_immidiate) {
-        return -1;
+        // Not an immidiate push relocation
+        Relocation reloc = {std::string(line, curtoken, token_len), offset,
+                            REL_LO12};
+        relocations.push_back(reloc);
+      } else {
+        imm = immidiate & 0x7FF;
+        rd = (immidiate >> 11) & 0x1F;
       }
-      imm = immidiate;
-      immset = true;
+      if (instruction.FuncCode & 0x1) {
+        ra = 19; // call
+      }
       break;
     }
   }
@@ -415,7 +420,7 @@ int main(int argc, char* argv[]) {
             fprintf(stderr, "invalid string directive on line%d\n", line_num);
             exit(1);
           }
-          for (int i = start; i < line.length(); ++i) {
+          for (int i = start + 1; i < line.length() - 1; ++i) {
             if (line[i] == '\\') {
               switch (line[++i]) {
                 case 'n': {
@@ -497,7 +502,7 @@ int main(int argc, char* argv[]) {
           if (value == invalid_immidiate) {
             printf("Error invalid immidiate after word directive\n");
           }
-          for (int i = 3; i >= 0; --i) {
+          for (int i = 0; i <= 3; i++) {
             data.push_back((value >> (i * 8)) & 0xff);
           }
           offset += 4;
@@ -508,7 +513,7 @@ int main(int argc, char* argv[]) {
           if (value == invalid_immidiate) {
             printf("Error invalid immidiate after hword directive\n");
           }
-          for (int i = 2; i >= 0; --i) {
+          for (int i = 0; i <= 1; i++) {
             data.push_back((value >> (i * 8)) & 0xff);
           }
           offset += 2;
@@ -547,8 +552,8 @@ int main(int argc, char* argv[]) {
                 instruction.Mnemonic, line_num);
         exit(1);
       }
-      for (int i = 3; i >= 0; --i) {
-        data.push_back((instr >> (i * 8)) & 0xff);
+      for (int i = 0; i <= 3; i++) {
+            data.push_back((instr >> (i * 8)) & 0xff);
       }
       continue;
     }
@@ -567,19 +572,31 @@ int main(int argc, char* argv[]) {
     // it->label.c_str(),
     //       it->offset, symbol_table[it->label].offset);
     if (it->type == REL_LO12) {
-      data[it->offset + 1] |= symbol_table[it->label].offset >> 14;
-      data[it->offset + 2] |= ((symbol_table[it->label].offset >> 11) & 0xE0);
-      data[it->offset + 2] |= ((symbol_table[it->label].offset >> 8) & 0x5);
-      data[it->offset + 3] = symbol_table[it->label].offset & 0xff;
+      data[it->offset + 2] |= symbol_table[it->label].offset >> 14;
+      data[it->offset + 1] |= ((symbol_table[it->label].offset >> 11) & 0xE0);
+      data[it->offset + 1] |= ((symbol_table[it->label].offset >> 8) & 0x5);
+      data[it->offset] = symbol_table[it->label].offset & 0xff;
     } else if (it->type == REL_LO16) {
       /* code */
-      data[it->offset + 2] |= symbol_table[it->label].offset >> 8;
-      data[it->offset + 3] |= symbol_table[it->label].offset & 0xff;
+      data[it->offset + 1] |= symbol_table[it->label].offset >> 8;
+      data[it->offset] |= symbol_table[it->label].offset & 0xff;
     }
   }
   printf("@0000 ");
-  for (auto i = data.begin(); i != data.end(); ++i) {
-    printf("%02X", *i);
+  data.insert(data.end(), roundUp(data.size(), 4) - data.size(), 0);
+  for (auto i = data.begin(); i != data.end(); i+= 4) {
+  	uint32_t val = *(i+3);
+  	val |= *(i+2) << 8;
+  	val |= *(i+1) << 16;
+  	val |= *i << 24;
+  	*i = val;
+  	*(i+1) = val >> 8; 	
+  	*(i+2) = val >> 16;
+   	*(i+3) = val >> 24;
+  }
+  for (auto i = data.begin(); i != data.end(); ++i)
+  {
+  	printf("%02X", *i);
   }
   std::ofstream out(outputfile, std::ios_base::binary);
   out.write(reinterpret_cast<char*>(&data[0]), data.size());

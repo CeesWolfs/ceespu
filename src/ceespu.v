@@ -15,7 +15,7 @@ module ceespu(
          input I_clk,
          input I_rst,
          input I_int_req,
-         input [2:0] I_int_vector,
+         input [1:0] I_int_vector,
          input [31:0] I_imemData,
          output [15:0] O_imemAddress,
          output O_imemEnable,
@@ -65,17 +65,13 @@ ceespu_pc pc (
             .I_rst(I_rst),
             .I_stall(stall),
             .I_branch(branch_mispredict || prediction),
-            .I_branchAddress(branch_mispredict ? ex_branchTarget : I_imemData[10:2]), //FIXME conditional branches have other encoding types
+            .I_branchAddress(branch_mispredict ? ex_branchTarget : {I_imemData[25:21], I_imemData[10:2]}), //FIXME conditional branches have other encoding types
             .O_PC(fetch_PC)
           );
 ceespu_branch_predictor branch_predictor(
                           .prediction_state(prediction_state),
                           .prediction(prediction),
-<<<<<<< HEAD
 								  .I_PC(ins_PC),
-=======
-								          .I_PC(fetch_PC),
->>>>>>> a8906183d7184df160004a6596c5a786d644c203
                           .clk(I_clk),
                           .rst(I_rst),
                           .I_instruction(I_imemData),
@@ -223,7 +219,7 @@ always @(posedge I_clk) begin
     $display("fetching addr:%d =  %h at %d", O_imemAddress, I_imemData, $time);
     if ( O_int_ack ) begin
       $display("decode: inserting INTERRUPT at pc_decode=0x%x, pc_exe=0x%x", dec_PC, ex_PC);
-      instruction_memory <= {28'hFE00_000, {I_int_vector[2:0], 2'b00}};
+      instruction_memory <= {28'hFC11_000, {I_int_vector, 2'b01}};
 		prediction_1 <= 0;
     end
 	 else begin

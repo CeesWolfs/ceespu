@@ -82,7 +82,7 @@ always @* begin
   else begin
     O_StoreData = I_storeData;
   end
-  O_memWe = 4'bxxxx;
+  O_memWe = 4'b0000;
   if (I_memE && I_memWe) begin
     if (I_selMem[1:0] == 2) begin
       case (adderResult[1:0])
@@ -109,11 +109,7 @@ always @* begin
     2'd3: Cin = 1;
   endcase
   if(I_prediction) begin
-<<<<<<< HEAD
     O_branchTarget = I_PC; // PC is already the PC of the next instruction
-=======
-    O_branchTarget = I_PC;
->>>>>>> a8906183d7184df160004a6596c5a786d644c203
   end
   else begin //FIXME: writeback data hazards are not handled yet for bx instructions
     O_branchTarget = I_branchTarget;

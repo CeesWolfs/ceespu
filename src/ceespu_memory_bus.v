@@ -12,23 +12,26 @@
 `include "ceespu_constants.vh"
 
 module ceespu_memory_bus(
-	input [15:0] O_dmemAddress, 
+   input I_clk,
+	input [15:0] I_dmemAddress, 
 	input [31:0] I_gpuData,
-	input [31:0] I_dmemData
+	input [31:0] I_dmemData,
 	input [7:0]  I_uartRxData,
 	output O_gpuMemEnable,
 	output O_dmemEnable,
-	output O_dmemData
+	output reg [31:0] O_dmemData
 	);
 
 reg gpu_mem_enable;
 reg rx_enabled;
 
-always @(posedge clk) begin
-	if (O_dmemAddress == 65528) begin
+assign O_gpuMemEnable = (I_dmemAddress[15:11] == 5'b1111?);
+
+always @(posedge I_clk) begin
+	if (I_dmemAddress == 65528) begin
 		rx_enabled <= 1;
 	end
-	else if (O_dmemAddress[15:11] == 5'b1111?) begin
+	else if (I_dmemAddress[15:11] == 5'b1111?) begin
 		gpu_mem_enable <= 1;
 	end
 	else begin
@@ -36,8 +39,6 @@ always @(posedge clk) begin
 		gpu_mem_enable <= 0;
 	end
 end
-
-assign O_gpuMemEnable = gpu_mem_enable;
 
 always @(*) begin
 	if (rx_enabled) begin
@@ -50,3 +51,5 @@ always @(*) begin
 		O_dmemData = I_dmemData;
 	end
 end
+
+endmodule

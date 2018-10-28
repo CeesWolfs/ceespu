@@ -54,7 +54,7 @@ reg [4:0] regD;
 reg [3:0] aluop;
 reg [2:0] branchOp, selMem;
 reg [1:0] selWb, selCin;
-reg we, isBranch, memE, memWe, set_imm_valid,  set_interrupts_enabled;
+reg we, isBranch, memE, memWe, set_imm_valid,  enable_interrupts;
 
 assign  O_regA = `rega_sel;
 assign  O_regB = `regb_sel;
@@ -67,8 +67,7 @@ always @* begin
       immidiate[15:0] = `imm_value;
   endcase
   immidiate[31:16] = imm_valid ? imm_hi : {16{immidiate[15]}};
-  set_interrupts_enabled = 0;
-  $display("imm_value is %h at PC:%d from regd:%b", immidiate, I_PC, `regd, $time);
+  enable_interrupts = 0;
     dataA = I_regA;
     dataB = I_regB;
     aluop = `ALU_ADD;
@@ -81,10 +80,10 @@ always @* begin
     selCin = 2'bxx;
     selMem = 2'bxx;
     memE = 0;
-    memWe = 1'bx;
+    memWe = 0;
     branchOp = `branch_condition;
     selWb = 0;
-    //$display("----------------------------------\ndecode instruction: opcode %b",`opcode);
+    $display("----------------------------------\ndecode instruction: instruction %h",I_instruction);
     casez (`opcode)
       `ADD: begin
         selCin = `C_bit ? 2'd1 : 2'd0;
@@ -150,6 +149,7 @@ always @* begin
         dataB = immidiate;
       end
       `BRANCH: begin
+		  regD = `rega_sel;
         isBranch = 1;
         we = `LINK_bit ? 1'b1 : 1'b0;
         if (`LINK_bit) begin
@@ -163,8 +163,9 @@ always @* begin
 			 useRegB = 1; 
         end
         if (I_instruction[1] && (O_regA == 17)) begin
-          set_interrupts_enabled = 1;
+          enable_interrupts = 1;
         end
+		  $display("Branch: branch_addr %h, link bit %b", branchAddress, `LINK_bit);
       end
       default: begin
         $display("Error invalid opcode at PC:%h", O_PC);
@@ -190,7 +191,7 @@ always @(posedge I_clk) begin
       interrupts_enabled <= I_instruction[0];
     end
     else begin
-      interrupts_enabled <= set_interrupts_enabled;
+      interrupts_enabled <= enable_interrupts ? 1 : interrupts_enabled;
     end
     O_storeData <= I_regB;
     O_PC <= I_PC;
