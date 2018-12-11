@@ -38,7 +38,7 @@ void Function::applyFixup(ObjectFile& object, uint16_t offset, uint8_t type,
 }
 
 void Function::fixup(ObjectFile& object) {
-  auto previous_top = object.relocation_table.end();
+  int previous_top = object.relocation_table.size();
   // fix all the relocation, add symbol entries to undefined symbols as needed
   for (auto& reloc : local_relocation_table) {
     Relocation relocation = {static_cast<uint8_t>(-1), reloc.rel_offset,
@@ -53,7 +53,7 @@ void Function::fixup(ObjectFile& object) {
       }
     }
     if (local) {
-      object.relocation_table.push_back(relocation);
+		object.relocation_table.push_back(relocation);
     } else {
       // check if already in string_table
       std::size_t index = object.findSymbol(reloc.label);
@@ -62,10 +62,15 @@ void Function::fixup(ObjectFile& object) {
       }
       relocation.symbol_index = index;
       // keep relocations to undefined symbol at the front to ease linker
-      object.relocation_table.insert(previous_top, 1, relocation);
+	  if (object.relocation_table.size() == 0) {
+		  object.relocation_table.push_back(relocation);
+	  }
+	  else {
+		  object.relocation_table.insert(object.relocation_table.begin()+previous_top, 1, relocation);
+	  }
     }
   }
-  symbol_entry.relocation_length = object.relocation_table.end() - previous_top;
+  symbol_entry.relocation_length = local_relocation_table.size();
   symbol_entry.size = object.data.size() - symbol_entry.addr;
 }
 
@@ -79,6 +84,7 @@ void Function::newFunction(Symbol& new_symbol) {
 ObjectFile::ObjectFile() {
   insertSymbol("dummy_sy", 0, 0);
   current_function = new Function(symbol_table[0]);
+  abs_offset = 0;
 }
 
 std::size_t ObjectFile::findSymbol(const std::string& name) {
@@ -104,8 +110,10 @@ std::size_t ObjectFile::insertSymbol(const std::string& name, uint16_t offset,
                   type,
                   offset,
                   0,
+	              static_cast<uint16_t>(relocation_table.size()),
+	              0,
                   static_cast<uint16_t>(string_section.size()),
-                  static_cast<uint8_t>(name.size())};
+                  static_cast<uint8_t>(name.length())};
   std::copy(name.begin(), name.end(), std::back_inserter(string_section));
   std::size_t index = symbol_table.size();
   symbol_table.push_back(label);
@@ -123,14 +131,11 @@ void ObjectFile::save(const std::string& filename) {
   out.write(reinterpret_cast<char*>(&obj_header), sizeof(struct Header));
   out.write(reinterpret_cast<char*>(&symbol_table[0]),
             symbol_table.size() * sizeof(Symbol));
+  if(!relocation_table.empty())
   out.write(reinterpret_cast<char*>(&relocation_table[0]),
             relocation_table.size() * sizeof(Relocation));
   out.write(reinterpret_cast<char*>(&string_section[0]), string_section.size());
   out.write(reinterpret_cast<char*>(&data[0]), data.size());
-  for (auto& i : symbol_table) {
-    printf("Symbol hash=%x type=%x \n addr=%x size=%x\n relocations=%x\n",
-           i.hash, i.type, i.addr, i.size, i.relocation_length);
-  }
   out.close();
 }
 
@@ -608,8 +613,6 @@ int main(int argc, char* argv[]) {
   std::ifstream input_file;
   std::string line;
   ObjectFile object;
-  uint16_t abs_offset = 0;
-  uint16_t rel_offset = 0;
   int line_num = 0;
   bool immset = false;
   input_file.open(argv[1]);
@@ -628,7 +631,6 @@ int main(int argc, char* argv[]) {
     if (token_len == 0) {
       continue;
     }
-    rel_offset = abs_offset - object.current_function->symbol_entry.addr;
     std::string label = getLabel(&line[curtoken], token_len);
     if (!label.empty()) {
       parseLabel(label, line_num, object.current_function);

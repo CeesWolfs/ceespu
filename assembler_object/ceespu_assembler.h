@@ -98,7 +98,7 @@ class ObjectFile;
 
 class Function {
  public:
-  Function(Symbol& symbol_entry) : symbol_entry(symbol_entry){};
+  Function(Symbol& symbol_entry) : symbol_entry(symbol_entry),rel_offset(0) {};
   Symbol& symbol_entry;
   std::vector<Label> local_symbol_table;
   std::vector<LocRelocation> local_relocation_table;
