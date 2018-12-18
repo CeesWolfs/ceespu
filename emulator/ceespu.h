@@ -1,6 +1,6 @@
 #ifndef EMULATOR_CEESPU_H
 #define EMULATOR_CEESPU_H
-
+#pragma once
 #define CeespuMemorySize (1 << 14)
 
 #include <stdint.h>
@@ -8,7 +8,11 @@
 #include <atomic>
 #include <cstdio>
 #include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
 #ifdef _WIN32
+#define NOMINMAX
 #include <Windows.h>
 #endif
 #ifdef __linux__
@@ -33,11 +37,11 @@ class Ceespu {
   bool load(const char *file_path);  // Load application
   void timerInterrupt();             // Do timer interrupt
   void recieveInterrupt(char c);
+  void breakpoint();
   uint32_t getWord(uint16_t location) const;
   uint16_t getHalfword(uint16_t location) const;
   uint8_t getByte(uint16_t location) const;
   friend void crash(Ceespu *cpu, const char *error);
-  std::atomic<bool> running;
 
  private:
   void storeWord(uint16_t location, uint32_t data);
@@ -48,9 +52,9 @@ class Ceespu {
   Memory memory[CeespuMemorySize];
   Video *screen;
   bool carry;
-  std::atomic<bool> interrupt;
-  std::atomic<uint8_t> int_vector;
-  std::atomic<char> reveiced_char;
+  bool interrupt;
+  uint8_t int_vector;
+  char reveiced_char;
   bool enable_interrupt;
   bool immidiate_valid;
   uint16_t immidiate_reg;
@@ -94,6 +98,83 @@ enum {
   BGEU = 61,
   BC = 62,
   B = 63
+};
+
+enum { A0, A1, A2, A3, B0, B1, B2, B3, B4, B5, B6, Br };
+
+enum DebugOption { Next, Disasm, View, Dump, Interrupt, Set};
+
+struct InstructionInfo {
+	char Mnemonic[5];
+	uint8_t Type;
+};
+
+constexpr InstructionInfo invalid = { {'i', 'n', 'v', 'a', 0}, 0xff};
+constexpr InstructionInfo instr[64] = { 
+	{{'a', 'd', 'd', 0, 0}, A0},
+	{{'a', 'd', 'c', 0, 0}, A0},
+	{{'s', 'u', 'b', 0, 0}, A0},
+	{{'s', 'b', 'b', 0, 0}, A0},
+	{{'o', 'r', 0, 0, 0}, A0},
+	{{'a', 'n', 'd', 0, 0}, A0},
+	{{'x', 'o', 'r', 0, 0}, A0},
+	{{'s', 'e', 'b', 0, 0}, A2},
+	{{'s', 'h', 'f', 0, 0}, A3},
+	{{'m', 'u', 'l', 0, 0}, A0},
+	invalid, 
+	invalid,
+	invalid,
+	invalid,
+	invalid,
+	invalid,
+	{{'a', 'd', 'd', 'i', 0}, B0},
+	{{'a', 'd', 'c', 'i', 0}, B0},
+	{{'s', 'u', 'b', 'i', 0}, B0},
+	{{'s', 'b', 'b', 'i', 0}, B0},
+	{{'o', 'r', 'i', 0, 0}, B0},
+	{{'a', 'n', 'd', 'i', 0}, B0},
+	{{'x', 'o', 'r', 'i', 0}, B0},
+	invalid,
+	{{'s', 'h', 'f', 'i', 0}, B6},
+	{{'m', 'u', 'l', 'i', 0}, B0},
+	invalid, 
+	invalid,
+	invalid,
+	invalid,
+	invalid,
+	invalid,
+	{{'l', 'w', 0, 0, 0}, B3},
+	{{'l', 'h', 0, 0, 0}, B3},
+	{{'l', 'b', 0, 0, 0}, B3},
+	{{'l', 'h', 'u', 0, 0}, B3},
+	{{'l', 'b', 'u', 0, 0}, B3},
+	invalid,
+	invalid,
+	invalid,
+	invalid,
+	invalid,
+	invalid,
+	{{'s', 'e', 't', 'i', 0}, B2},
+	invalid,
+	invalid,
+	invalid,
+	invalid,
+	invalid,
+	invalid,
+	invalid,
+	invalid,
+	{{'s', 'w', 0, 0, 0}, B4},
+	{{'s', 'h', 0, 0, 0}, B4},
+	{{'s', 'b', 0, 0, 0}, B4},
+	invalid,
+	{{'b', 'e', 'q', 0, 0}, B1},
+	{{'b', 'n', 'e', 0, 0}, B1},
+	{{'b', 'g', 'u', 0, 0}, B1},
+	{{'b', 'g', 'e', 'u', 0}, B1},
+	{{'b', 'g', 0, 0, 0}, B1},
+	{{'b', 'g', 'e', 0, 0}, B1},
+	{{'b', 'c', 0, 0, 0}, B5},
+	{{'b', 0, 0, 0, 0}, Br}
 };
 
 const unsigned char font[] = {

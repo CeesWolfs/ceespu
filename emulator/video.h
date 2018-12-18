@@ -1,14 +1,13 @@
 #ifndef EMULATOR_VIDEO_H
 #define EMULATOR_VIDEO_H
 
-#include <SDL2/SDL.h>
+#include "include/SDL.h"
 #include "ceespu.h"
 
 #define CEESPU_SCREEN_WIDTH 640
 #define CEESPU_SCREEN_HEIGHT 480
-#define CEESPU_COLOUR_MEMORY_OFFSET 0xf000
+#define CEESPU_VRAM_OFFSET 0xf000
 #define CEESPU_FONT_MEMORY_OFFSET 0xe000
-#define CEESPU_TEXT_MEMORY_OFFSET 0xf800
 
 #define TEXTURE_PIXEL(x, y) (640 * (y) + (x))
 
@@ -22,7 +21,7 @@ class Video {
   void update();
 
  private:
-  uint32_t framebuffer[480][640];
+  uint32_t framebuffer[480 * 640];
   bool drawOccured;
   SDL_Window* window = NULL;
   SDL_Renderer* renderer = NULL;
