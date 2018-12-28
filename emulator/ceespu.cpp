@@ -162,7 +162,7 @@ void Ceespu::init(Video* screen) {
   memset(&this->memory[0], 0, 65536);
   memcpy(&this->memory[CEESPU_FONT_MEMORY_OFFSET / 4], font, 2048);
   for (int i = 0; i < 2048*2; i += 4) {
-    this->memory[(CEESPU_VRAM_OFFSET + i) / 4].word = 0x0f00f00;
+    this->memory[(CEESPU_VRAM_OFFSET + i) / 4].word = 0x0f000f00;
   }
   this->pc = 0;
   this->carry = false;
@@ -235,6 +235,22 @@ void Ceespu::breakpoint()
 				storeWord(addres, value);
 			}
 		}
+		if (option == Disasm) {
+			if (args.size() < 3) {
+				printf("\nError 2 arguments needed\n");
+				continue;
+			}
+			int num = atoi(args[2].c_str());
+			int addres = strtol(args[1].c_str(), NULL, 0);
+			char disassembly[50];
+			
+			for (size_t i = 0; i < num; i++)
+			{
+				helpers::disasm(disassembly, getWord(addres + 4*i));
+				printf(" %04X:  %s\n", addres +i*4, disassembly);
+			}
+		}
+
 	}
 }
 
@@ -279,10 +295,12 @@ void Ceespu::emulateCycle() {
         result = Regs[ra] + Regs[rb] + this->carry;
         this->carry = result < Regs[ra];
         Regs[rd] = result;
+		break;
       case SUB:
         result = Regs[rb] - Regs[ra];
         this->carry = result > Regs[rb];
         Regs[rd] = result;
+		break;
       case SBB:
         result = Regs[rb] - Regs[ra] - this->carry;
         this->carry = result > Regs[rb];
@@ -349,7 +367,7 @@ void Ceespu::emulateCycle() {
         Regs[rd] = Regs[ra] ^ immidiate;
         break;
       case SHFI:
-        switch (helpers::getBits(instruction, 15, 14)) {
+        switch (helpers::getBits(instruction, 7, 6)) {
           case 0:
             Regs[rd] = Regs[ra] << helpers::getBits(immidiate, 4, 0);
             break;
@@ -437,7 +455,7 @@ void Ceespu::emulateCycle() {
             (this->carry) ? (static_cast<uint16_t>(immidiate)) : this->pc;
         break;
       case B:
-        Regs[rd] = helpers::getBit(instruction, 0) ? (this->pc) : Regs[rd];
+        Regs[ra] = helpers::getBit(instruction, 0) ? (this->pc) : Regs[ra];
         this->pc = helpers::getBit(instruction, 1)
                        ? static_cast<uint16_t>(Regs[ra])
                        : static_cast<uint16_t>(immidiate & ~0x3);
@@ -473,7 +491,7 @@ void Ceespu::timerInterrupt() {
 void Ceespu::recieveInterrupt(char c) {
   this->interrupt = true;
   this->int_vector = 4;
-  this->reveiced_char = c;
+  storeByte(65528, c);
 }
 
 uint32_t Ceespu::getWord(uint16_t location) const {
@@ -493,21 +511,21 @@ uint8_t Ceespu::getByte(uint16_t location) const {
 void Ceespu::storeWord(uint16_t location, uint32_t data) {
 	this->memory[location >> 2].word = helpers::swap32(data);
   if (location >= CEESPU_VRAM_OFFSET)
-    this->screen->drawChar(*this, (location - CEESPU_VRAM_OFFSET) % 160,
+    this->screen->drawChar(*this, ((location - CEESPU_VRAM_OFFSET) >> 1) % 80,
                            (location - CEESPU_VRAM_OFFSET) / 160);
 }
 
 void Ceespu::storeHalfword(uint16_t location, uint16_t data) {
   this->memory[location >> 2].hword[location & 2] = helpers::swap16(data);
   if (location >= CEESPU_VRAM_OFFSET)
-	  this->screen->drawChar(*this, (location - CEESPU_VRAM_OFFSET) % 160,
+	  this->screen->drawChar(*this, ((location - CEESPU_VRAM_OFFSET) >> 1) % 80,
 	  (location - CEESPU_VRAM_OFFSET) / 160);
 }
 
 void Ceespu::storeByte(uint16_t location, uint8_t data) {
   this->memory[location >> 2].byte[location & 3] = data;
   if (location >= CEESPU_VRAM_OFFSET)
-	  this->screen->drawChar(*this, (location - CEESPU_VRAM_OFFSET) % 160,
+	  this->screen->drawChar(*this, ((location - CEESPU_VRAM_OFFSET) >> 1) % 80,
 	  (location - CEESPU_VRAM_OFFSET) / 160);
   if (location == 65528) std::putc(data, stdout);
 }
@@ -596,6 +614,18 @@ int main(int argc, char** argv) {
 			  case SDLK_k:
 				  cpu.breakpoint();
 				  QueryPerformanceCounter(&curtime);
+				  break;
+			  case SDLK_UP:
+				  cpu.recieveInterrupt('w');
+				  break;
+			  case SDLK_DOWN:
+				  cpu.recieveInterrupt('s');
+				  break;
+			  case SDLK_RIGHT:
+				  cpu.recieveInterrupt('d');
+				  break;
+			  case SDLK_LEFT:
+				  cpu.recieveInterrupt('a');
 				  break;
 			  }
 			  break;

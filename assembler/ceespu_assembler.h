@@ -61,7 +61,7 @@ typedef struct Relocation {
   uint8_t type;
 } Relocation;
 
-enum { REL_LO16 = 1, REL_LO12 = 2 };
+enum { REL_LO16 = 1, REL_LO12 = 2, REL_HI16 = 3 };
 
 struct InstructionInfo {
   char Mnemonic[5];
