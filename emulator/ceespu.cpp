@@ -26,6 +26,7 @@ enum DebugOption parse_command(std::string command) {
 	if (command == "disasm" || command == "d") return Disasm;
 	if (command == "int" || command == "i") return Next;
 	if (command == "set" || command == "s") return Set;
+	if (command == "continue" || command == "c") return Continue;
 }
 
 size_t split(const std::string &txt, std::vector<std::string> &strs, char ch)
@@ -99,6 +100,10 @@ void disasm(char* target, uint32_t instruction) {
 	rd = helpers::getBits(instruction, 25, 21);
 	ra = helpers::getBits(instruction, 20, 16);
 	rb = helpers::getBits(instruction, 15, 11);
+	if (instruction == 0xffffffff) {
+		sprintf(target, "break");
+		return;
+	}
 	if ((opcode >= 52 && opcode <= 54) || ((opcode >= 56) && (opcode <= 62))) {
 		immidiate = static_cast<int16_t>(
 				helpers::getBits(instruction, 25, 21) << 11 |
@@ -147,6 +152,16 @@ void disasm(char* target, uint32_t instruction) {
 	case B4:
 		sprintf(target, "%s c%d,%hu(c%d)", instr[opcode].Mnemonic, rb, immidiate, ra);
 		break;
+	case Br:
+		if (helpers::getBit(instruction, 0)) {
+			sprintf(target, "call 0x%04X",immidiate);
+			break;
+		}
+		if (helpers::getBit(instruction, 1)) {
+			sprintf(target, "bx c%d", ra);
+			break;
+		}
+		sprintf(target, "b 0x%04X", immidiate);
 	default:
 		break;
 	}
@@ -180,7 +195,7 @@ void Ceespu::breakpoint()
 	bool debugging = true;
 	std::vector<std::string> args;
 	printf("Breakpoint hit at PC:%04X\n", this->pc);
-	char disassembly[50];
+	char disassembly[80];
 	helpers::disasm(disassembly, getWord(this->pc - 4));
 	printf(" %04X:  %s\n", this->pc - 4, disassembly);
 	helpers::disasm(disassembly, getWord(this->pc));
@@ -212,12 +227,10 @@ void Ceespu::breakpoint()
 			if (helpers::getReg(args[1].c_str(), args[1].length()) != -1) {
 				int reg = helpers::getReg(args[1].c_str(), args[1].length());
 				printf("%s : %04X : %d\n", args[1].c_str(), this->Regs[reg], this->Regs[reg]);
+				continue;
 			}
-
-			if (atoi(args[1].c_str()) != 0) {
-				int addres = atoi(args[1].c_str());
-				printf("%s : %04X : %d\n", args[1].c_str(), getWord(addres), getWord(addres));
-			}
+			int addres = strtol(args[1].c_str(), NULL, 0);
+			printf("%s : %04X : %d\n", args[1].c_str(), getWord(addres), getWord(addres));
 		}
 		if (option == Set) {
 			if (args.size() < 3) {
@@ -242,7 +255,6 @@ void Ceespu::breakpoint()
 			}
 			int num = atoi(args[2].c_str());
 			int addres = strtol(args[1].c_str(), NULL, 0);
-			char disassembly[50];
 			
 			for (size_t i = 0; i < num; i++)
 			{
@@ -250,11 +262,11 @@ void Ceespu::breakpoint()
 				printf(" %04X:  %s\n", addres +i*4, disassembly);
 			}
 		}
-
+		if (option == Continue) return;
 	}
 }
 
-void Ceespu::emulateCycle() {
+bool Ceespu::emulateCycle() {
   if (this->interrupt && this->enable_interrupt) {
     this->Regs[17] = this->pc + 4;
     this->pc = this->int_vector;
@@ -267,6 +279,7 @@ void Ceespu::emulateCycle() {
     uint32_t instruction = this->getWord(this->pc);
     uint64_t result;
     this->pc += 4;
+	if (instruction == 0xffffffff) return true;
     opcode = helpers::getBits(instruction, 31, 26);
     rd = helpers::getBits(instruction, 25, 21);
     ra = helpers::getBits(instruction, 20, 16);
@@ -321,7 +334,7 @@ void Ceespu::emulateCycle() {
                        : static_cast<int8_t>(Regs[ra]);
         break;
       case SHF:
-        switch (helpers::getBits(instruction, 15, 14)) {
+        switch (helpers::getBits(instruction, 7, 6)) {
           case 0:
             Regs[rd] = Regs[ra] << Regs[rb];
             break;
@@ -467,6 +480,7 @@ void Ceespu::emulateCycle() {
         break;
     }
   }
+  return false;
 }
 
 bool Ceespu::load(const char* file_path) {
@@ -590,7 +604,7 @@ int main(int argc, char** argv) {
   for (;;) {
 #ifdef _WIN32
 	LARGE_INTEGER curtime;
-    if (cycles > 1000) {
+    if (cycles > 10000) {
 
       QueryPerformanceCounter(&curtime);
 	  uint64_t elapsedMicroseconds = curtime.QuadPart - timer_time.QuadPart;
@@ -605,7 +619,7 @@ int main(int argc, char** argv) {
 	  elapsedMicroseconds /= freq.QuadPart;
       if (elapsedMicroseconds > 20*1000) {
         fps_time = curtime;
-        screen->update();
+        screen->update(cpu);
       }
       if (SDL_PollEvent(&event)) {
         switch (event.type) {
@@ -660,7 +674,7 @@ int main(int argc, char** argv) {
       cycles = 0;
     }
 #endif
-    cpu.emulateCycle();
+    if(cpu.emulateCycle()) cpu.breakpoint();
     cycles++;
   }
 }

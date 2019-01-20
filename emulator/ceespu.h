@@ -33,7 +33,7 @@ class Ceespu {
   Ceespu();
   ~Ceespu();
   void init(Video *screen);
-  void emulateCycle();               // Emulate one cycle
+  bool emulateCycle();               // Emulate one cycle
   bool load(const char *file_path);  // Load application
   void timerInterrupt();             // Do timer interrupt
   void recieveInterrupt(char c);
@@ -102,7 +102,7 @@ enum {
 
 enum { A0, A1, A2, A3, B0, B1, B2, B3, B4, B5, B6, Br };
 
-enum DebugOption { Next, Disasm, View, Dump, Interrupt, Set};
+enum DebugOption { Next, Disasm, View, Dump, Interrupt, Set, Continue};
 
 struct InstructionInfo {
 	char Mnemonic[5];
