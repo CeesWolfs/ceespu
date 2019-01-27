@@ -532,178 +532,180 @@ void Ceespu::storeWord(uint16_t location, uint32_t data) {
   if (location >= CEESPU_VRAM_OFFSET)
     this->screen->drawChar(*this, ((location - CEESPU_VRAM_OFFSET) >> 1) % 80,
                            (location - CEESPU_VRAM_OFFSET) / 160);
-  else if(location >= CEESPU_SPRITE_OFFSET)
+  else if (location >= CEESPU_SPRITE_OFFSET)
     this->screen->spritesChanged = true;
 
-void Ceespu::storeHalfword(uint16_t location, uint16_t data) {
-  this->memory[location >> 2].hword[location & 2] = helpers::swap16(data);
-  if (location >= CEESPU_VRAM_OFFSET)
-    this->screen->drawChar(*this, ((location - CEESPU_VRAM_OFFSET) >> 1) % 80,
-                           (location - CEESPU_VRAM_OFFSET) / 160);
-  else if(location >= CEESPU_SPRITE_OFFSET)
-    this->screen->spritesChanged = true;
-}
+  void Ceespu::storeHalfword(uint16_t location, uint16_t data) {
+    this->memory[location >> 2].hword[location & 2] = helpers::swap16(data);
+    if (location >= CEESPU_VRAM_OFFSET)
+      this->screen->drawChar(*this, ((location - CEESPU_VRAM_OFFSET) >> 1) % 80,
+                             (location - CEESPU_VRAM_OFFSET) / 160);
+    else if (location >= CEESPU_SPRITE_OFFSET)
+      this->screen->spritesChanged = true;
+  }
 
-void Ceespu::storeByte(uint16_t location, uint8_t data) {
-  this->memory[location >> 2].byte[location & 3] = data;
-  if (location >= CEESPU_VRAM_OFFSET)
-    this->screen->drawChar(*this, ((location - CEESPU_VRAM_OFFSET) >> 1) % 80,
-                           (location - CEESPU_VRAM_OFFSET) / 160);
-  else if (location == 65528) std::putc(data, stdout);
-  else if(location >= CEESPU_SPRITE_OFFSET)
-    this->screen->spritesChanged = true;
-}
+  void Ceespu::storeByte(uint16_t location, uint8_t data) {
+    this->memory[location >> 2].byte[location & 3] = data;
+    if (location >= CEESPU_VRAM_OFFSET)
+      this->screen->drawChar(*this, ((location - CEESPU_VRAM_OFFSET) >> 1) % 80,
+                             (location - CEESPU_VRAM_OFFSET) / 160);
+    else if (location == 65528)
+      std::putc(data, stdout);
+    else if (location >= CEESPU_SPRITE_OFFSET)
+      this->screen->spritesChanged = true;
+  }
 
-void crash(Ceespu* cpu, const char* error) {
-  std::fprintf(stderr, "Error cpu crashed while executing at PC:%04X\nReason: ",
-               cpu->pc);
-  std::fprintf(stderr, "%s", error);
-  std::fprintf(stderr,
-               "\nDo you want a detailed dump of proccesor info? [Y/n] ");
-  int ans = getchar();
-  if (ans != 'Y' && ans != 'y') exit(1);
-  std::fprintf(stderr, "Registers:\n");
-  for (uint8_t reg = 0; reg < 32; reg++) {
-    std::fprintf(stderr, "c%d : %08X\n", reg, cpu->Regs[reg]);
-  }
-  std::fprintf(stderr, "carryflag : %s\n", cpu->carry ? "on" : "off");
-  std::fprintf(stderr, "int_flag : %s\n", cpu->interrupt ? "on" : "off");
-  std::fprintf(stderr, "int_vector : %04X\n", unsigned(cpu->int_vector));
-  std::fprintf(stderr, "immidiate_flag : %s\n",
-               cpu->immidiate_valid ? "on" : "off");
-  std::fprintf(stderr, "immidiate : %04X\n", cpu->immidiate_reg);
-  std::fprintf(stderr, "Do you want to dump the memory file to disk? [Y/n] ");
-  while ((ans = getchar()) != '\n' && ans != EOF) {
-  }
-  ans = getchar();
-  if (ans == 'Y' || ans == 'y') {
-    std::fprintf(stderr, "\nDumping ceespu memory to disk....\n");
-    FILE* dumpfile = fopen("memdump.bin", "wb");
-    fwrite(&cpu->memory[0], sizeof(Memory), CeespuMemorySize, dumpfile);
-    std::fprintf(stderr, "Done!\n");
-  }
-  exit(1);
-}
-
-int main(int argc, char** argv) {
-  if (argc != 2) {
-    std::fprintf(stderr, "Usage: ceespu <ROM file>\n");
-    return 1;
-  }
-#ifdef _WIN32
-  LARGE_INTEGER timer_time, freq;
-  LARGE_INTEGER fps_time;
-  QueryPerformanceCounter(&timer_time);
-  QueryPerformanceFrequency(&freq);
-  fps_time = timer_time;
-#endif
-#ifdef __linux__
-  timespec timer_time, curtime, fps_time;
-  clock_gettime(CLOCK_THREAD_CPUTIME_ID, &timer_time);
-  fps_time = timer_time;
-#endif
-  SDL_Event event;
-  Ceespu cpu;
-  Video* screen = new Video();
-  cpu.init(screen);
-  screen->init();
-  if (!cpu.load(argv[1])) {
+  void crash(Ceespu * cpu, const char* error) {
+    std::fprintf(
+        stderr,
+        "Error cpu crashed while executing at PC:%04X\nReason: ", cpu->pc);
+    std::fprintf(stderr, "%s", error);
+    std::fprintf(stderr,
+                 "\nDo you want a detailed dump of proccesor info? [Y/n] ");
+    int ans = getchar();
+    if (ans != 'Y' && ans != 'y') exit(1);
+    std::fprintf(stderr, "Registers:\n");
+    for (uint8_t reg = 0; reg < 32; reg++) {
+      std::fprintf(stderr, "c%d : %08X\n", reg, cpu->Regs[reg]);
+    }
+    std::fprintf(stderr, "carryflag : %s\n", cpu->carry ? "on" : "off");
+    std::fprintf(stderr, "int_flag : %s\n", cpu->interrupt ? "on" : "off");
+    std::fprintf(stderr, "int_vector : %04X\n", unsigned(cpu->int_vector));
+    std::fprintf(stderr, "immidiate_flag : %s\n",
+                 cpu->immidiate_valid ? "on" : "off");
+    std::fprintf(stderr, "immidiate : %04X\n", cpu->immidiate_reg);
+    std::fprintf(stderr, "Do you want to dump the memory file to disk? [Y/n] ");
+    while ((ans = getchar()) != '\n' && ans != EOF) {
+    }
+    ans = getchar();
+    if (ans == 'Y' || ans == 'y') {
+      std::fprintf(stderr, "\nDumping ceespu memory to disk....\n");
+      FILE* dumpfile = fopen("memdump.bin", "wb");
+      fwrite(&cpu->memory[0], sizeof(Memory), CeespuMemorySize, dumpfile);
+      std::fprintf(stderr, "Done!\n");
+    }
     exit(1);
   }
-  uint64_t cycles = 0;
-  for (;;) {
-#ifdef _WIN32
-    LARGE_INTEGER curtime;
-    if (cycles > 10000) {
-      QueryPerformanceCounter(&curtime);
-      uint64_t elapsedMicroseconds = curtime.QuadPart - timer_time.QuadPart;
-      elapsedMicroseconds *= 1000000;
-      elapsedMicroseconds /= freq.QuadPart;
-      if (elapsedMicroseconds > 1000) {
-        timer_time.QuadPart += freq.QuadPart / (1000);
-        cpu.timerInterrupt();
-      }
-      elapsedMicroseconds = curtime.QuadPart - fps_time.QuadPart;
-      elapsedMicroseconds *= 1000000;
-      elapsedMicroseconds /= freq.QuadPart;
-      if (elapsedMicroseconds > 20 * 1000) {
-        fps_time = curtime;
-        screen->update(cpu);
-      }
-      if (SDL_PollEvent(&event)) {
-        switch (event.type) {
-          case SDL_KEYDOWN:
-            switch (event.key.keysym.sym) {
-              case SDLK_k:
-                cpu.breakpoint();
-                QueryPerformanceCounter(&curtime);
-                break;
-              case SDLK_UP:
-                cpu.recieveInterrupt('w');
-                break;
-              case SDLK_DOWN:
-                cpu.recieveInterrupt('s');
-                break;
-              case SDLK_RIGHT:
-                cpu.recieveInterrupt('d');
-                break;
-              case SDLK_LEFT:
-                cpu.recieveInterrupt('a');
-                break;
-            }
-            break;
-          case SDL_QUIT:
-            exit(0);
-          default:
-            break;
-        }
-      }
-      cycles = 0;
+
+  int main(int argc, char** argv) {
+    if (argc != 2) {
+      std::fprintf(stderr, "Usage: ceespu <ROM file>\n");
+      return 1;
     }
+#ifdef _WIN32
+    LARGE_INTEGER timer_time, freq;
+    LARGE_INTEGER fps_time;
+    QueryPerformanceCounter(&timer_time);
+    QueryPerformanceFrequency(&freq);
+    fps_time = timer_time;
 #endif
 #ifdef __linux__
-    if (cycles > 10000) {
-      clock_gettime(CLOCK_THREAD_CPUTIME_ID, &curtime);
-      if ((curtime.tv_nsec - timer_time.tv_nsec) > 1 * 1000 * 1000) {
-        timer_time = curtime;
-        cpu.timerInterrupt();
-      }
-      if ((curtime.tv_nsec - fps_time.tv_nsec) > 20 * 1000 * 1000) {
-        fps_time = curtime;
-        screen->update(cpu);
-      }
-      if (SDL_PollEvent(&event)) {
-        switch (event.type) {
-          case SDL_KEYDOWN:
-            switch (event.key.keysym.sym) {
-              case SDLK_k:
-                cpu.breakpoint();
-                clock_gettime(CLOCK_REALTIME, &curtime);
-                break;
-              case SDLK_UP:
-                cpu.recieveInterrupt('w');
-                break;
-              case SDLK_DOWN:
-                cpu.recieveInterrupt('s');
-                break;
-              case SDLK_RIGHT:
-                cpu.recieveInterrupt('d');
-                break;
-              case SDLK_LEFT:
-                cpu.recieveInterrupt('a');
-                break;
-            }
-            break;
-          case SDL_QUIT:
-            exit(0);
-          default:
-            break;
-        }
-      }
-      cycles = 0;
-    }
+    timespec timer_time, curtime, fps_time;
+    clock_gettime(CLOCK_THREAD_CPUTIME_ID, &timer_time);
+    fps_time = timer_time;
 #endif
-    if (cpu.emulateCycle()) cpu.breakpoint();
-    cycles++;
+    SDL_Event event;
+    Ceespu cpu;
+    Video* screen = new Video();
+    cpu.init(screen);
+    screen->init();
+    if (!cpu.load(argv[1])) {
+      exit(1);
+    }
+    uint64_t cycles = 0;
+    for (;;) {
+#ifdef _WIN32
+      LARGE_INTEGER curtime;
+      if (cycles > 10000) {
+        QueryPerformanceCounter(&curtime);
+        uint64_t elapsedMicroseconds = curtime.QuadPart - timer_time.QuadPart;
+        elapsedMicroseconds *= 1000000;
+        elapsedMicroseconds /= freq.QuadPart;
+        if (elapsedMicroseconds > 1000) {
+          timer_time.QuadPart += freq.QuadPart / (1000);
+          cpu.timerInterrupt();
+        }
+        elapsedMicroseconds = curtime.QuadPart - fps_time.QuadPart;
+        elapsedMicroseconds *= 1000000;
+        elapsedMicroseconds /= freq.QuadPart;
+        if (elapsedMicroseconds > 20 * 1000) {
+          fps_time = curtime;
+          screen->update(cpu);
+        }
+        if (SDL_PollEvent(&event)) {
+          switch (event.type) {
+            case SDL_KEYDOWN:
+              switch (event.key.keysym.sym) {
+                case SDLK_k:
+                  cpu.breakpoint();
+                  QueryPerformanceCounter(&curtime);
+                  break;
+                case SDLK_UP:
+                  cpu.recieveInterrupt('w');
+                  break;
+                case SDLK_DOWN:
+                  cpu.recieveInterrupt('s');
+                  break;
+                case SDLK_RIGHT:
+                  cpu.recieveInterrupt('d');
+                  break;
+                case SDLK_LEFT:
+                  cpu.recieveInterrupt('a');
+                  break;
+              }
+              break;
+            case SDL_QUIT:
+              exit(0);
+            default:
+              break;
+          }
+        }
+        cycles = 0;
+      }
+#endif
+#ifdef __linux__
+      if (cycles > 10000) {
+        clock_gettime(CLOCK_THREAD_CPUTIME_ID, &curtime);
+        if ((curtime.tv_nsec - timer_time.tv_nsec) > 1 * 1000 * 1000) {
+          timer_time = curtime;
+          cpu.timerInterrupt();
+        }
+        if ((curtime.tv_nsec - fps_time.tv_nsec) > 20 * 1000 * 1000) {
+          fps_time = curtime;
+          screen->update(cpu);
+        }
+        if (SDL_PollEvent(&event)) {
+          switch (event.type) {
+            case SDL_KEYDOWN:
+              switch (event.key.keysym.sym) {
+                case SDLK_k:
+                  cpu.breakpoint();
+                  clock_gettime(CLOCK_REALTIME, &curtime);
+                  break;
+                case SDLK_UP:
+                  cpu.recieveInterrupt('w');
+                  break;
+                case SDLK_DOWN:
+                  cpu.recieveInterrupt('s');
+                  break;
+                case SDLK_RIGHT:
+                  cpu.recieveInterrupt('d');
+                  break;
+                case SDLK_LEFT:
+                  cpu.recieveInterrupt('a');
+                  break;
+              }
+              break;
+            case SDL_QUIT:
+              exit(0);
+            default:
+              break;
+          }
+        }
+        cycles = 0;
+      }
+#endif
+      if (cpu.emulateCycle()) cpu.breakpoint();
+      cycles++;
+    }
   }
-}

@@ -32,5 +32,4 @@ class Video {
   SDL_Renderer* renderer = NULL;
   SDL_Texture* texture = NULL;
 };
-
 #endif  // EMULATOR_VIDEO_H

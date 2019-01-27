@@ -267,7 +267,7 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
       if (immidiate == invalid_immidiate) {
         // Not an immidiate push relocation
         Relocation reloc = {std::string(line, curtoken, token_len), offset,
-                            REL_LO16};
+                            REL_HI16};
         relocations.push_back(reloc);
         immidiate = 0;
       } else {
@@ -379,8 +379,8 @@ int main(int argc, char* argv[]) {
     fprintf(stderr, "Error input file could not be opened\n");
     return 1;
   }
-  uint8_t curtoken = 0;
   while (std::getline(input_file, line)) {
+	uint8_t curtoken = 0;
     line_num++;
     if (line.length() > 120) {
       fprintf(stderr, "Error max line length execeeded at line %d\n", line_num);
@@ -424,15 +424,15 @@ int main(int argc, char* argv[]) {
               switch (line[++i]) {
                 case 'n': {
                   data.push_back('\n');
-                  break;
+                  continue;
                 }
                 case 'r': {
                   data.push_back('\r');
-                  break;
+                  continue;
                 }
                 case '\"': {
                   data.push_back('\"');
-                  break;
+                  continue;
                 }
               }
             }
@@ -525,7 +525,7 @@ int main(int argc, char* argv[]) {
           if (value == invalid_immidiate) {
             printf("Error invalid immidiate after word directive\n");
           }
-          for (int i = 0; i <= 3; i++) {
+          for (int i = 3; i >= 0; i--) {
             data.push_back((value >> (i * 8)) & 0xff);
           }
           offset += 4;
@@ -536,7 +536,7 @@ int main(int argc, char* argv[]) {
           if (value == invalid_immidiate) {
             printf("Error invalid immidiate after hword directive\n");
           }
-          for (int i = 0; i <= 1; i++) {
+          for (int i = 1; i >= 0; i--) {
             data.push_back((value >> (i * 8)) & 0xff);
           }
           offset += 2;
@@ -575,8 +575,13 @@ int main(int argc, char* argv[]) {
                 instruction.Mnemonic, line_num);
         exit(1);
       }
+<<<<<<< HEAD
       for (int i = 0; i <= 3; i++) {
         data.push_back((instr >> (i * 8)) & 0xff);
+=======
+      for (int i = 3; i >= 0; i--) {
+            data.push_back((instr >> (i * 8)) & 0xff);
+>>>>>>> b23ca1797f30f14ec2aec1245d949bf3e6274307
       }
       continue;
     }
@@ -595,18 +600,24 @@ int main(int argc, char* argv[]) {
     // it->label.c_str(),
     //       it->offset, symbol_table[it->label].offset);
     if (it->type == REL_LO12) {
-      data[it->offset + 2] |= symbol_table[it->label].offset >> 14;
-      data[it->offset + 1] |= ((symbol_table[it->label].offset >> 11) & 0xE0);
-      data[it->offset + 1] |= ((symbol_table[it->label].offset >> 8) & 0x5);
-      data[it->offset] = symbol_table[it->label].offset & 0xff;
+      data[it->offset + 1] |= symbol_table[it->label].offset >> 14;
+      data[it->offset + 2] |= ((symbol_table[it->label].offset >> 11) & 0xE0);
+      data[it->offset + 2] |= ((symbol_table[it->label].offset >> 8) & 0x5);
+      data[it->offset + 3] |= symbol_table[it->label].offset & 0xff;
     } else if (it->type == REL_LO16) {
       /* code */
-      data[it->offset + 1] |= symbol_table[it->label].offset >> 8;
-      data[it->offset] |= symbol_table[it->label].offset & 0xff;
+      data[it->offset + 2] |= symbol_table[it->label].offset >> 8;
+      data[it->offset + 3] |= symbol_table[it->label].offset & 0xff;
     }
+	else if (it->type == REL_HI16) {
+		/* code */
+		data[it->offset + 2] |= 0;
+		data[it->offset + 3] |= 0;
+	}
   }
   printf("@0000 ");
   data.insert(data.end(), roundUp(data.size(), 4) - data.size(), 0);
+<<<<<<< HEAD
   for (auto i = data.begin(); i != data.end(); i += 4) {
     uint32_t val = *(i + 3);
     val |= *(i + 2) << 8;
@@ -619,6 +630,11 @@ int main(int argc, char* argv[]) {
   }
   for (auto i = data.begin(); i != data.end(); ++i) {
     printf("%02X", *i);
+=======
+  for (auto i = data.begin(); i != data.end(); ++i)
+  {
+  	printf("%02X", *i);
+>>>>>>> b23ca1797f30f14ec2aec1245d949bf3e6274307
   }
   std::ofstream out(outputfile, std::ios_base::binary);
   out.write(reinterpret_cast<char*>(&data[0]), data.size());
