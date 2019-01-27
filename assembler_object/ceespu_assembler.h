@@ -1,7 +1,7 @@
 // Copyright 2018 <Cees Wolfs>
 
-#ifndef CEESPU_ASSEMBLER_H
-#define CEESPU_ASSEMBLER_H
+#ifndef _HOME_CEES_DOCUMENTS_REPOS_CEESPU_ASSEMBLER_OBJECT_CEESPU_ASSEMBLER_H
+#define _HOME_CEES_DOCUMENTS_REPOS_CEESPU_ASSEMBLER_OBJECT_CEESPU_ASSEMBLER_H
 
 #include <stdint.h>
 #include <stdio.h>
@@ -52,9 +52,31 @@ enum {
 
 struct Header {
   uint32_t ident = 0x4365651B;
-  uint32_t reloc_start;
   uint32_t string_start;
+  uint32_t depend_start;
+  uint32_t reloc_start;
   uint32_t data_start;
+};
+
+struct Symbol {
+  uint32_t addr;
+  uint16_t size;
+  uint16_t reloc_offset;
+  uint16_t relocs;
+  uint16_t string_offset;
+  uint8_t type;
+  uint8_t align;
+};
+
+struct Relocation {
+  uint16_t offset;
+  uint16_t string_offset;
+  uint8_t type;
+};
+
+struct Dependecy {
+  uint8_t from;
+  uint8_t to;
 };
 
 typedef struct Label {
@@ -98,7 +120,7 @@ class ObjectFile;
 
 class Function {
  public:
-  Function(Symbol& symbol_entry) : symbol_entry(symbol_entry),rel_offset(0) {};
+  Function(Symbol& symbol_entry) : symbol_entry(symbol_entry), rel_offset(0){};
   Symbol& symbol_entry;
   std::vector<Label> local_symbol_table;
   std::vector<LocRelocation> local_relocation_table;
@@ -117,7 +139,7 @@ class ObjectFile {
   std::vector<Symbol> symbol_table;
   std::vector<Relocation> relocation_table;
   std::vector<uint8_t> data;
-  uint16_t abs_offset;
+  uint16_t abs_offset{};
   Function* current_function;
   ObjectFile();
   std::size_t insertSymbol(const std::string& name, uint16_t offset,
@@ -175,4 +197,4 @@ InstructionInfo instr[] = {{{'a', 'd', 'c', 0, 0}, A0, (0x01), 0},
 
 const int nInstrs = sizeof(instr) / sizeof(InstructionInfo);
 const int nDirect = sizeof(directives) / sizeof(directives[0]);
-#endif  // CEESPU_ASSEMBLER_H
+#endif  // _HOME_CEES_DOCUMENTS_REPOS_CEESPU_ASSEMBLER_OBJECT_CEESPU_ASSEMBLER_H

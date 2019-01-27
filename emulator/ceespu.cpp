@@ -1,12 +1,7 @@
 // Copyright (c) 2018 <Cees Wolfs>
 
 #include "ceespu.h"
-#include "receive.h"
 #include "video.h"
-
-#include <thread>
-
-std::thread input_thread;
 
 namespace helpers {
 
@@ -24,6 +19,150 @@ inline uint32_t getBits(uint32_t val, const uint8_t upperbit,
 
 inline bool getBit(uint32_t val, const uint8_t bit) { return val >> bit & 0x1; }
 
+enum DebugOption parse_command(std::string command) {
+  if (command == "next" || command == "n") return Next;
+  if (command == "view" || command == "v") return View;
+  if (command == "disasm" || command == "d") return Disasm;
+  if (command == "int" || command == "i") return Next;
+  if (command == "set" || command == "s") return Set;
+  if (command == "continue" || command == "c") return Continue;
+}
+
+size_t split(const std::string& txt, std::vector<std::string>& strs, char ch) {
+  size_t pos = txt.find(ch);
+  size_t initialPos = 0;
+  strs.clear();
+
+  // Decompose statement
+  while (pos != std::string::npos) {
+    strs.push_back(txt.substr(initialPos, pos - initialPos));
+    initialPos = pos + 1;
+
+    pos = txt.find(ch, initialPos);
+  }
+
+  // Add the last one
+  strs.push_back(
+      txt.substr(initialPos, std::min(pos, txt.size()) - initialPos + 1));
+
+  return strs.size();
+}
+
+int getReg(const char* reg, uint8_t size) {
+  if (size > 3 || size < 2) {
+    return -1;
+  }
+  if (reg[0] != 'c') {
+    return -1;
+  }
+  if (size == 2) {
+    if (isdigit(reg[1]) != 0) {
+      return reg[1] - '0';
+    }
+    return -1;
+  }
+  // bit of a hack, but it does work
+  int regnum = ((reg[1] - '0') * 10 + (reg[2] - '0'));
+  if ((regnum < 32) && (regnum >= 0)) {
+    return regnum;
+  }
+  if (reg[1] == 'f' && reg[2] == 'p') {
+    return 16;  // Ceespu stack pointer
+  }
+  if (reg[1] == 'i' && reg[2] == 'r') {
+    return 17;  // Ceespu stack pointer
+  }
+  if (reg[1] == 's' && reg[2] == 'p') {
+    return 18;  // Ceespu stack pointer
+  }
+  if (reg[1] == 'l' && reg[2] == 'r') {
+    return 19;  // Ceespu link register
+  }
+  return -1;  // invalid register
+}
+
+inline char* decReg(char* target, uint8_t reg, bool comma = true) {
+  *target++ = 'c';
+  // itoa(reg, target, 10);
+  target = strchr(target, 0);
+  if (comma) {
+    *target++ = ',';
+  }
+  return target;
+}
+
+void disasm(char* target, uint32_t instruction) {
+  uint8_t rd, ra, rb, opcode;
+  int32_t immidiate;
+  opcode = helpers::getBits(instruction, 31, 26);
+  rd = helpers::getBits(instruction, 25, 21);
+  ra = helpers::getBits(instruction, 20, 16);
+  rb = helpers::getBits(instruction, 15, 11);
+  if (instruction == 0xffffffff) {
+    sprintf(target, "break");
+    return;
+  }
+  if ((opcode >= 52 && opcode <= 54) || ((opcode >= 56) && (opcode <= 62))) {
+    immidiate =
+        static_cast<int16_t>(helpers::getBits(instruction, 25, 21) << 11 |
+                             helpers::getBits(instruction, 10, 0));
+  } else {
+    immidiate = static_cast<int16_t>(instruction);
+  }
+  switch (instr[opcode].Type) {
+    case A0:
+      sprintf(target, "%s c%d,c%d,c%d", instr[opcode].Mnemonic, rd, ra, rb);
+      break;
+    case A2:
+      sprintf(target, "sh%c c%d,c%d,c%d",
+              helpers::getBit(instruction, 0) ? 'h' : 'b', rd, ra, rb);
+      break;
+    case A3:
+      switch (helpers::getBits(instruction, 7, 6)) {
+        case 0:
+          sprintf(target, "shl c%d,c%d,c%d", rd, ra, rb);
+          break;
+        case 1:
+          sprintf(target, "shr c%d,c%d,c%d", rd, ra, rb);
+          break;
+        case 2:
+          sprintf(target, "sar c%d,c%d,c%d", rd, ra, rb);
+          break;
+        default:
+          break;
+      }
+      break;
+    case B0:
+      sprintf(target, "%s c%d,c%d,%d", instr[opcode].Mnemonic, rd, ra,
+              immidiate);
+      break;
+    case B1:
+      sprintf(target, "%s c%d,c%d,0x%04X", instr[opcode].Mnemonic, ra, rb,
+              immidiate);
+      break;
+    case B3:
+      sprintf(target, "%s c%d,%u(c%d)", instr[opcode].Mnemonic, rd, immidiate,
+              ra);
+      break;
+    case B4:
+      sprintf(target, "%s c%d,%u(c%d)", instr[opcode].Mnemonic, rb, immidiate,
+              ra);
+      break;
+    case Br:
+      if (helpers::getBit(instruction, 0)) {
+        sprintf(target, "call 0x%04X", immidiate);
+        break;
+      }
+      if (helpers::getBit(instruction, 1)) {
+        sprintf(target, "bx c%d", ra);
+        break;
+      }
+      sprintf(target, "b 0x%04X", immidiate);
+    default:
+      break;
+  }
+}
+
 }  // namespace helpers
 
 Ceespu::Ceespu() {}
@@ -33,8 +172,15 @@ Ceespu::~Ceespu() {}
 void Ceespu::init(Video* screen) {
   memset(&this->memory[0], 0, 65536);
   memcpy(&this->memory[CEESPU_FONT_MEMORY_OFFSET / 4], font, 2048);
-  for (int i = 0; i < 2048; i += 4) {
-    this->memory[(CEESPU_COLOUR_MEMORY_OFFSET + i) / 4].word = 0x0f0f0f0f;
+  this->memory[CEESPU_SPRITE_PALLETE_OFFSET / 4].byte[1] = 10;
+  this->memory[CEESPU_SPRITE_PALLETE_OFFSET / 4].byte[2] = 11;
+  this->memory[CEESPU_SPRITE_PALLETE_OFFSET / 4].byte[3] = 13;
+  for (int i = 0; i < 32; ++i) {
+    this->memory[(CEESPU_SPRITE_OFFSET + i * 4) / 4].byte[0] = 0xff;
+    this->memory[(CEESPU_SPRITE_OFFSET + i * 4) / 4].byte[1] = 1;
+  }
+  for (int i = 0; i < 2048 * 2; i += 4) {
+    this->memory[(CEESPU_VRAM_OFFSET + i) / 4].word = 0x0f000f00;
   }
   this->pc = 0;
   this->carry = false;
@@ -44,11 +190,87 @@ void Ceespu::init(Video* screen) {
   for (size_t i = 0; i < 31; i++) {
     Regs[i] = 0;
   }
+  Regs[18] = CEESPU_SPRITE_PALLETE_OFFSET - 4;
   this->screen = screen;
 }
 
-void Ceespu::emulateCycle() {
-  if (this->interrupt & this->enable_interrupt) {
+void Ceespu::breakpoint() {
+  bool debugging = true;
+  std::vector<std::string> args;
+  printf("Breakpoint hit at PC:%04X\n", this->pc);
+  char disassembly[80];
+  helpers::disasm(disassembly, getWord(this->pc - 4));
+  printf(" %04X:  %s\n", this->pc - 4, disassembly);
+  helpers::disasm(disassembly, getWord(this->pc));
+  printf("[%04X]: %s\n", this->pc, disassembly);
+  helpers::disasm(disassembly, getWord(this->pc + 4));
+  printf(" %04X:  %s\n", this->pc + 4, disassembly);
+  while (debugging) {
+    printf("(cdbg) ");
+    std::string command;
+    std::getline(std::cin, command);
+    helpers::split(command, args, ' ');
+    enum DebugOption option = helpers::parse_command(args[0]);
+    if (option == Next) {
+      this->emulateCycle();
+      char disassembly[50];
+      helpers::disasm(disassembly, getWord(this->pc - 4));
+      printf(" %04X:  %s\n", this->pc - 4, disassembly);
+      helpers::disasm(disassembly, getWord(this->pc));
+      printf("[%04X]: %s\n", this->pc, disassembly);
+      helpers::disasm(disassembly, getWord(this->pc + 4));
+      printf(" %04X:  %s\n", this->pc + 4, disassembly);
+    }
+    if (option == View) {
+      if (args.size() == 1) {
+        printf("\nError argument needed\n");
+        continue;
+      }
+      if (helpers::getReg(args[1].c_str(), args[1].length()) != -1) {
+        int reg = helpers::getReg(args[1].c_str(), args[1].length());
+        printf("%s : %04X : %d\n", args[1].c_str(), this->Regs[reg],
+               this->Regs[reg]);
+        continue;
+      }
+      int addres = strtol(args[1].c_str(), NULL, 0);
+      printf("%s : %04X : %d\n", args[1].c_str(), getWord(addres),
+             getWord(addres));
+    }
+    if (option == Set) {
+      if (args.size() < 3) {
+        printf("\nError 2 arguments needed\n");
+        continue;
+      }
+      int value = atoi(args[2].c_str());
+      if (helpers::getReg(args[1].c_str(), args[1].length()) != -1) {
+        int reg = helpers::getReg(args[1].c_str(), args[1].length());
+        this->Regs[reg] = value;
+      }
+
+      if (atoi(args[1].c_str()) != 0) {
+        int addres = atoi(args[1].c_str());
+        storeWord(addres, value);
+      }
+    }
+    if (option == Disasm) {
+      if (args.size() < 3) {
+        printf("\nError 2 arguments needed\n");
+        continue;
+      }
+      int num = atoi(args[2].c_str());
+      int addres = strtol(args[1].c_str(), NULL, 0);
+
+      for (int i = 0; i < num; i++) {
+        helpers::disasm(disassembly, getWord(addres + 4 * i));
+        printf(" %04X:  %s\n", addres + i * 4, disassembly);
+      }
+    }
+    if (option == Continue) return;
+  }
+}
+
+bool Ceespu::emulateCycle() {
+  if (this->interrupt && this->enable_interrupt) {
     this->Regs[17] = this->pc + 4;
     this->pc = this->int_vector;
     this->enable_interrupt = false;
@@ -60,6 +282,7 @@ void Ceespu::emulateCycle() {
     uint32_t instruction = this->getWord(this->pc);
     uint64_t result;
     this->pc += 4;
+    if (instruction == 0xffffffff) return true;
     opcode = helpers::getBits(instruction, 31, 26);
     rd = helpers::getBits(instruction, 25, 21);
     ra = helpers::getBits(instruction, 20, 16);
@@ -88,13 +311,15 @@ void Ceespu::emulateCycle() {
         result = Regs[ra] + Regs[rb] + this->carry;
         this->carry = result < Regs[ra];
         Regs[rd] = result;
+        break;
       case SUB:
         result = Regs[rb] - Regs[ra];
-        this->carry = result > Regs[ra];
+        this->carry = result > Regs[rb];
         Regs[rd] = result;
+        break;
       case SBB:
         result = Regs[rb] - Regs[ra] - this->carry;
-        this->carry = result > Regs[ra];
+        this->carry = result > Regs[rb];
         Regs[rd] = result;
         break;
       case OR:
@@ -112,7 +337,7 @@ void Ceespu::emulateCycle() {
                        : static_cast<int8_t>(Regs[ra]);
         break;
       case SHF:
-        switch (helpers::getBits(instruction, 15, 14)) {
+        switch (helpers::getBits(instruction, 7, 6)) {
           case 0:
             Regs[rd] = Regs[ra] << Regs[rb];
             break;
@@ -139,10 +364,12 @@ void Ceespu::emulateCycle() {
         result = Regs[ra] + immidiate + this->carry;
         this->carry = result < Regs[ra];
         Regs[rd] = result;
+        break;
       case SUBI:
         result = immidiate - Regs[ra];
         this->carry = result > immidiate;
         Regs[rd] = result;
+        break;
       case SBBI:
         result = immidiate - Regs[ra] - this->carry;
         this->carry = result > immidiate;
@@ -158,7 +385,7 @@ void Ceespu::emulateCycle() {
         Regs[rd] = Regs[ra] ^ immidiate;
         break;
       case SHFI:
-        switch (helpers::getBits(instruction, 15, 14)) {
+        switch (helpers::getBits(instruction, 7, 6)) {
           case 0:
             Regs[rd] = Regs[ra] << helpers::getBits(immidiate, 4, 0);
             break;
@@ -246,7 +473,7 @@ void Ceespu::emulateCycle() {
             (this->carry) ? (static_cast<uint16_t>(immidiate)) : this->pc;
         break;
       case B:
-        Regs[rd] = helpers::getBit(instruction, 0) ? (this->pc) : Regs[rd];
+        Regs[ra] = helpers::getBit(instruction, 0) ? (this->pc) : Regs[ra];
         this->pc = helpers::getBit(instruction, 1)
                        ? static_cast<uint16_t>(Regs[ra])
                        : static_cast<uint16_t>(immidiate & ~0x3);
@@ -258,6 +485,7 @@ void Ceespu::emulateCycle() {
         break;
     }
   }
+  return false;
 }
 
 bool Ceespu::load(const char* file_path) {
@@ -282,7 +510,7 @@ void Ceespu::timerInterrupt() {
 void Ceespu::recieveInterrupt(char c) {
   this->interrupt = true;
   this->int_vector = 4;
-  this->reveiced_char = c;
+  storeByte(65528, c);
 }
 
 uint32_t Ceespu::getWord(uint16_t location) const {
@@ -301,47 +529,35 @@ uint8_t Ceespu::getByte(uint16_t location) const {
 
 void Ceespu::storeWord(uint16_t location, uint32_t data) {
   this->memory[location >> 2].word = helpers::swap32(data);
-  if (location >= CEESPU_COLOUR_MEMORY_OFFSET &&
-      location < CEESPU_FONT_MEMORY_OFFSET)
-    this->screen->drawChar(*this,
-                           ((location - CEESPU_COLOUR_MEMORY_OFFSET) / 2) % 80,
-                           ((location - CEESPU_COLOUR_MEMORY_OFFSET) / 2) / 80);
-  if (location >= CEESPU_TEXT_MEMORY_OFFSET)
-    this->screen->drawChar(*this, (location - CEESPU_TEXT_MEMORY_OFFSET) % 80,
-                           (location - CEESPU_TEXT_MEMORY_OFFSET) / 80);
-}
+  if (location >= CEESPU_VRAM_OFFSET)
+    this->screen->drawChar(*this, ((location - CEESPU_VRAM_OFFSET) >> 1) % 80,
+                           (location - CEESPU_VRAM_OFFSET) / 160);
+  else if(location >= CEESPU_SPRITE_OFFSET)
+    this->screen->spritesChanged = true;
 
 void Ceespu::storeHalfword(uint16_t location, uint16_t data) {
   this->memory[location >> 2].hword[location & 2] = helpers::swap16(data);
-  if (location >= CEESPU_COLOUR_MEMORY_OFFSET &&
-      location < CEESPU_FONT_MEMORY_OFFSET)
-    this->screen->drawChar(*this,
-                           ((location - CEESPU_COLOUR_MEMORY_OFFSET) / 2) % 80,
-                           ((location - CEESPU_COLOUR_MEMORY_OFFSET) / 2) / 80);
-  if (location >= CEESPU_TEXT_MEMORY_OFFSET)
-    this->screen->drawChar(*this, (location - CEESPU_TEXT_MEMORY_OFFSET) % 80,
-                           (location - CEESPU_TEXT_MEMORY_OFFSET) / 80);
+  if (location >= CEESPU_VRAM_OFFSET)
+    this->screen->drawChar(*this, ((location - CEESPU_VRAM_OFFSET) >> 1) % 80,
+                           (location - CEESPU_VRAM_OFFSET) / 160);
+  else if(location >= CEESPU_SPRITE_OFFSET)
+    this->screen->spritesChanged = true;
 }
 
 void Ceespu::storeByte(uint16_t location, uint8_t data) {
   this->memory[location >> 2].byte[location & 3] = data;
-  if (location >= CEESPU_COLOUR_MEMORY_OFFSET &&
-      location < CEESPU_FONT_MEMORY_OFFSET)
-    this->screen->drawChar(*this,
-                           ((location - CEESPU_COLOUR_MEMORY_OFFSET) / 2) % 80,
-                           ((location - CEESPU_COLOUR_MEMORY_OFFSET) / 2) / 80);
-  if (location >= CEESPU_TEXT_MEMORY_OFFSET)
-    this->screen->drawChar(*this, (location - CEESPU_TEXT_MEMORY_OFFSET) % 80,
-                           (location - CEESPU_TEXT_MEMORY_OFFSET) / 80);
-  if (location == 65528) std::putc(data, stdout);
+  if (location >= CEESPU_VRAM_OFFSET)
+    this->screen->drawChar(*this, ((location - CEESPU_VRAM_OFFSET) >> 1) % 80,
+                           (location - CEESPU_VRAM_OFFSET) / 160);
+  else if (location == 65528) std::putc(data, stdout);
+  else if(location >= CEESPU_SPRITE_OFFSET)
+    this->screen->spritesChanged = true;
 }
 
 void crash(Ceespu* cpu, const char* error) {
-  cpu->running = false;
   std::fprintf(stderr, "Error cpu crashed while executing at PC:%04X\nReason: ",
                cpu->pc);
   std::fprintf(stderr, "%s", error);
-  input_thread.join();
   std::fprintf(stderr,
                "\nDo you want a detailed dump of proccesor info? [Y/n] ");
   int ans = getchar();
@@ -375,42 +591,67 @@ int main(int argc, char** argv) {
     return 1;
   }
 #ifdef _WIN32
-  uint64_t timer_time;
-  uint64_t fps_time;
-  QueryUnbiasedInterruptTime(&timer_time);
+  LARGE_INTEGER timer_time, freq;
+  LARGE_INTEGER fps_time;
+  QueryPerformanceCounter(&timer_time);
+  QueryPerformanceFrequency(&freq);
   fps_time = timer_time;
 #endif
 #ifdef __linux__
   timespec timer_time, curtime, fps_time;
-  clock_gettime(CLOCK_REALTIME, &timer_time);
+  clock_gettime(CLOCK_THREAD_CPUTIME_ID, &timer_time);
   fps_time = timer_time;
 #endif
   SDL_Event event;
   Ceespu cpu;
-  Video screen = Video();
-  cpu.init(&screen);
-  screen.init();
+  Video* screen = new Video();
+  cpu.init(screen);
+  screen->init();
   if (!cpu.load(argv[1])) {
     exit(1);
   }
-  cpu.running = true;
-  input_thread = std::thread(receive_input, &cpu);
   uint64_t cycles = 0;
   for (;;) {
 #ifdef _WIN32
-    uint64_t curtime;
-    if (cycles > 1000) {
-      QueryUnbiasedInterruptTime(&curtime);
-      if ((curtime - timer_time) > 10000) {
-        timer_time = curtime;
+    LARGE_INTEGER curtime;
+    if (cycles > 10000) {
+      QueryPerformanceCounter(&curtime);
+      uint64_t elapsedMicroseconds = curtime.QuadPart - timer_time.QuadPart;
+      elapsedMicroseconds *= 1000000;
+      elapsedMicroseconds /= freq.QuadPart;
+      if (elapsedMicroseconds > 1000) {
+        timer_time.QuadPart += freq.QuadPart / (1000);
         cpu.timerInterrupt();
       }
-      if ((curtime - fps_time) > 200000) {
+      elapsedMicroseconds = curtime.QuadPart - fps_time.QuadPart;
+      elapsedMicroseconds *= 1000000;
+      elapsedMicroseconds /= freq.QuadPart;
+      if (elapsedMicroseconds > 20 * 1000) {
         fps_time = curtime;
-        screen.update();
+        screen->update(cpu);
       }
       if (SDL_PollEvent(&event)) {
         switch (event.type) {
+          case SDL_KEYDOWN:
+            switch (event.key.keysym.sym) {
+              case SDLK_k:
+                cpu.breakpoint();
+                QueryPerformanceCounter(&curtime);
+                break;
+              case SDLK_UP:
+                cpu.recieveInterrupt('w');
+                break;
+              case SDLK_DOWN:
+                cpu.recieveInterrupt('s');
+                break;
+              case SDLK_RIGHT:
+                cpu.recieveInterrupt('d');
+                break;
+              case SDLK_LEFT:
+                cpu.recieveInterrupt('a');
+                break;
+            }
+            break;
           case SDL_QUIT:
             exit(0);
           default:
@@ -421,18 +662,38 @@ int main(int argc, char** argv) {
     }
 #endif
 #ifdef __linux__
-    if (cycles > 1000) {
-      clock_gettime(CLOCK_REALTIME, &curtime);
+    if (cycles > 10000) {
+      clock_gettime(CLOCK_THREAD_CPUTIME_ID, &curtime);
       if ((curtime.tv_nsec - timer_time.tv_nsec) > 1 * 1000 * 1000) {
         timer_time = curtime;
         cpu.timerInterrupt();
       }
       if ((curtime.tv_nsec - fps_time.tv_nsec) > 20 * 1000 * 1000) {
         fps_time = curtime;
-        screen.update();
+        screen->update(cpu);
       }
       if (SDL_PollEvent(&event)) {
         switch (event.type) {
+          case SDL_KEYDOWN:
+            switch (event.key.keysym.sym) {
+              case SDLK_k:
+                cpu.breakpoint();
+                clock_gettime(CLOCK_REALTIME, &curtime);
+                break;
+              case SDLK_UP:
+                cpu.recieveInterrupt('w');
+                break;
+              case SDLK_DOWN:
+                cpu.recieveInterrupt('s');
+                break;
+              case SDLK_RIGHT:
+                cpu.recieveInterrupt('d');
+                break;
+              case SDLK_LEFT:
+                cpu.recieveInterrupt('a');
+                break;
+            }
+            break;
           case SDL_QUIT:
             exit(0);
           default:
@@ -442,7 +703,7 @@ int main(int argc, char** argv) {
       cycles = 0;
     }
 #endif
-    cpu.emulateCycle();
+    if (cpu.emulateCycle()) cpu.breakpoint();
     cycles++;
   }
 }

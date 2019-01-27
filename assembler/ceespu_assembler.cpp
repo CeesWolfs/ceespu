@@ -324,7 +324,6 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
       break;
     }
     case B5: {
-      token_len = Tokenize(line, curtoken, curtoken + token_len);
       uint64_t immidiate = getImmidiate(&line[curtoken], token_len);
       if (immidiate == invalid_immidiate) {
         // Not an immidiate push relocation
@@ -336,7 +335,7 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
         rd = (immidiate >> 11) & 0x1F;
       }
       if (instruction.FuncCode & 0x1) {
-        ra = 19; // call
+        ra = 19;  // call
       }
       break;
     }
@@ -442,11 +441,24 @@ int main(int argc, char* argv[]) {
           data.push_back(0);
           continue;
         }
+        case AT: {
+          uint64_t at = getImmidiate(&line[curtoken], token_len);
+          if (at < offset) {
+            fprintf(stderr,
+                    "Error addres requested below current addres at line%d\n",
+                    line_num);
+            exit(-1);
+          }
+          data.insert(data.end(), at - offset, 0);
+          offset = at;
+          break;
+        }
         case ALIGN: {
           uint64_t align = getImmidiate(&line[curtoken], token_len);
           if (align < 1 || align > 8) {
             fprintf(stderr, "Error invalid alignement requested at line%d\n",
                     line_num);
+            exit(-1);
           }
           offset = roundUp(offset, 1 << align);
           break;
@@ -485,6 +497,17 @@ int main(int argc, char* argv[]) {
             fprintf(stderr, "Error duplicate label definition at line %d\n",
                     line_num);
             exit(1);
+          }
+          break;
+        }
+        case INCBIN: {
+          if (FILE* fp = fopen(&line[6], "r")) {
+            char buf[1024];
+            while (size_t len = fread(buf, 1, sizeof(buf), fp)) {
+              data.insert(data.end(), buf, buf + len);
+              offset += len;
+            }
+            fclose(fp);
           }
           break;
         }
@@ -553,7 +576,7 @@ int main(int argc, char* argv[]) {
         exit(1);
       }
       for (int i = 0; i <= 3; i++) {
-            data.push_back((instr >> (i * 8)) & 0xff);
+        data.push_back((instr >> (i * 8)) & 0xff);
       }
       continue;
     }
@@ -584,19 +607,18 @@ int main(int argc, char* argv[]) {
   }
   printf("@0000 ");
   data.insert(data.end(), roundUp(data.size(), 4) - data.size(), 0);
-  for (auto i = data.begin(); i != data.end(); i+= 4) {
-  	uint32_t val = *(i+3);
-  	val |= *(i+2) << 8;
-  	val |= *(i+1) << 16;
-  	val |= *i << 24;
-  	*i = val;
-  	*(i+1) = val >> 8; 	
-  	*(i+2) = val >> 16;
-   	*(i+3) = val >> 24;
+  for (auto i = data.begin(); i != data.end(); i += 4) {
+    uint32_t val = *(i + 3);
+    val |= *(i + 2) << 8;
+    val |= *(i + 1) << 16;
+    val |= *i << 24;
+    *i = val;
+    *(i + 1) = val >> 8;
+    *(i + 2) = val >> 16;
+    *(i + 3) = val >> 24;
   }
-  for (auto i = data.begin(); i != data.end(); ++i)
-  {
-  	printf("%02X", *i);
+  for (auto i = data.begin(); i != data.end(); ++i) {
+    printf("%02X", *i);
   }
   std::ofstream out(outputfile, std::ios_base::binary);
   out.write(reinterpret_cast<char*>(&data[0]), data.size());

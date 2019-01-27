@@ -3,25 +3,12 @@
 
 bool inline is16bit(int x) { return (x < 65536) && !(x < -65536); }
 
-bool ispowerof2(unsigned int x) { return x && !(x & (x - 1)); }
+bool ispowerof2(unsigned int x) { return (x != 0u) && ((x & (x - 1)) == 0u); }
 
 inline int roundUp(int n, int a) {
   // align value n to alignment a, works only for powers of 2
   // fails miserably otherwise
   return ((n & (a - 1)) == 0) ? n : (n + a) & ~(a - 1);
-}
-
-uint32_t hashString(const std::string& key) {
-  uint32_t hash = 0;
-  for (const char& c : key) {
-    hash += c;
-    hash += hash << 10;
-    hash ^= hash >> 6;
-  }
-  hash += hash << 3;
-  hash ^= hash >> 11;
-  hash += hash << 15;
-  return hash;
 }
 
 void Function::applyFixup(ObjectFile& object, uint16_t offset, uint8_t type,
@@ -53,7 +40,7 @@ void Function::fixup(ObjectFile& object) {
       }
     }
     if (local) {
-		object.relocation_table.push_back(relocation);
+      object.relocation_table.push_back(relocation);
     } else {
       // check if already in string_table
       std::size_t index = object.findSymbol(reloc.label);
@@ -62,12 +49,12 @@ void Function::fixup(ObjectFile& object) {
       }
       relocation.symbol_index = index;
       // keep relocations to undefined symbol at the front to ease linker
-	  if (object.relocation_table.size() == 0) {
-		  object.relocation_table.push_back(relocation);
-	  }
-	  else {
-		  object.relocation_table.insert(object.relocation_table.begin()+previous_top, 1, relocation);
-	  }
+      if (object.relocation_table.size() == 0) {
+        object.relocation_table.push_back(relocation);
+      } else {
+        object.relocation_table.insert(
+            object.relocation_table.begin() + previous_top, 1, relocation);
+      }
     }
   }
   symbol_entry.relocation_length = local_relocation_table.size();
@@ -88,13 +75,12 @@ ObjectFile::ObjectFile() {
 }
 
 std::size_t ObjectFile::findSymbol(const std::string& name) {
-  uint32_t hash = hashString(name);
   std::size_t index = 0;
   for (Symbol& symbol : symbol_table) {
     if (symbol.hash == hash) {
       // possible hit label
-      if (!strncmp(name.data(), string_section.data() + symbol.string_offset,
-                   name.size())) {
+      if (strncmp(name.data(), string_section.data() + symbol.string_offset,
+                  name.size()) == 0) {
         return index;
       }
     }
@@ -110,8 +96,8 @@ std::size_t ObjectFile::insertSymbol(const std::string& name, uint16_t offset,
                   type,
                   offset,
                   0,
-	              static_cast<uint16_t>(relocation_table.size()),
-	              0,
+                  static_cast<uint16_t>(relocation_table.size()),
+                  0,
                   static_cast<uint16_t>(string_section.size()),
                   static_cast<uint8_t>(name.length())};
   std::copy(name.begin(), name.end(), std::back_inserter(string_section));
@@ -131,9 +117,9 @@ void ObjectFile::save(const std::string& filename) {
   out.write(reinterpret_cast<char*>(&obj_header), sizeof(struct Header));
   out.write(reinterpret_cast<char*>(&symbol_table[0]),
             symbol_table.size() * sizeof(Symbol));
-  if(!relocation_table.empty())
-  out.write(reinterpret_cast<char*>(&relocation_table[0]),
-            relocation_table.size() * sizeof(Relocation));
+  if (!relocation_table.empty())
+    out.write(reinterpret_cast<char*>(&relocation_table[0]),
+              relocation_table.size() * sizeof(Relocation));
   out.write(reinterpret_cast<char*>(&string_section[0]), string_section.size());
   out.write(reinterpret_cast<char*>(&data[0]), data.size());
   out.close();
@@ -149,7 +135,7 @@ uint8_t Tokenize(const std::string& str, uint8_t& curtoken, uint8_t start) {
   curtoken = str.find_first_not_of(" ,()\t", start);
   std::string::size_type pos = str.find_first_of(" ,()\t", curtoken);
 
-  if (curtoken == (uint8_t)-1) {
+  if (curtoken == static_cast<uint8_t>(-1)) {
     return 0;
   }
 
@@ -291,7 +277,7 @@ void parseLabel(const std::string& label_name, int line_num,
 }
 
 uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
-                          bool& immset, InstructionInfo instruction,
+                          bool& /*immset*/, InstructionInfo instruction,
                           Function* function) {
   // get the next token
   uint8_t token_len = Tokenize(line, curtoken, curtoken);
@@ -453,7 +439,7 @@ uint32_t parseInstruction(const std::string& line, uint8_t& curtoken,
         imm = immidiate & 0x7FF;
         rd = (immidiate >> 11) & 0x1F;
       }
-      if (instruction.FuncCode & 0x1) {
+      if ((instruction.FuncCode & 0x1) != 0) {
         ra = 19;  // call
       }
       break;
@@ -476,7 +462,7 @@ bool parseDirective(const std::string& line, int line_num, uint8_t& curtoken,
                     uint8_t token_len, uint8_t directive, ObjectFile& object) {
   switch (directive) {
     case ASCII: {
-      size_t start = line.find_first_of("\"", curtoken);
+      size_t start = line.find_first_of('\"', curtoken);
       if (start == std::string::npos) {
         fprintf(stderr, "invalid ascii string on line %d\n", line_num);
         exit(1);
@@ -661,7 +647,7 @@ int main(int argc, char* argv[]) {
       }
       object.abs_offset += 4;
       object.current_function->rel_offset += 4;
-      if (instr == (uint32_t)-1) {
+      if (instr == static_cast<uint32_t>(-1)) {
         fprintf(stderr, "Error invalid instruction %s at line %d\n",
                 instruction.Mnemonic, line_num);
         exit(1);

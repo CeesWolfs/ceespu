@@ -1,0 +1,1564 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"u",
+				"uart_rx_irq"
+			],
+			[
+				"i",
+				"inc\t#include \"…\""
+			],
+			[
+				"L",
+				"LBB0"
+			],
+			[
+				"Cee",
+				"Ceespu_CC_GE"
+			],
+			[
+				"C",
+				"Ceespu_CC_GT"
+			],
+			[
+				"Ce",
+				"Ceespu_CC_NE"
+			],
+			[
+				"Cees",
+				"Ceespu_CC_EQ"
+			],
+			[
+				"fo",
+				"for\tFor Loop"
+			],
+			[
+				"llvm",
+				"llvm_unreachable"
+			],
+			[
+				"Machine",
+				"MachineBasicBlock"
+			],
+			[
+				"uint",
+				"uint64_t\tuint64_t"
+			],
+			[
+				"co",
+				"const\tconst"
+			],
+			[
+				"Ceesp",
+				"CeespuInstrInfo"
+			],
+			[
+				"P",
+				"Pseudo"
+			],
+			[
+				"int",
+				"int8_t\tint8_t"
+			],
+			[
+				"getBt",
+				"getBits\tuint32_t getBits(uint32_t val, const uint8_t upperbit, const uint8_t lowerbit)"
+			],
+			[
+				"XOR",
+				"_mm256_xor_si256\t__m256i _mm256_xor_si256(__m256i __a, __m256i __b)"
+			],
+			[
+				"uin",
+				"uint8_t\tuint8_t"
+			],
+			[
+				"retu",
+				"return\treturn expression"
+			],
+			[
+				"m",
+				"main\tmain()"
+			],
+			[
+				"rec",
+				"reveiced_char\tstd::atomic<char> reveiced_char"
+			],
+			[
+				"I_",
+				"I_instruction"
+			],
+			[
+				"imm",
+				"immidiate"
+			],
+			[
+				"bran",
+				"branch_condition"
+			],
+			[
+				"br",
+				"branch_condition"
+			],
+			[
+				"end",
+				"endcase"
+			],
+			[
+				"out",
+				"outputfile\tstd::string outputfile"
+			],
+			[
+				"arg",
+				"argv\tchar ** argv"
+			],
+			[
+				"dir",
+				"directive\tchar * directive"
+			],
+			[
+				"size",
+				"sizeof\tsize_t sizeof(expression-or-type)"
+			],
+			[
+				"inv",
+				"invalid_immidiate\tconst uint64_t invalid_immidiate"
+			],
+			[
+				"in",
+				"insert\titerator insert(const_iterator __position, size_type __n, const value_type &__x)"
+			],
+			[
+				"p",
+				"push_back\tvoid push_back(const value_type &__x)"
+			],
+			[
+				"for",
+				"for\tFor Loop"
+			],
+			[
+				"function_l",
+				"function_label"
+			],
+			[
+				"ins",
+				"instruction"
+			],
+			[
+				"ui",
+				"uint32_t\tuint32_t"
+			],
+			[
+				"mach",
+				"MachineBasicBlock"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuInstrInfo.td",
+			"settings":
+			{
+				"buffer_size": 13543,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/simplechartest.cpp",
+			"settings":
+			{
+				"buffer_size": 220,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/simplechartest.s",
+			"settings":
+			{
+				"buffer_size": 2532,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/repos/ceespu/tests/gpu_test.s",
+			"settings":
+			{
+				"buffer_size": 111,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/printtest.c",
+			"settings":
+			{
+				"buffer_size": 242,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/printtest.s",
+			"settings":
+			{
+				"buffer_size": 1242,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/print.s",
+			"settings":
+			{
+				"buffer_size": 316,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/cees/Downloads/mojo/foo.s",
+			"settings":
+			{
+				"buffer_size": 35,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/movtest.c",
+			"settings":
+			{
+				"buffer_size": 304,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/crt.s",
+			"settings":
+			{
+				"buffer_size": 605,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/movtestlinked.s",
+			"settings":
+			{
+				"buffer_size": 1506,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/tetris.cpp",
+			"settings":
+			{
+				"buffer_size": 1623,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/ceespu_lib/random.h",
+			"settings":
+			{
+				"buffer_size": 643,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/snake.cpp",
+			"settings":
+			{
+				"buffer_size": 2173,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/repos/ceespu/assembler/ceespu_assembler.cpp",
+			"settings":
+			{
+				"buffer_size": 19150,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/repos/ceespu/assembler/ceespu_assembler.h",
+			"settings":
+			{
+				"buffer_size": 4518,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/CeespuISelLowering.cpp",
+			"settings":
+			{
+				"buffer_size": 26648,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "\t.text\n\t.file\t\"snake.cpp\"\n\t.globl\t_Z8newInputv            ; -- Begin function _Z8newInputv\n\t.p2align\t2\n\t.type\t_Z8newInputv,@function\n_Z8newInputv:                           ; @_Z8newInputv\n; %bb.0:\n\tseti\t_new_uart_recieved\n\tori\tc20, c0, _new_uart_recieved\n\tlw\tc20, 0(c20)\n\tbeq\tc20, c0, .LBB0_2\n; %bb.1:\n\taddi\tc20, c0, 0\n\tb\t.LBB0_3\n.LBB0_2:\n\tori\tc20, c0, 1\n.LBB0_3:\n\tbx\tclr\n.Lfunc_end0:\n\t.size\t_Z8newInputv, .Lfunc_end0-_Z8newInputv\n                                        ; -- End function\n\t.globl\t_Z8getInputv            ; -- Begin function _Z8getInputv\n\t.p2align\t2\n\t.type\t_Z8getInputv,@function\n_Z8getInputv:                           ; @_Z8getInputv\n; %bb.0:\n\tseti\t_new_uart_recieved\n\tori\tc22, c0, _new_uart_recieved\n\tlw\tc21, 0(c22)\n\tori\tc20, c0, 1\n\tsw\tc20, 0(c22)\n\taddi\tc20, c0, 0\n\tbne\tc21, c0, .LBB1_2\n; %bb.1:\n\tseti\t0\n\tori\tc20, c0, 65528\n\tlbu\tc20, 0(c20)\n.LBB1_2:\n\tseb\tc20, c20\n\tbx\tclr\n.Lfunc_end1:\n\t.size\t_Z8getInputv, .Lfunc_end1-_Z8getInputv\n                                        ; -- End function\n\t.globl\t_Z6randomv              ; -- Begin function _Z6randomv\n\t.p2align\t2\n\t.type\t_Z6randomv,@function\n_Z6randomv:                             ; @_Z6randomv\n; %bb.0:\n\tseti\t_ms\n\tori\tc20, c0, _ms\n\tlw\tc22, 0(c20)\n\tseti\t_ZL1y\n\tori\tc21, c0, _ZL1y\n\tlw\tc20, 0(c21)\n\tadd\tc22, c20, c22\n\tshli\tc20, c22, 2\n\txor\tc22, c20, c22\n\tshri\tc20, c22, 7\n\txor\tc22, c20, c22\n\tshli\tc20, c22, 7\n\txor\tc20, c20, c22\n\tsw\tc20, 0(c21)\n\tbx\tclr\n.Lfunc_end2:\n\t.size\t_Z6randomv, .Lfunc_end2-_Z6randomv\n                                        ; -- End function\n\t.globl\t_Z7setcharhhc           ; -- Begin function _Z7setcharhhc\n\t.p2align\t2\n\t.type\t_Z7setcharhhc,@function\n_Z7setcharhhc:                          ; @_Z7setcharhhc\n; %bb.0:\n\taddi\tc23, c21, 0\n\taddi\tc24, c20, 0\n\taddi\tc20, c0, 0\n\tori\tc21, c0, 79\n\tbgu\tc24, c21, .LBB3_3\n; %bb.1:\n\tori\tc21, c0, 24\n\tbgu\tc23, c21, .LBB3_3\n; %bb.2:\n\tmuli\tc20, c23, 25\n\tseti\t0\n\tori\tc21, c24, 63488\n\tadd\tc20, c20, c21\n\tshli\tc20, c20, 16\n\tshri\tc20, c20, 16\n\tsb\tc22, 0(c20)\n\tori\tc20, c0, 1\n.LBB3_3:\n\tbx\tclr\n.Lfunc_end3:\n\t.size\t_Z7setcharhhc, .Lfunc_end3-_Z7setcharhhc\n                                        ; -- End function\n\t.globl\t_Z9setcolourhh6Colour   ; -- Begin function _Z9setcolourhh6Colour\n\t.p2align\t2\n\t.type\t_Z9setcolourhh6Colour,@function\n_Z9setcolourhh6Colour:                  ; @_Z9setcolourhh6Colour\n; %bb.0:\n\taddi\tc23, c21, 0\n\taddi\tc24, c20, 0\n\taddi\tc20, c0, 0\n\tori\tc21, c0, 79\n\tbgu\tc24, c21, .LBB4_3\n; %bb.1:\n\tori\tc21, c0, 24\n\tbgu\tc23, c21, .LBB4_3\n; %bb.2:\n\tmuli\tc20, c23, 25\n\tseti\t0\n\tori\tc21, c24, 61440\n\tadd\tc20, c20, c21\n\tshli\tc20, c20, 16\n\tshri\tc20, c20, 16\n\tsb\tc22, 0(c20)\n\tori\tc20, c0, 1\n.LBB4_3:\n\tbx\tclr\n.Lfunc_end4:\n\t.size\t_Z9setcolourhh6Colour, .Lfunc_end4-_Z9setcolourhh6Colour\n                                        ; -- End function\n\t.globl\t_Z9setcolourhh6ColourS_ ; -- Begin function _Z9setcolourhh6ColourS_\n\t.p2align\t2\n\t.type\t_Z9setcolourhh6ColourS_,@function\n_Z9setcolourhh6ColourS_:                ; @_Z9setcolourhh6ColourS_\n; %bb.0:\n\taddi\tc24, c21, 0\n\taddi\tc25, c20, 0\n\taddi\tc20, c0, 0\n\tori\tc21, c0, 79\n\tbgu\tc25, c21, .LBB5_3\n; %bb.1:\n\tori\tc21, c0, 24\n\tbgu\tc24, c21, .LBB5_3\n; %bb.2:\n\tor\tc20, c23, c22\n\tmuli\tc21, c24, 25\n\tseti\t0\n\tori\tc22, c25, 61440\n\tadd\tc21, c21, c22\n\tshli\tc21, c21, 16\n\tshri\tc21, c21, 16\n\tsb\tc20, 0(c21)\n\tori\tc20, c0, 1\n.LBB5_3:\n\tbx\tclr\n.Lfunc_end5:\n\t.size\t_Z9setcolourhh6ColourS_, .Lfunc_end5-_Z9setcolourhh6ColourS_\n                                        ; -- End function\n\t.globl\t_Z11clearscreenv        ; -- Begin function _Z11clearscreenv\n\t.p2align\t2\n\t.type\t_Z11clearscreenv,@function\n_Z11clearscreenv:                       ; @_Z11clearscreenv\n; %bb.0:\n\tori\tc20, c0, 2000\n\tseti\t0\n\tori\tc21, c0, 61440\n\tori\tc22, c0, 15\n.LBB6_1:                                ; =>This Inner Loop Header: Depth=1\n\tsb\tc0, 2048(c21)\n\tsb\tc22, 0(c21)\n\taddi\tc21, c21, 1\n\taddi\tc20, c20, -1\n\tbeq\tc20, c0, .LBB6_2\n\tb\t.LBB6_1\n.LBB6_2:\n\tbx\tclr\n.Lfunc_end6:\n\t.size\t_Z11clearscreenv, .Lfunc_end6-_Z11clearscreenv\n                                        ; -- End function\n\t.globl\t_Z11printscreenhhPKc    ; -- Begin function _Z11printscreenhhPKc\n\t.p2align\t2\n\t.type\t_Z11printscreenhhPKc,@function\n_Z11printscreenhhPKc:                   ; @_Z11printscreenhhPKc\n; %bb.0:\n\tlbu\tc23, 0(c22)\n\tbeq\tc23, c0, .LBB7_14\n; %bb.1:\n\taddi\tc22, c22, 1\n\tori\tc26, c0, 80\n\tori\tc13, c0, 24\n\tori\tc25, c0, 79\n\tori\tc15, c0, 13\n\tori\tc14, c0, 10\n\tb\t.LBB7_6\n.LBB7_2:                                ;   in Loop: Header=BB7_6 Depth=1\n\tandi\tc20, c21, 255\n\taddi\tc22, c0, 0\n\tbgu\tc20, c13, .LBB7_4\n; %bb.3:                                ;   in Loop: Header=BB7_6 Depth=1\n\taddi\tc22, c21, 1\n.LBB7_4:                                ;   in Loop: Header=BB7_6 Depth=1\n\taddi\tc20, c0, 0\n\taddi\tc21, c22, 0\n\tandi\tc22, c20, 255\n\tbgu\tc22, c25, .LBB7_13\n\tb\t.LBB7_11\n.LBB7_5:                                ;   in Loop: Header=BB7_6 Depth=1\n\taddi\tc20, c20, 1\n\tandi\tc22, c20, 255\n\tbgu\tc22, c25, .LBB7_13\n\tb\t.LBB7_11\n.LBB7_6:                                ; =>This Inner Loop Header: Depth=1\n\taddi\tc27, c22, 0\n\tandi\tc22, c20, 255\n\tbgu\tc26, c22, .LBB7_7\n\tb\t.LBB7_2\n.LBB7_7:                                ;   in Loop: Header=BB7_6 Depth=1\n\tandi\tc22, c23, 255\n\tbeq\tc22, c15, .LBB7_10\n; %bb.8:                                ;   in Loop: Header=BB7_6 Depth=1\n\tbne\tc22, c14, .LBB7_5\n; %bb.9:                                ;   in Loop: Header=BB7_6 Depth=1\n\taddi\tc21, c21, 1\n.LBB7_10:                               ;   in Loop: Header=BB7_6 Depth=1\n\taddi\tc20, c0, 0\n\tandi\tc22, c20, 255\n\tbgu\tc22, c25, .LBB7_13\n.LBB7_11:                               ;   in Loop: Header=BB7_6 Depth=1\n\tandi\tc22, c21, 255\n\tbgu\tc22, c13, .LBB7_13\n; %bb.12:                               ;   in Loop: Header=BB7_6 Depth=1\n\tmuli\tc24, c22, 25\n\tandi\tc22, c20, 255\n\tseti\t0\n\tori\tc22, c22, 63488\n\tadd\tc22, c24, c22\n\tshli\tc22, c22, 16\n\tshri\tc22, c22, 16\n\tsb\tc23, 0(c22)\n.LBB7_13:                               ;   in Loop: Header=BB7_6 Depth=1\n\taddi\tc22, c27, 1\n\tlbu\tc23, 0(c27)\n\tbne\tc23, c0, .LBB7_6\n.LBB7_14:\n\tbx\tclr\n.Lfunc_end7:\n\t.size\t_Z11printscreenhhPKc, .Lfunc_end7-_Z11printscreenhhPKc\n                                        ; -- End function\n\t.globl\tmain                    ; -- Begin function main\n\t.p2align\t2\n\t.type\tmain,@function\nmain:                                   ; @main\n; %bb.0:\n\taddi\tcsp, csp, -120\n\tsw\tc1, 116(csp)\n\tsw\tc2, 112(csp)\n\tsw\tc3, 108(csp)\n\tsw\tc4, 104(csp)\n\tsw\tc5, 100(csp)\n\tsw\tc6, 96(csp)\n\tsw\tc7, 92(csp)\n\tsw\tc8, 88(csp)\n\tsw\tc9, 84(csp)\n\tsw\tc10, 80(csp)\n\tsw\tc11, 76(csp)\n\tsw\tc12, 72(csp)\n\taddi\tcfp, csp, 120\n\tori\tc20, c0, 3111\n\tsh\tc20, -112(cfp)\n\tori\tc21, c0, 12\n\tori\tc22, c0, 20\n\tori\tc7, c0, 1\n\taddi\tc20, cfp, -112\n\tori\tc20, c20, 1\n\tsw\tc20, -116(cfp)\n\tseti\t_ms\n\tori\tc6, c0, _ms\n\tseti\t_new_uart_recieved\n\tori\tc5, c0, _new_uart_recieved\n\tseti\t0\n\tori\tc4, c0, 65528\n\tori\tc3, c0, 114\n\tori\tc12, c0, 97\n\tori\tc30, c0, 255\n\tori\tc31, c0, 100\n\tori\tc2, c0, 119\n\tori\tc1, c0, 115\n\tori\tc29, c0, 201\n\tori\tc15, c0, 79\n\tori\tc14, c0, 24\n\tori\tc27, c0, 2\n\tseti\t_ZL1y\n\tori\tc26, c0, _ZL1y\n\taddi\tc13, c7, 0\n\taddi\tc25, c0, 0\n                                        ; implicit-def: $r20\n\tb\t.LBB8_2\n.LBB8_1:                                ;   in Loop: Header=BB8_2 Depth=1\n\tandi\tc23, c20, 255\n\tshli\tc24, c23, 1\n\taddi\tc23, cfp, -112\n\tadd\tc23, c23, c24\n\tsb\tc28, 1(c23)\n\tsb\tc8, 0(c23)\n.LBB8_2:                                ; =>This Loop Header: Depth=1\n                                        ;     Child Loop BB8_11 Depth 2\n                                        ;     Child Loop BB8_27 Depth 2\n\tlw\tc24, 0(c6)\n\tb\t.LBB8_11\n.LBB8_3:                                ;   in Loop: Header=BB8_11 Depth=2\n\tlbu\tc23, 0(c4)\n\tbg\tc23, c3, .LBB8_7\n; %bb.4:                                ;   in Loop: Header=BB8_11 Depth=2\n\tbeq\tc23, c12, .LBB8_6\n; %bb.5:                                ;   in Loop: Header=BB8_11 Depth=2\n\tbeq\tc23, c31, .LBB8_6\n\tb\t.LBB8_12\n.LBB8_6:                                ;   in Loop: Header=BB8_11 Depth=2\n\taddi\tc13, c30, 0\n\taddi\tc25, c0, 0\n\tb\t.LBB8_12\n.LBB8_7:                                ;   in Loop: Header=BB8_11 Depth=2\n\tbeq\tc23, c2, .LBB8_10\n; %bb.8:                                ;   in Loop: Header=BB8_11 Depth=2\n\tbne\tc23, c1, .LBB8_12\n; %bb.9:                                ;   in Loop: Header=BB8_11 Depth=2\n\taddi\tc13, c0, 0\n\taddi\tc25, c30, 0\n\tb\t.LBB8_12\n.LBB8_10:                               ;   in Loop: Header=BB8_11 Depth=2\n\taddi\tc13, c0, 0\n\taddi\tc25, c7, 0\n\tb\t.LBB8_12\n.LBB8_11:                               ;   Parent Loop BB8_2 Depth=1\n                                        ; =>  This Inner Loop Header: Depth=2\n\tlw\tc23, 0(c5)\n\tsw\tc7, 0(c5)\n\tbne\tc23, c0, .LBB8_12\n\tb\t.LBB8_3\n.LBB8_12:                               ;   in Loop: Header=BB8_11 Depth=2\n\tlw\tc23, 0(c6)\n\tsub\tc23, c23, c24\n\tbgu\tc29, c23, .LBB8_11\n; %bb.13:                               ;   in Loop: Header=BB8_2 Depth=1\n\tandi\tc11, c20, 255\n\tshli\tc24, c11, 1\n\taddi\tc23, cfp, -112\n\tadd\tc28, c23, c24\n\tlbu\tc24, 0(c28)\n\tandi\tc23, c13, 255\n\tadd\tc8, c24, c23\n\tandi\tc23, c8, 255\n\tbgu\tc23, c15, .LBB8_31\n; %bb.14:                               ;   in Loop: Header=BB8_2 Depth=1\n\tandi\tc24, c25, 255\n\tlbu\tc23, 1(c28)\n\tadd\tc28, c23, c24\n\tandi\tc23, c28, 255\n\tbgu\tc23, c14, .LBB8_31\n; %bb.15:                               ;   in Loop: Header=BB8_2 Depth=1\n\tmuli\tc9, c23, 25\n\tandi\tc24, c8, 255\n\tseti\t0\n\tori\tc23, c24, 63488\n\tadd\tc23, c9, c23\n\tshli\tc23, c23, 16\n\tshri\tc23, c23, 16\n\tsb\tc27, 0(c23)\n\tandi\tc23, c22, 255\n\tbne\tc23, c24, .LBB8_22\n; %bb.16:                               ;   in Loop: Header=BB8_2 Depth=1\n\tandi\tc24, c28, 255\n\tandi\tc23, c21, 255\n\tbne\tc23, c24, .LBB8_22\n; %bb.17:                               ;   in Loop: Header=BB8_2 Depth=1\n\tlw\tc22, 0(c26)\n\tlw\tc21, 0(c6)\n\tadd\tc22, c22, c21\n\tshli\tc21, c22, 2\n\txor\tc22, c21, c22\n\tshri\tc21, c22, 7\n\txor\tc23, c21, c22\n\tandi\tc21, c23, 127\n\taddi\tc22, c21, 176\n\tbgu\tc21, c15, .LBB8_19\n; %bb.18:                               ;   in Loop: Header=BB8_2 Depth=1\n\taddi\tc22, c21, 0\n.LBB8_19:                               ;   in Loop: Header=BB8_2 Depth=1\n\tshli\tc21, c23, 7\n\txor\tc23, c21, c23\n\tlw\tc21, 0(c6)\n\tadd\tc23, c23, c21\n\tshli\tc21, c23, 2\n\txor\tc23, c21, c23\n\tshri\tc21, c23, 7\n\txor\tc23, c21, c23\n\tshli\tc21, c23, 7\n\txor\tc21, c21, c23\n\tsw\tc21, 0(c26)\n\tandi\tc23, c23, 31\n\taddi\tc21, c23, 231\n\tbgu\tc23, c14, .LBB8_21\n; %bb.20:                               ;   in Loop: Header=BB8_2 Depth=1\n\taddi\tc21, c23, 0\n.LBB8_21:                               ;   in Loop: Header=BB8_2 Depth=1\n\taddi\tc20, c20, 1\n\tb\t.LBB8_1\n.LBB8_22:                               ;   in Loop: Header=BB8_2 Depth=1\n\tlbu\tc9, -112(cfp)\n\tbgu\tc9, c15, .LBB8_25\n; %bb.23:                               ;   in Loop: Header=BB8_2 Depth=1\n\tlbu\tc23, -111(cfp)\n\tbgu\tc23, c14, .LBB8_25\n; %bb.24:                               ;   in Loop: Header=BB8_2 Depth=1\n\tmuli\tc24, c23, 25\n\tseti\t0\n\tori\tc23, c9, 63488\n\tadd\tc23, c24, c23\n\tshli\tc23, c23, 16\n\tshri\tc23, c23, 16\n\tsb\tc0, 0(c23)\n.LBB8_25:                               ;   in Loop: Header=BB8_2 Depth=1\n\tandi\tc23, c20, 255\n\tbeq\tc23, c0, .LBB8_30\n; %bb.26:                               ;   in Loop: Header=BB8_2 Depth=1\n\tlw\tc24, -116(cfp)\n\taddi\tc23, c0, 0\n.LBB8_27:                               ;   Parent Loop BB8_2 Depth=1\n                                        ; =>  This Inner Loop Header: Depth=2\n\tlhu\tc9, 1(c24)\n\tsh\tc9, -1(c24)\n\tandi\tc10, c8, 255\n\tshri\tc9, c9, 8\n\tbne\tc9, c10, .LBB8_29\n; %bb.28:                               ;   in Loop: Header=BB8_27 Depth=2\n\tandi\tc10, c28, 255\n\tlbu\tc9, 0(c24)\n\tbne\tc9, c10, .LBB8_29\n\tb\t.LBB8_31\n.LBB8_29:                               ;   in Loop: Header=BB8_27 Depth=2\n\taddi\tc23, c23, 1\n\taddi\tc24, c24, 2\n\tbgu\tc11, c23, .LBB8_27\n\tb\t.LBB8_1\n.LBB8_30:                               ;   in Loop: Header=BB8_2 Depth=1\n\taddi\tc20, c0, 0\n\tb\t.LBB8_1\n.LBB8_31:\n\tori\tc20, c0, 2000\n\tseti\t0\n\tori\tc21, c0, 61440\n\tori\tc22, c0, 15\n.LBB8_32:                               ; =>This Inner Loop Header: Depth=1\n\tsb\tc0, 2048(c21)\n\tsb\tc22, 0(c21)\n\taddi\tc21, c21, 1\n\taddi\tc20, c20, -1\n\tbne\tc20, c0, .LBB8_32\n; %bb.33:\n\tori\tc21, c0, 30\n\tori\tc20, c0, 12\n\tori\tc23, c0, 71\n\tori\tc24, c0, 65515\n\tori\tc28, c0, 80\n\tseti\t.L.str\n\tori\tc25, c0, .L.str\n\tori\tc27, c0, 13\n\tori\tc26, c0, 10\n\tb\t.LBB8_38\n.LBB8_34:                               ;   in Loop: Header=BB8_38 Depth=1\n\tandi\tc21, c20, 255\n\taddi\tc22, c0, 0\n\tbgu\tc21, c14, .LBB8_36\n; %bb.35:                               ;   in Loop: Header=BB8_38 Depth=1\n\taddi\tc22, c20, 1\n.LBB8_36:                               ;   in Loop: Header=BB8_38 Depth=1\n\taddi\tc21, c0, 0\n\taddi\tc20, c22, 0\n\tandi\tc22, c21, 255\n\tbgu\tc22, c15, .LBB8_45\n\tb\t.LBB8_43\n.LBB8_37:                               ;   in Loop: Header=BB8_38 Depth=1\n\taddi\tc21, c21, 1\n\tandi\tc22, c21, 255\n\tbgu\tc22, c15, .LBB8_45\n\tb\t.LBB8_43\n.LBB8_38:                               ; =>This Inner Loop Header: Depth=1\n\tandi\tc22, c21, 255\n\tbgu\tc28, c22, .LBB8_39\n\tb\t.LBB8_34\n.LBB8_39:                               ;   in Loop: Header=BB8_38 Depth=1\n\tandi\tc22, c23, 255\n\tbeq\tc22, c27, .LBB8_42\n; %bb.40:                               ;   in Loop: Header=BB8_38 Depth=1\n\tbne\tc22, c26, .LBB8_37\n; %bb.41:                               ;   in Loop: Header=BB8_38 Depth=1\n\taddi\tc20, c20, 1\n.LBB8_42:                               ;   in Loop: Header=BB8_38 Depth=1\n\taddi\tc21, c0, 0\n\tandi\tc22, c21, 255\n\tbgu\tc22, c15, .LBB8_45\n.LBB8_43:                               ;   in Loop: Header=BB8_38 Depth=1\n\tandi\tc22, c20, 255\n\tbgu\tc22, c14, .LBB8_45\n; %bb.44:                               ;   in Loop: Header=BB8_38 Depth=1\n\tmuli\tc13, c22, 25\n\tandi\tc22, c21, 255\n\tseti\t0\n\tori\tc22, c22, 63488\n\tadd\tc22, c13, c22\n\tshli\tc22, c22, 16\n\tshri\tc22, c22, 16\n\tsb\tc23, 0(c22)\n.LBB8_45:                               ;   in Loop: Header=BB8_38 Depth=1\n\tadd\tc22, c24, c25\n\tlbu\tc23, 0(c22)\n\taddi\tc24, c24, 1\n\tbne\tc24, c0, .LBB8_38\n.LBB8_46:                               ; =>This Inner Loop Header: Depth=1\n\tb\t.LBB8_46\n.Lfunc_end8:\n\t.size\tmain, .Lfunc_end8-main\n                                        ; -- End function\n\t.type\t_ZL1y,@object           ; @_ZL1y\n\t.data\n\t.p2align\t2\n_ZL1y:\n\t.word\t127342                  ; 0x1f16e\n\t.size\t_ZL1y, 4\n\n\t.type\t.L.str,@object          ; @.str\n\t.section\t.rodata.str1.1,\"aMS\",@progbits,1\n.L.str:\n\t.asciz\t\"GAME OVER!\\nTry agian?\"\n\t.size\t.L.str, 22\n\n\n\t.ident\t\"clang version 6.0.1 (tags/RELEASE_601/final)\"\n\t.section\t\".note.GNU-stack\",\"\",@progbits\n",
+			"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/snake.s",
+			"file_size": 14287,
+			"file_write_time": 131824373528710800,
+			"settings":
+			{
+				"buffer_size": 14287,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuISelLowering.h",
+			"settings":
+			{
+				"buffer_size": 5922,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuISelLowering.cpp",
+			"settings":
+			{
+				"buffer_size": 55424,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuAsmPrinter.cpp",
+			"settings":
+			{
+				"buffer_size": 4941,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/RISCV/RISCVISelLowering.cpp",
+			"settings":
+			{
+				"buffer_size": 59410,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Execute",
+					""
+				],
+				[
+					"build Debug",
+					""
+				],
+				[
+					"build Release",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/C++11/C++11.sublime-build",
+					""
+				],
+				[
+					"Packages/C++11/C++11.sublime-build",
+					"Run"
+				]
+			],
+			[
+				"Execute",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/C++11/C++11.sublime-build",
+					""
+				],
+				[
+					"Packages/C++11/C++11.sublime-build",
+					"Run"
+				]
+			],
+			[
+				"Packages/C++11/C++11.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"build Debug",
+					""
+				],
+				[
+					"build Release",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/C++11/C++11.sublime-build",
+					""
+				],
+				[
+					"Packages/C++11/C++11.sublime-build",
+					"Run"
+				]
+			],
+			[
+				"build Debug",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"Anarch",
+				"AnarchyDebug: Start debugger"
+			],
+			[
+				"",
+				"Build With: C++11"
+			],
+			[
+				"gdb",
+				"SublimeGDB: Open Disassembly View"
+			],
+			[
+				"SetSyntac",
+				"Set Syntax: C++11"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 212.0,
+		"history":
+		[
+			"exit",
+			"step"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/data/Users/Cees/Documents/repos/llvm-ceespu",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/include",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/include/llvm",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/include/llvm/Option",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/BPF",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/TargetInfo",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/InstPrinter",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/MCTargetDesc",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/TargetInfo",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Cpu0",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Lanai"
+	],
+	"file_history":
+	[
+		"/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/video.h",
+		"/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/simplechartest.ll",
+		"/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/videotest.ll",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/BPF/BPFInstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuISelLowering.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Cpu0/Cpu0MCInstLower.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuMCInstLower.cpp",
+		"/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/snake.cpp",
+		"/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/snake.s",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuAsmPrinter.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuISelLowering.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Lanai/LanaiISelLowering.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Lanai/LanaiISelLowering.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuTargetMachine.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/MCTargetDesc/CeespuMCTargetDesc.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/MCTargetDesc/CeespuELFObjectWriter.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Lanai/LanaiInstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/MCTargetDesc/CeespuMCAsmInfo.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuInstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/CeespuInstrInfo.td",
+		"/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/randtest.c",
+		"/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/snake.c",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuInstrInfo.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/CeespuMCInstLower.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuFrameLowering.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuMachineFunctionInfo.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuMachineFunctionInfo.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CMakeLists.txt",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/CeespuCallingConv.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/CeespuISelLowering.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/InstPrinter/CeespuInstPrinter.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/MCTargetDesc/CeespuMCCodeEmitter.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuInstrInfo.h",
+		"/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/add.ll",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuCallingConv.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuRegisterInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/MCTargetDesc/CeespuELFStreamer.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/MCTargetDesc/CeespuELFStreamer.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/MCTargetDesc/CeespuMCCodeEmitter.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/CeespuISelLowering.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/InstPrinter/CeespuInstPrinter.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/include/llvm/BinaryFormat/ELF.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/include/llvm/BinaryFormat/ELFRelocs/Ceespu.def",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/MCTargetDesc/CeespuFixupKinds.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Cpu0/Cpu0ISelLowering.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/CeespuMachineFunction.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/RISCV/RISCVISelLowering.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Cpu0/Cpu0ISelLowering.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2ISelLowering.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/CeespuInstrInfo.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/BPF/BPFISelLowering.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/CeespuInstrInfo.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/BPF/BPFISelDAGToDAG.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/src/testbenches/ceespu_tb.v",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/InstPrinter/CeespuInstPrinter.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/InstPrinter/CeespuInstPrinter.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuRegisterInfo.cpp",
+		"/home/cees/.config/sublime-text-3/Packages/User/SublimeGDB.sublime-settings",
+		"/home/cees/.config/sublime-text-3/Packages/SublimeGDB/SublimeGDB.sublime-settings",
+		"/home/cees/.config/sublime-text-3/Packages/SublimeAnarchyDebug/SublimeAnarchy.sublime-settings",
+		"/home/cees/.config/sublime-text-3/Packages/SublimeGDB/Default.sublime-keymap",
+		"/build/gcc/src/gcc-build/x86_64-pc-linux-gnu/libstdc++-v3/include/thread",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/emulator.txt",
+		"/home/cees/.config/sublime-text-3/Packages/Verilog Automatic/Default (Linux).sublime-keymap",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/ceespu.h",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/ceespu.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/video.h",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/video.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/receive.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/receive.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/RISCV/RISCVInstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/RISCV/RISCVInstrInfo.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/emulator.sublime-project",
+		"/home/cees/.config/sublime-text-3/Packages/GoSublime/CHANGELOG.md",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/CeespuISelDAGToDAG.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Sparc/SparcISelDAGToDAG.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuISelDAGToDAG.cpp",
+		"/data/Users/Cees/Documents/go/emulator/main.go",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Mips/MipsISelDAGToDAG.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Lanai/LanaiISelDAGToDAG.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuISelDAGToDAG.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2AsmPrinter.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/MCTargetDesc/CeespuMCTargetDesc.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuFrameLowering.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/ARM/ARMInstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/ARC/ARCInstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2InstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Hexagon/HexagonInstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2MCInstLower.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2InstrInfo.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2InstrFormats.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2Schedule.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/ARM/ARMInstrInfo.",
+		"/data/Users/Cees/Documents/repos/ceespu/src/ceespu_decode.v",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuInstrFormats.td",
+		"/data/Users/Cees/Documents/repos/ceespu/src/ceespu_constants.vh",
+		"/data/Users/Cees/Documents/repos/ceespu/src/ceespu.v",
+		"/data/Users/Cees/Documents/repos/yosys/ceespu.v",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/ceespu_assembler.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/ceespu_assembler.h",
+		"/data/Users/Cees/Documents/repos/ceespu/src/ceespu_execute.v",
+		"/data/Users/Cees/Documents/repos/ceespu/src/intr/int_controller.v",
+		"/data/Users/Cees/Documents/repos/ceespu/src/intr/timer.v",
+		"/data/Users/Cees/Documents/repos/ceespu/src/ceespu_alu.v",
+		"/data/Users/Cees/Documents/repos/ceespu/tests/call_test.s",
+		"/data/Users/Cees/Documents/repos/ceespu/workspace/assembler.project",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/self_modifyingtest.s",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/self_modifyingtest.s",
+		"/data/Users/Cees/Documents/repos/ceespu/src/ceespu_pc.v",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/ceespu_assembler.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/src/gpu/ceespu_gpu.v",
+		"/data/Users/Cees/Documents/repos/ceespu/src/gpu/ceespu_gpu",
+		"/data/Users/Cees/Documents/repos/ceespu/src/ceespu_constant.vh",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/ceespu_assembler.h",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/stringviewtest.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/ceespu_assembler_stringview.cpp",
+		"/usr/include/c++/v1/string_view",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/TargetInfo/CeespuTargetInfo.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/Ceespu.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuTargetMachine.h",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/simple_test.s",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/crt0.s",
+		"/usr/include/c++/8.1.1/string_view",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/stringviewtest.c",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuSubtarget.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuSubtarget.cpp",
+		"/data/Users/Cees/Documents/builds/llvm-ceespu-build/error.txt"
+	],
+	"find":
+	{
+		"height": 37.3333333333
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"mul",
+			"y",
+			"NegateCC",
+			"LowerBR_CC",
+			"BGU",
+			"WithCus",
+			"LowerBR",
+			"brind",
+			"Select",
+			"Phi",
+			"select",
+			"PHI",
+			"phi",
+			"class J",
+			"J",
+			"phi",
+			"br_cc",
+			"phi",
+			"setcc",
+			"Ceespubrcc",
+			"BR_CC",
+			"setcc",
+			"select",
+			"phi",
+			"getBranchOpcodeForIntCondCode",
+			"normaliseSetCC",
+			"Select",
+			"LowerBR_CC",
+			"_ms",
+			"% 0",
+			"% 0 ",
+			"';'",
+			"ALUarit",
+			"adde",
+			"i64",
+			"select",
+			"phi",
+			"getBranchOpcodeForIntCondCode",
+			"select",
+			"::select",
+			"select",
+			"Select",
+			"lowerSELECT_CC",
+			"LowerSel",
+			"NegateCC",
+			"LowerSELECT_CC",
+			"SELECT_CC",
+			"Select",
+			"GetJTISymbol",
+			"MAI",
+			"LowerJum",
+			"vastart",
+			"jump",
+			"external",
+			"brind",
+			"jump",
+			"jumptable",
+			"brind",
+			"jump",
+			"Call",
+			"jump",
+			"\"b",
+			"brcc",
+			"InstBR",
+			"BrCC",
+			"BRCC",
+			"Two",
+			"SELECT_CC",
+			"normaliseSetCC",
+			"Select",
+			"setcc",
+			"LowerSETCC",
+			"SELECT",
+			"getHasJmpExt",
+			"LowerSELECT_CC",
+			"Select",
+			"SELECT",
+			"selectcc",
+			"setcc",
+			"mem",
+			"memcpy",
+			"LW",
+			"::SW",
+			"SW",
+			"LowerS",
+			"Select",
+			"Selet",
+			"Select",
+			"IntCondCCodeToICC",
+			"select",
+			"VarArgs",
+			"LowerRet",
+			"VaAr",
+			"LowerVASTART",
+			"memcp",
+			"R17",
+			"InstSCC",
+			"setcc",
+			"texternalsym",
+			"JAL",
+			"Call",
+			"Global",
+			"MOV",
+			"Mov",
+			"set",
+			"vtable",
+			"CanLower",
+			"RV",
+			"Lanai",
+			"CeespuMFI",
+			"LowerCCCAr",
+			"LowerCCCCallTo",
+			"Lanai",
+			"Lanai32",
+			"Lanai",
+			"CeespuFI",
+			"CeespuFunctionInfo",
+			"LowerCall",
+			"lowerSELECT",
+			"normaliseSetCC",
+			"SELECT_CC",
+			"Select_c",
+			"Select",
+			"selectcc",
+			"SELECT_CC",
+			"lowerSELECT",
+			"reverseBranchCondition",
+			"getOppositeBranchOpcode"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"Ceespu",
+			"_CEESPU_",
+			"CEESPU",
+			""
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 12,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuInstrInfo.td",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13543,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2167,
+								2167
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LLVM TableGen/Syntaxes/TableGen.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 347.333333333,
+						"zoom_level": 1.0
+					},
+					"stack_index": 15,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/simplechartest.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 220,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								194,
+								194
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++11/C++11.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 14,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/simplechartest.s",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2532,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								272,
+								272
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/R/R.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 13,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/data/Users/Cees/Documents/repos/ceespu/tests/gpu_test.s",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 111,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								107,
+								107
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/R/R.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/printtest.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 242,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								218,
+								218
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/printtest.s",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1242,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/R/R.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/print.s",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 316,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								143,
+								143
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/R/R.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/home/cees/Downloads/mojo/foo.s",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 35,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								19,
+								19
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/R/R.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/movtest.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 304,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								19,
+								19
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/crt.s",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 605,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								402,
+								402
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/R/R.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 72.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/movtestlinked.s",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1506,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								582,
+								582
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/R/R.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 457.333333333,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/tetris.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1623,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								128,
+								128
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++11/C++11.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/ceespu_lib/random.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 643,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								52,
+								52
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/snake.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2173,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++11/C++11.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "/data/Users/Cees/Documents/repos/ceespu/assembler/ceespu_assembler.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 19150,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++11/C++11.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 7776.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "/data/Users/Cees/Documents/repos/ceespu/assembler/ceespu_assembler.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4518,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1584.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 16,
+					"file": "/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/CeespuISelLowering.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 26648,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								26331,
+								26331
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++11/C++11.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 17256.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 19,
+					"type": "text"
+				},
+				{
+					"buffer": 17,
+					"file": "/data/Users/Cees/Documents/builds/llvm-ceespu-build/testsuite/snake.s",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 14287,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13833,
+								13833
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/R/R.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 12048.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 21,
+					"type": "text"
+				},
+				{
+					"buffer": 18,
+					"file": "/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuISelLowering.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5922,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4393,
+								4393
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2448.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 17,
+					"type": "text"
+				},
+				{
+					"buffer": 19,
+					"file": "/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuISelLowering.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 55424,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								19404,
+								19404
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++11/C++11.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 13200.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 16,
+					"type": "text"
+				},
+				{
+					"buffer": 20,
+					"file": "/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuAsmPrinter.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4941,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								291,
+								291
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++11/C++11.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 169.333333333,
+						"zoom_level": 1.0
+					},
+					"stack_index": 20,
+					"type": "text"
+				},
+				{
+					"buffer": 21,
+					"file": "/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/RISCV/RISCVISelLowering.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 59410,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								20441,
+								20441
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++11/C++11.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 12480.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 18,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 37.3333333333
+	},
+	"input":
+	{
+		"height": 56.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.GoSublime-main-output":
+	{
+		"height": 168.0
+	},
+	"output.exec":
+	{
+		"height": 225.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.mdpopups":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "llvm-ceespu.sublime-project",
+	"replace":
+	{
+		"height": 69.3333333333
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 750.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"/data/Users/Cees/Documents/repos/ceespu/ceespu.sublime-project"
+			]
+		],
+		"width": 570.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 377.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

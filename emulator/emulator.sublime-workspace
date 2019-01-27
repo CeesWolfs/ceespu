@@ -1,0 +1,783 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"uint",
+				"uint8_t\tuint8_t"
+			],
+			[
+				"i",
+				"ifnd\tifndef (…)"
+			],
+			[
+				"int",
+				"int8_t\tint8_t"
+			],
+			[
+				"getBt",
+				"getBits\tuint32_t getBits(uint32_t val, const uint8_t upperbit, const uint8_t lowerbit)"
+			],
+			[
+				"XOR",
+				"_mm256_xor_si256\t__m256i _mm256_xor_si256(__m256i __a, __m256i __b)"
+			],
+			[
+				"uin",
+				"uint8_t\tuint8_t"
+			],
+			[
+				"retu",
+				"return\treturn expression"
+			],
+			[
+				"m",
+				"main\tmain()"
+			],
+			[
+				"llvm",
+				"llvm_shutdown\tvoid llvm_shutdown()"
+			],
+			[
+				"rec",
+				"reveiced_char\tstd::atomic<char> reveiced_char"
+			],
+			[
+				"I_",
+				"I_instruction"
+			],
+			[
+				"imm",
+				"immidiate"
+			],
+			[
+				"bran",
+				"branch_condition"
+			],
+			[
+				"br",
+				"branch_condition"
+			],
+			[
+				"fo",
+				"forv\tVector For Loop"
+			],
+			[
+				"end",
+				"endcase"
+			],
+			[
+				"out",
+				"outputfile\tstd::string outputfile"
+			],
+			[
+				"arg",
+				"argv\tchar ** argv"
+			],
+			[
+				"dir",
+				"directive\tchar * directive"
+			],
+			[
+				"size",
+				"sizeof\tsize_t sizeof(expression-or-type)"
+			],
+			[
+				"inv",
+				"invalid_immidiate\tconst uint64_t invalid_immidiate"
+			],
+			[
+				"in",
+				"insert\titerator insert(const_iterator __position, size_type __n, const value_type &__x)"
+			],
+			[
+				"p",
+				"push_back\tvoid push_back(const value_type &__x)"
+			],
+			[
+				"for",
+				"for\tFor Loop"
+			],
+			[
+				"function_l",
+				"function_label"
+			],
+			[
+				"ins",
+				"instruction"
+			],
+			[
+				"ui",
+				"uint32_t\tuint32_t"
+			],
+			[
+				"Ce",
+				"Ceespueb\tllvm::Triple::ArchType Ceespueb"
+			],
+			[
+				"Cees",
+				"Ceespu\tllvm::Triple::ArchType Ceespu"
+			],
+			[
+				"mach",
+				"MachineBasicBlock"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "ceespu.cpp",
+			"settings":
+			{
+				"buffer_size": 14256,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "emulator.sublime-project",
+			"settings":
+			{
+				"buffer_size": 455,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "video.cpp",
+			"settings":
+			{
+				"buffer_size": 2556,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Execute",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Execute",
+					""
+				],
+				[
+					"build Debug",
+					""
+				],
+				[
+					"build Release",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/C++11/C++11.sublime-build",
+					""
+				],
+				[
+					"Packages/C++11/C++11.sublime-build",
+					"Run"
+				]
+			],
+			[
+				"Execute",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/C++11/C++11.sublime-build",
+					""
+				],
+				[
+					"Packages/C++11/C++11.sublime-build",
+					"Run"
+				]
+			],
+			[
+				"Packages/C++11/C++11.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"build Debug",
+					""
+				],
+				[
+					"build Release",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/C++11/C++11.sublime-build",
+					""
+				],
+				[
+					"Packages/C++11/C++11.sublime-build",
+					"Run"
+				]
+			],
+			[
+				"build Debug",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"Anarch",
+				"AnarchyDebug: Start debugger"
+			],
+			[
+				"",
+				"Build With: C++11"
+			],
+			[
+				"gdb",
+				"SublimeGDB: Open Disassembly View"
+			],
+			[
+				"SetSyntac",
+				"Set Syntax: C++11"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 212.0,
+		"history":
+		[
+			"exit",
+			"step"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Users/Cees/Documents/repos/ceespu/emulator"
+	],
+	"file_history":
+	[
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuRegisterInfo.cpp",
+		"/home/cees/.config/sublime-text-3/Packages/User/SublimeGDB.sublime-settings",
+		"/home/cees/.config/sublime-text-3/Packages/SublimeGDB/SublimeGDB.sublime-settings",
+		"/home/cees/.config/sublime-text-3/Packages/SublimeAnarchyDebug/SublimeAnarchy.sublime-settings",
+		"/home/cees/.config/sublime-text-3/Packages/SublimeGDB/Default.sublime-keymap",
+		"/build/gcc/src/gcc-build/x86_64-pc-linux-gnu/libstdc++-v3/include/thread",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/emulator.txt",
+		"/home/cees/.config/sublime-text-3/Packages/Verilog Automatic/Default (Linux).sublime-keymap",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/ceespu.h",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/ceespu.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/video.h",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/video.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/receive.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/receive.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/RISCV/RISCVInstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/RISCV/RISCVInstrInfo.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/emulator.sublime-project",
+		"/home/cees/.config/sublime-text-3/Packages/GoSublime/CHANGELOG.md",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuISelLowering.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuInstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/CeespuOld/CeespuISelDAGToDAG.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Sparc/SparcISelDAGToDAG.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuISelDAGToDAG.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuInstrInfo.cpp",
+		"/data/Users/Cees/Documents/go/emulator/main.go",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Mips/MipsISelDAGToDAG.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Lanai/LanaiISelDAGToDAG.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuISelDAGToDAG.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuInstrInfo.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuRegisterInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuTargetMachine.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/InstPrinter/CeespuInstPrinter.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2AsmPrinter.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/MCTargetDesc/CeespuMCTargetDesc.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuFrameLowering.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuFrameLowering.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/InstPrinter/CeespuInstPrinter.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuAsmPrinter.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/ARM/ARMInstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/ARC/ARCInstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2InstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Lanai/LanaiInstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Hexagon/HexagonInstrInfo.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/BPF/BPFISelLowering.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2MCInstLower.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2InstrInfo.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2InstrFormats.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Nios2/Nios2Schedule.td",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/ARM/ARMInstrInfo.",
+		"/data/Users/Cees/Documents/repos/ceespu/src/ceespu_decode.v",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuInstrFormats.td",
+		"/data/Users/Cees/Documents/repos/ceespu/src/ceespu_constants.vh",
+		"/data/Users/Cees/Documents/repos/ceespu/src/ceespu.v",
+		"/data/Users/Cees/Documents/repos/yosys/ceespu.v",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/ceespu_assembler.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/ceespu_assembler.h",
+		"/data/Users/Cees/Documents/repos/ceespu/src/ceespu_execute.v",
+		"/data/Users/Cees/Documents/repos/ceespu/src/intr/int_controller.v",
+		"/data/Users/Cees/Documents/repos/ceespu/src/intr/timer.v",
+		"/data/Users/Cees/Documents/repos/ceespu/src/ceespu_alu.v",
+		"/data/Users/Cees/Documents/repos/ceespu/tests/call_test.s",
+		"/data/Users/Cees/Documents/repos/ceespu/workspace/assembler.project",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/self_modifyingtest.s",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/self_modifyingtest.s",
+		"/data/Users/Cees/Documents/repos/ceespu/src/ceespu_pc.v",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/ceespu_assembler.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/src/gpu/ceespu_gpu.v",
+		"/data/Users/Cees/Documents/repos/ceespu/src/gpu/ceespu_gpu",
+		"/data/Users/Cees/Documents/repos/ceespu/src/ceespu_constant.vh",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/ceespu_assembler.h",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/stringviewtest.cpp",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/ceespu_assembler_stringview.cpp",
+		"/usr/include/c++/v1/string_view",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/TargetInfo/CeespuTargetInfo.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CMakeLists.txt",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/Ceespu.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuTargetMachine.h",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/simple_test.s",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/crt0.s",
+		"/usr/include/c++/8.1.1/string_view",
+		"/data/Users/Cees/Documents/repos/ceespu/assembler/fast_assembler/stringviewtest.c",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuSubtarget.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuSubtarget.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuCallingConv.td",
+		"/data/Users/Cees/Documents/builds/llvm-ceespu-build/error.txt",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuISelLowering.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/Disassembler/RISCVDisassembler.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuFrameLowering.ch",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/BPF/MCTargetDesc/BPFAsmBackend.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Sparc/MCTargetDesc/SparcAsmBackend.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuMachineFunction.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuMCInstLower.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/CeespuRegisterInfo.h",
+		"/data/Users/Cees/Documents/builds/llvm-ceespu-build/fail.txt",
+		"/home/cees/.config/sublime-text-3/Packages/User/clang_format.sublime-settings",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/MCTargetDesc/CeespuAsmBackend.cpp",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/Ceespu/MCTargetDesc/CeespuMCTargetDesc.cpp",
+		"/home/cees/.conky/min.conky",
+		"/home/cees/.conky/conky.conf",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/include/llvm/ADT/Triple.h",
+		"/data/Users/Cees/Documents/repos/ceespu/gpu/ceespu_gpu.v",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/include/llvm/ADT/triple.h",
+		"/data/Users/Cees/Documents/repos/llvm-ceespu/lib/Target/ARM/ARMRegisterInfo.h",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/emulator.h",
+		"/data/Users/Cees/Documents/repos/ceespu/emulator/ceespu.c",
+		"/.git/config",
+		"/home/cees/.config/sublime-text-3/Packages/Clang Format/clang_format_custom.sublime-settings",
+		"/home/cees/.config/sublime-text-3/Packages/Clang Format/clang_format.sublime-settings",
+		"/data/Users/Cees/Documents/repos/ceespu/README.md",
+		"/home/cees/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
+		"/home/cees/Documents/repos/HelloTest/HelloCMake/CMakeLists.txt"
+	],
+	"find":
+	{
+		"height": 27.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"getWord",
+			"emulate_cycle",
+			"MEMri",
+			"Fi",
+			"selectad",
+			"BLT",
+			"BEQ",
+			"GPR.",
+			"&&",
+			"ADDri",
+			"ADD",
+			"GPR",
+			"rr",
+			"ADDri",
+			"brtarget",
+			"bb",
+			"jmptarget'",
+			"jmptarget",
+			"bb",
+			"JNE",
+			"BLE",
+			"BG",
+			"imm",
+			"B1",
+			"jmptarget",
+			"brtarget",
+			"call",
+			"simm13_lsb0",
+			"TYPE_ALU_JMP",
+			"brtarget",
+			"brtarget ",
+			"OtherVT",
+			"simm13_lsb0",
+			"BranchCC_rri",
+			"BGE",
+			"BGE ",
+			"imm",
+			"InstBcc",
+			"BranchCC_rri",
+			"OtherVT",
+			"JMP_RR",
+			"Ceespubrcc",
+			"BRCC",
+			"BEQ",
+			"Ceespubrcc",
+			"BEQ",
+			"rtarget",
+			"XORI",
+			"input_thread",
+			"input_thread.terminate();",
+			"crash",
+			"terminate",
+			"HI",
+			"simm32",
+			"XLenVT",
+			"simm32",
+			"LUI",
+			"(LUI",
+			"i32",
+			"ALU_RI",
+			"interrupts_enabled",
+			"REL_LO16",
+			"REL_LO",
+			"relocation",
+			"rel",
+			"workspace",
+			"/fast_assembler/",
+			"01ff",
+			"7FF",
+			"not_interrupt",
+			"10",
+			"enable_interrupts",
+			"BRANCH",
+			"storeData",
+			"dataB",
+			"dataA",
+			"printf",
+			"string_view",
+			"(immidiate & ~(0xffff)) && is16bit(immidiate)",
+			"offset",
+			"lineNum",
+			"labelName",
+			"hasFP",
+			"frame",
+			"GPRRegClass",
+			"MFI->",
+			"MI->",
+			"emit",
+			"BPF"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"emulateCycle",
+			"ADDI",
+			"BrDst",
+			"ALU_RI_EXT",
+			"/",
+			"",
+			"07ff",
+			"interrupt_enabled",
+			"immidiate == invalid_immidiate",
+			"it->offset",
+			"line_num",
+			"label_name",
+			"GPR",
+			"MFI.",
+			"MI.",
+			"Ceespu"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "ceespu.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 14256,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5728,
+								5728
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++11/C++11.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4158.4,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "emulator.sublime-project",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 455,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								452,
+								452
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "video.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2556,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								33,
+								33
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++11/C++11.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1008.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"sheets":
+			[
+			]
+		},
+		{
+			"sheets":
+			[
+			]
+		},
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 56.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				3,
+				1
+			],
+			[
+				0,
+				1,
+				1,
+				2
+			],
+			[
+				1,
+				1,
+				2,
+				2
+			],
+			[
+				2,
+				1,
+				3,
+				2
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.33,
+			0.66,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			0.947368421053,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.GoSublime-main-output":
+	{
+		"height": 168.0
+	},
+	"output.exec":
+	{
+		"height": 225.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.mdpopups":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "emulator.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 750.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 570.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 225.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

@@ -21,27 +21,30 @@ enum { A0, A1, A2, A3, B0, B1, B2, B3, B4, B5 };
 
 enum {
   ASCII = 0,
-  BYTE = 1,
-  COMM = 2,
-  DATA = 3,
-  EXTERN = 4,
-  FILE_D = 5,
-  GLOBL = 6,
+  AT = 1,
+  BYTE = 2,
+  COMM = 3,
+  DATA = 4,
+  EXTERN = 5,
+  FILE_D = 6,
+  GLOBL = 7,
   IDENT = 8,
-  HWORD = 7,
-  ALIGN = 9,
-  SECTION = 10,
-  SIZE = 11,
-  SPACE = 12,
-  TEXT = 13,
-  TYPE = 14,
-  WORD = 15,
+  INCBIN = 9,
+  HWORD = 10,
+  ALIGN = 11,
+  SECTION = 12,
+  SIZE = 13,
+  SPACE = 14,
+  TEXT = 15,
+  TYPE = 16,
+  WORD = 17,
   INVALID = 0xff
 };
 
-char directives[][8] = {"asciz", "byte",  "comm",  "data",    "extern",  "file",
-                        "globl", "hword", "ident", "p2align", "section", "size",
-                        "space", "text",  "type",  "word"};
+char directives[][8] = {"asciz",  "at",      "byte",    "comm",  "data",
+                        "extern", "file",    "globl",   "hword", "ident",
+                        "incbin", "p2align", "section", "size",  "space",
+                        "text",   "type",    "word"};
 typedef struct Label {
   uint16_t offset;
   uint8_t type;
